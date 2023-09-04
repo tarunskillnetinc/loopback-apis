@@ -138,6 +138,18 @@ export class VtexController {
       throw error;
     }
   }
+  @get('/vtex-new-arrivals')
+  @response(200, {
+    description: 'Get VTEX best selling products from the external API',
+  })
+  async getNewSellingProducts(): Promise<any> {
+    try {
+      const bestSellingProducts = await this.vtexService.getBestSellingProducts();
+      return bestSellingProducts;
+    } catch (error) {
+      throw error;
+    }
+  }
   @get('/vtex-plp/{categoryId}')
 
       @response(200, {

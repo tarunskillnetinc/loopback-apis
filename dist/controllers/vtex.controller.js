@@ -110,6 +110,15 @@ let VtexController = exports.VtexController = class VtexController {
             throw error;
         }
     }
+    async getNewSellingProducts() {
+        try {
+            const bestSellingProducts = await this.vtexService.getBestSellingProducts();
+            return bestSellingProducts;
+        }
+        catch (error) {
+            throw error;
+        }
+    }
     async getVtexPlp(categoryId) {
         try {
             console.log("categoryID", categoryId);
@@ -197,6 +206,15 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:paramtypes", []),
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getBestSellingProducts", null);
+tslib_1.__decorate([
+    (0, rest_1.get)('/vtex-new-arrivals'),
+    (0, rest_1.response)(200, {
+        description: 'Get VTEX best selling products from the external API',
+    }),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", []),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "getNewSellingProducts", null);
 tslib_1.__decorate([
     (0, rest_1.get)('/vtex-plp/{categoryId}'),
     (0, rest_1.response)(200, {

@@ -105,11 +105,43 @@ let VtexService = exports.VtexService = class VtexService {
             await categoryTreemap.push({
                 id: item.id,
                 title: item.name,
-                data: responseData === null || responseData === void 0 ? void 0 : responseData.products,
+                data: await this.functionVtexCategoryTreeLoopbackForData(responseData),
             });
         }));
         console.log('transformCategoryTree', categoryTreemap);
         return categoryTreemap;
+    }
+    async functionVtexCategoryTreeLoopbackForData(responseData) {
+        const dataArr = [];
+        await (responseData === null || responseData === void 0 ? void 0 : responseData.products.map(async (responseitem, index) => {
+            const Ddatavar = await {
+                attributes: {
+                    "sku": responseitem === null || responseitem === void 0 ? void 0 : responseitem.productId,
+                    "isDiscontinued": false,
+                    "discontinuedNote": null,
+                    "averageRating": null,
+                    "reviewCount": 0,
+                    "productAbstractSku": "232",
+                    "name": responseitem === null || responseitem === void 0 ? void 0 : responseitem.productName,
+                    "description": responseitem === null || responseitem === void 0 ? void 0 : responseitem.description,
+                    "attributes": [],
+                    "superAttributesDefinition": [],
+                    "metaTitle": null,
+                    "metaKeywords": null,
+                    "metaDescription": null,
+                    "attributeNames": [],
+                    "productConfigurationInstance": null,
+                    "abstractSku": "232",
+                    "url": responseitem === null || responseitem === void 0 ? void 0 : responseitem.link,
+                    "price": responseitem.priceRange.sellingPrice.highPrice,
+                    "abstractName": responseitem === null || responseitem === void 0 ? void 0 : responseitem.productName,
+                    "prices": responseitem === null || responseitem === void 0 ? void 0 : responseitem.priceRange,
+                    "images": responseitem === null || responseitem === void 0 ? void 0 : responseitem.images
+                },
+            };
+            await dataArr.push(Ddatavar);
+        }));
+        return dataArr;
     }
     // private vtextransformCategoryTree1(response: any): any {
     //   console.log("response1234",response)
@@ -201,7 +233,24 @@ let VtexService = exports.VtexService = class VtexService {
             const endpoint_two = `api/pricing/prices/${items.SkuId}`;
             const product_price_response = await this.fetchFromEndpoint(endpoint_two);
             console.log('danishis', product_price_response);
-            items.basePrice = product_price_response.costPrice;
+            items.basePrice = product_price_response.basePrice;
+            items.listPrice = product_price_response.costPrice;
+            emptyarray.push({ ...items });
+            return items;
+        }));
+        return emptyarray;
+    }
+    async getNewSellingProducts() {
+        const endpoint = `api/catalog/pvt/collection/137/products`;
+        const response = this.fetchFromEndpoint(endpoint);
+        const data = await response;
+        var emptyarray = [];
+        await Promise.all(data.Data.map(async (items, index) => {
+            const endpoint_two = `api/pricing/prices/${items.SkuId}`;
+            const product_price_response = await this.fetchFromEndpoint(endpoint_two);
+            console.log('danishis', product_price_response);
+            items.basePrice = product_price_response.basePrice;
+            items.listPrice = product_price_response.costPrice;
             emptyarray.push({ ...items });
             return items;
         }));

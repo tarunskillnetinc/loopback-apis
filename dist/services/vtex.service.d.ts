@@ -7,6 +7,7 @@ export declare class VtexService {
     vtexCategoryTreeLoopbackFetchFromEndpoint(endpoint: string): Promise<any>;
     getVtexCategoryTree(): Promise<any>;
     getVtexCategoryTreeloopback(): Promise<any>;
+    functionVtexCategoryTreeLoopbackForData(responseData: any): Promise<any>;
     getVtexCollection(collectionId: string): Promise<any>;
     getVtexProducListingPage(categoryId: String): Promise<any>;
     getVtexProductDetails(productId: string): Promise<any>;
@@ -14,6 +15,7 @@ export declare class VtexService {
     getVtexCartDetails(): Promise<any>;
     getTransformedVtexProductDetails(productId: string): Promise<any>;
     getBestSellingProducts(): Promise<any>;
+    getNewSellingProducts(): Promise<any>;
     private transformProductDetails;
     private vtextransformCategoryTreeloopback;
     private CategroychildrenDataloopback;

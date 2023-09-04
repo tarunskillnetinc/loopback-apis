@@ -9,6 +9,7 @@ export declare class VtexController {
     getVtexCartData(): Promise<any>;
     gettransformedVtexProductDetails(productId: string): Promise<any>;
     getBestSellingProducts(): Promise<any>;
+    getNewSellingProducts(): Promise<any>;
     getVtexPlp(categoryId: string): Promise<any>;
     getVtexCategoryTreeloopback(): Promise<any>;
 }
