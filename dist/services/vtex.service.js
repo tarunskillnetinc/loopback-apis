@@ -13,45 +13,60 @@ let VtexService = exports.VtexService = class VtexService {
         try {
             const response = await axios_1.default.get(`${this.dataSource.settings.baseURL}/${endpoint}`, {
                 headers: {
-                    'Accept': 'application/json',
+                    Accept: 'application/json',
                     'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
-                    'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR'
-                }
+                    'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+                },
             });
             return response.data;
         }
         catch (error) {
+            console.log('error', error);
             throw error;
         }
     }
-    // async getVtexCategoryTree(): Promise<any> {
-    //   const endpoint = 'api/catalog_system/pub/category/tree/2';
-    //   return this.fetchFromEndpoint(endpoint);
-    // }
-    // async getVtexProductDetails(productId: string): Promise<any> {
-    //   const endpoint = `api/catalog/pvt/product/${productId}`;
-    //   return this.fetchFromEndpoint(endpoint);
-    // }
-    async getTransformedVtexProductDetails(productId) {
-        const endpoint = `api/catalog/pvt/product/${productId}`;
-        const response = await this.fetchFromEndpoint(endpoint);
-        // return this.fetchFromEndpoint(endpoint);
-        const transformedResponse = this.transformProductDetails(response);
-        return transformedResponse;
+    //for cartapi
+    async cartFetchFromEndpoint(endpoint) {
+        try {
+            const response = await axios_1.default.get(`https://hometest--skillnet.myvtex.com/${endpoint}`, {
+                headers: {
+                    Accept: 'application/json',
+                    'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
+                    'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+                },
+            });
+            return response.data;
+        }
+        catch (error) {
+            console.log('error', error);
+            const data = {
+                statusCode: error.response.status,
+                statusText: error.response.statusText,
+                data: error.response.data,
+            };
+            return data;
+        }
     }
-    // async getBestSellingProducts(): Promise<any> {
-    //   const endpoint = `api/catalog/pvt/collection/143/products`;
-    //   return this.fetchFromEndpoint(endpoint);
-    // }
-    transformProductDetails(response) {
-        return {
-            productId: response.Id,
-            productName: response.Name,
-            category: {
-                departmentId: response.DepartmentId,
-                categoryId: response.CategoryId,
-            },
-        };
+    async vtexCategoryTreeLoopbackFetchFromEndpoint(endpoint) {
+        try {
+            const response = await axios_1.default.get(`${endpoint}`, { timeout: 100000,
+                headers: {
+                    Accept: 'application/json',
+                    'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
+                    'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+                },
+            });
+            return response.data;
+        }
+        catch (error) {
+            console.log('error', error);
+            // const data = {
+            //   statusCode: error.response.status,
+            //   statusText: error.response.statusText,
+            //   data: error.response.data,
+            // };
+            // return data;
+        }
     }
     async getVtexCategoryTree() {
         const endpoint = 'api/catalog_system/pub/category/tree/2';
@@ -60,6 +75,67 @@ let VtexService = exports.VtexService = class VtexService {
         console.log('transformCategoryTree', transformCategoryTree);
         return transformCategoryTree;
     }
+    // async getVtexCategoryTreeloopback(): Promise<any> {
+    //   const endpoint = 'api/catalog_system/pub/category/tree/2';
+    //   const response = await this.fetchFromEndpoint(endpoint);
+    //   const categoryTreemap: any = [];
+    //   // const result=this.vtextransformCategoryTree1(response)
+    //   const transformCategoryTree =this.vtextransformCategoryTreeloopback(response);
+    //   Promise.all(response?.map(async (item: any, index: any) => {
+    //     const endpoint = `https://skillnet.vtexcommercestable.com.br/api/io/_v/api/intelligent-search/product_search/category-1/${item.name}`;
+    //     const response = await this.vtexCategoryTreeLoopbackFetchFromEndpoint(endpoint)
+    //     console.log("response",response)
+    //     categoryTreemap.push({
+    //       id: item.id,
+    //       title: item.name,
+    //       data: response.products,
+    //     });  
+    //   }));
+    //   console.log('transformCategoryTree', categoryTreemap);
+    //   return categoryTreemap;
+    // }
+    async getVtexCategoryTreeloopback() {
+        const endpoint = 'api/catalog_system/pub/category/tree/2';
+        const response = await this.fetchFromEndpoint(endpoint);
+        const categoryTreemap = [];
+        await Promise.all(response === null || response === void 0 ? void 0 : response.map(async (item, index) => {
+            const endpoint = `https://skillnet.vtexcommercestable.com.br/api/io/_v/api/intelligent-search/product_search/category-1/${item.name}`;
+            const responseData = await this.vtexCategoryTreeLoopbackFetchFromEndpoint(endpoint);
+            console.log("response", responseData);
+            await categoryTreemap.push({
+                id: item.id,
+                title: item.name,
+                data: responseData === null || responseData === void 0 ? void 0 : responseData.products,
+            });
+        }));
+        console.log('transformCategoryTree', categoryTreemap);
+        return categoryTreemap;
+    }
+    // private vtextransformCategoryTree1(response: any): any {
+    //   console.log("response1234",response)
+    //   const categoryTreemap: any = [];
+    //   response?.map(async (item: any, index: any) => {
+    //     // item.children.map(async (childitem: any) => {
+    //     //   categoryChildren.push({
+    //     //     Id: childitem.id,
+    //     //     name: childitem.name,
+    //     //     hasChildren: childitem.hasChildren,
+    //     //     url: childitem.url,
+    //     //   });
+    //     // });
+    //     const endpoint = `https://skillnet.vtexcommercestable.com.br/api/io/_v/api/intelligent-search/product_search/category-1/${item.name}`;
+    //     const response = await this.vtexCategoryTreeLoopbackFetchFromEndpoint(endpoint)
+    //     // console.log("response",response)
+    //     categoryTreemap.push({
+    //       parent_Id: item.id,
+    //       name: item.name,
+    //       data: response.products,
+    //       hasChildren: item.hasChildren,
+    //       url: item.url
+    //     });
+    //   });
+    //   return categoryTreemap;
+    // }
     async getVtexCollection(collectionId) {
         const endpoint = `api/catalog/pvt/collection/${collectionId}/products`;
         var endpointresponse = await this.fetchFromEndpoint(endpoint);
@@ -80,6 +156,7 @@ let VtexService = exports.VtexService = class VtexService {
         return collectionPrice;
     }
     async getVtexProducListingPage(categoryId) {
+        console.log("rersrser", categoryId);
         const childrenendpoint = `api/catalog_system/pub/products/search?fq=C:/${categoryId}/`;
         console.log('wdaw', await this.fetchFromEndpoint(childrenendpoint));
         return await this.fetchFromEndpoint(childrenendpoint);
@@ -92,16 +169,13 @@ let VtexService = exports.VtexService = class VtexService {
         const endpoint = `api/catalog/pvt/product/${pid}`;
         const response = this.fetchFromEndpoint(endpoint);
         const data = await response;
-        console.log("data", data);
-        console.log("data.Id", data.Id);
         const endpoint1 = `api/catalog_system/pub/products/variations/${data.Id}`;
         const product_variation = this.fetchFromEndpoint(endpoint1);
         const product_variation_response = await product_variation;
-        console.log("product_variation", product_variation);
         product_variation_response['categoryId'] = data.CategoryId;
         product_variation_response['brandId'] = data.BrandId;
         product_variation_response['description'] = data.Description;
-        console.log("product_variation_response", product_variation_response);
+        console.log('product_variation_response', product_variation_response);
         const transformVtexPdp = this.transformVtexProductDetailPage(product_variation_response);
         // console.log("transformVtexPdp",transformVtexPdp);
         return transformVtexPdp;
@@ -109,35 +183,71 @@ let VtexService = exports.VtexService = class VtexService {
     async getVtexCartDetails() {
         // a7be4a750c55442a865ca49fd22a4232 cart id
         const endpoint = `api/checkout/pub/orderForm/a7be4a750c55442a865ca49fd22a4232`;
-        return this.fetchFromEndpoint(endpoint);
+        return this.cartFetchFromEndpoint(endpoint);
     }
-    // async getTransformedVtexProductDetails(productId: string): Promise<any> {
-    //   const endpoint = `api/catalog/pvt/product/${productId}`;
-    //   const response = await this.fetchFromEndpoint(endpoint);
-    //   // return this.fetchFromEndpoint(endpoint);
-    //   const transformedResponse = this.transformProductDetails(response);
-    //   return transformedResponse;
-    // }
+    async getTransformedVtexProductDetails(productId) {
+        const endpoint = `api/catalog/pvt/product/${productId}`;
+        const response = await this.fetchFromEndpoint(endpoint);
+        // return this.fetchFromEndpoint(endpoint);
+        const transformedResponse = this.transformProductDetails(response);
+        return transformedResponse;
+    }
     async getBestSellingProducts() {
         const endpoint = `api/catalog/pvt/collection/143/products`;
-        return this.fetchFromEndpoint(endpoint);
+        const response = this.fetchFromEndpoint(endpoint);
+        const data = await response;
+        var emptyarray = [];
+        await Promise.all(data.Data.map(async (items, index) => {
+            const endpoint_two = `api/pricing/prices/${items.SkuId}`;
+            const product_price_response = await this.fetchFromEndpoint(endpoint_two);
+            console.log('danishis', product_price_response);
+            items.basePrice = product_price_response.costPrice;
+            emptyarray.push({ ...items });
+            return items;
+        }));
+        return emptyarray;
     }
-    // private transformProductDetails(response: any): any {
-    //   return {
-    //     productId: response.Id,
-    //     productName: response.Name,
-    //     category: {
-    //       departmentId: response.DepartmentId,
-    //       categoryId: response.CategoryId,
-    //     },
-    //   };
-    // }
+    transformProductDetails(response) {
+        return {
+            productId: response.Id,
+            productName: response.Name,
+            category: {
+                departmentId: response.DepartmentId,
+                categoryId: response.CategoryId,
+            },
+        };
+    }
+    vtextransformCategoryTreeloopback(response) {
+        // console.log("response1234",response)
+        const categoryTreemap = [];
+        response === null || response === void 0 ? void 0 : response.map(async (item, index) => {
+            var childrendata = this.CategroychildrenDataloopback(item.children);
+            // console.log("dwadawdaw",childrendata)
+            categoryTreemap.push(childrendata);
+        });
+        // console.log("categoryTreemap",categoryTreemap)
+        return categoryTreemap;
+    }
+    CategroychildrenDataloopback(response) {
+        const categoryChildren = [];
+        response === null || response === void 0 ? void 0 : response.map(async (childitem) => {
+            const endpoint = `https://skillnet.vtexcommercestable.com.br/api/io/_v/api/intelligent-search/product_search/category-2/${childitem.name}`;
+            const response = await this.vtexCategoryTreeLoopbackFetchFromEndpoint(endpoint);
+            console.log('CategroychildrenDataloopback', response);
+            if (response) {
+                categoryChildren.push({
+                    id: childitem.id,
+                    title: childitem.name,
+                    data: response,
+                });
+            }
+        });
+        return categoryChildren;
+    }
     vtextransformCategoryTree(response) {
         // console.log("response1234",response)
         const categoryTreemap = [];
         response === null || response === void 0 ? void 0 : response.map(async (item, index) => {
-            const endpoint = `/api/io/_v/api/intelligent-search/product_search/category-1/${item.name}`;
-            const response = await this.fetchFromEndpoint(endpoint);
             // item.children.map(async (childitem: any) => {
             //   categoryChildren.push({
             //     Id: childitem.id,
@@ -151,7 +261,7 @@ let VtexService = exports.VtexService = class VtexService {
                 name: item.name,
                 hasChildren: item.hasChildren,
                 url: item.url,
-                // products: [response.products],
+                children: this.CategroychildrenData(item.children),
             });
         });
         return categoryTreemap;
@@ -164,7 +274,7 @@ let VtexService = exports.VtexService = class VtexService {
                 name: childitem.name,
                 hasChildren: childitem.hasChildren,
                 url: childitem.url,
-                children: this.CategroychildrenData(childitem.children)
+                children: this.CategroychildrenData(childitem.children),
             });
         });
         return categoryChildren;
@@ -174,102 +284,8 @@ let VtexService = exports.VtexService = class VtexService {
             productId: response.productId,
             name: response.name,
             available: response.available,
-            skus: response.skus
+            skus: response.skus,
         };
-    }
-    filterSubcategories(data) {
-        const subcategories = [];
-        for (const category of data) {
-            console.log('category', category);
-            const products = this.getProductsByCategory(category.id);
-            if (category.hasChildren) {
-                const subcategory = {
-                    Id: category.id,
-                    name: category.name,
-                    url: category.url,
-                    products: [products],
-                };
-                console.log('subcategory', category);
-                subcategories.push(subcategory);
-            }
-        }
-        return subcategories;
-    }
-    async getVtexCategoryTreeloopback() {
-        const endpoint = 'api/catalog_system/pub/category/tree/2';
-        const response = await this.fetchFromEndpoint(endpoint);
-        // console.log('response New', response);
-        const transformCategoryTree = this.vtextransformCategoryTreeloopback(response);
-        // console.log('transformCategoryTree', transformCategoryTree);
-        return transformCategoryTree;
-    }
-    async getProductsByCategory(categoryId) {
-        return new Promise(async (resolve, reject) => {
-            try {
-                const endpoint = `/api/io/_v/api/intelligent-search/product_search/category-1/${categoryId}`;
-                const response = await this.fetchFromEndpoint(endpoint);
-                // console.log('response', response);
-                resolve(response.products);
-            }
-            catch (error) {
-                reject(error);
-            }
-        });
-    }
-    async vtextransformCategoryTreeloopback(response) {
-        const categoryTreemap = [];
-        // Create an array of promises
-        const promises = response.map(async (item) => {
-            // Wait for the data from getProductsByCategory
-            const products = await this.getProductsByCategory(item.name);
-            // Push the result into the categoryTreemap
-            categoryTreemap.push({
-                id: item.id,
-                title: item.name,
-                url: item.url,
-                products: products
-            });
-        });
-        // Wait for all promises to resolve
-        await Promise.all(promises);
-        return categoryTreemap;
-    }
-    CategroychildrenDataloopback(response) {
-        const categoryChildren = [];
-        response === null || response === void 0 ? void 0 : response.map(async (childitem) => {
-            const endpoint = `https://skillnet.vtexcommercestable.com.br/api/io/_v/api/intelligent-search/product_search/category-2/${childitem.name}`;
-            const response = await this.vtexCategoryTreeLoopbackFetchFromEndpoint(endpoint);
-            // console.log('CategroychildrenDataloopback', response);
-            if (response) {
-                categoryChildren.push({
-                    id: childitem.id,
-                    title: childitem.name,
-                    data: response,
-                });
-            }
-        });
-        return categoryChildren;
-    }
-    async vtexCategoryTreeLoopbackFetchFromEndpoint(endpoint) {
-        try {
-            const response = await axios_1.default.get(`${endpoint}`, {
-                headers: {
-                    Accept: 'application/json',
-                    'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
-                    'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
-                },
-            });
-            return response.data;
-        }
-        catch (error) {
-            console.log('error', error);
-            // const data = {
-            //   statusCode: error.response.status,
-            //   statusText: error.response.statusText,
-            //   data: error.response.data,
-            // };
-            // return data;
-        }
     }
 };
 exports.VtexService = VtexService = tslib_1.__decorate([

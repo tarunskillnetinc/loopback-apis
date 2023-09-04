@@ -85,18 +85,18 @@ export class VtexController {
           throw error;
         }
       }
-      @get('/vtex-plp')
-      @response(200, {
-        description: 'Get VTEX product details from the external API',
-      })
-      async getVtexPlp(@param.path.string('categoryId') categoryId: string): Promise<any> {
-        try {
-          const vtexProductListingPage = await this.vtexService.getVtexProducListingPage(categoryId);
-          return vtexProductListingPage;
-        } catch (error) {
-          throw error;
-        }
-      }
+      // @get('/vtex-plp')
+      // @response(200, {
+      //   description: 'Get VTEX product details from the external API',
+      // })
+      // async getVtexPlp(@param.path.string('categoryId') categoryId: string): Promise<any> {
+      //   try {
+      //     const vtexProductListingPage = await this.vtexService.getVtexProducListingPage(categoryId);
+      //     return vtexProductListingPage;
+      //   } catch (error) {
+      //     throw error;
+      //   }
+      // }
       @get('/vtex-cartDetail')
       @response(200, {
         description: 'Get VTEX cart details from the external API',

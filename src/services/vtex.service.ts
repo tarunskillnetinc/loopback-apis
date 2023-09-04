@@ -237,8 +237,41 @@ export class VtexService {
   }
 
   async getBestSellingProducts(): Promise<any> {
+
     const endpoint = `api/catalog/pvt/collection/143/products`;
-    return this.fetchFromEndpoint(endpoint);
+
+    const response =  this.fetchFromEndpoint(endpoint);
+
+    const data = await response;
+
+    var emptyarray:any[]=[]
+
+ 
+
+    await Promise.all(
+
+      data.Data.map(async (items: any, index: any) => {
+
+        const endpoint_two = `api/pricing/prices/${items.SkuId}`;
+
+        const product_price_response = await this.fetchFromEndpoint(endpoint_two);
+
+        console.log('danishis', product_price_response);
+
+        items.basePrice = product_price_response.costPrice;
+
+        emptyarray.push({ ...items });
+
+ 
+
+        return items;
+
+      })
+
+    );
+
+    return emptyarray;
+
   }
 
   private transformProductDetails(response: any): any {

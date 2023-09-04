@@ -71,15 +71,18 @@ let VtexController = exports.VtexController = class VtexController {
             throw error;
         }
     }
-    async getVtexPlp(categoryId) {
-        try {
-            const vtexProductListingPage = await this.vtexService.getVtexProducListingPage(categoryId);
-            return vtexProductListingPage;
-        }
-        catch (error) {
-            throw error;
-        }
-    }
+    // @get('/vtex-plp')
+    // @response(200, {
+    //   description: 'Get VTEX product details from the external API',
+    // })
+    // async getVtexPlp(@param.path.string('categoryId') categoryId: string): Promise<any> {
+    //   try {
+    //     const vtexProductListingPage = await this.vtexService.getVtexProducListingPage(categoryId);
+    //     return vtexProductListingPage;
+    //   } catch (error) {
+    //     throw error;
+    //   }
+    // }
     async getVtexCartData() {
         try {
             const vtexCartDetail = await this.vtexService.getVtexCartDetails();
@@ -102,6 +105,16 @@ let VtexController = exports.VtexController = class VtexController {
         try {
             const bestSellingProducts = await this.vtexService.getBestSellingProducts();
             return bestSellingProducts;
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    async getVtexPlp(categoryId) {
+        try {
+            console.log("categoryID", categoryId);
+            const vtexProductListingPage = await this.vtexService.getVtexProducListingPage(categoryId);
+            return vtexProductListingPage;
         }
         catch (error) {
             throw error;
@@ -157,16 +170,6 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getVtexCollection", null);
 tslib_1.__decorate([
-    (0, rest_1.get)('/vtex-plp'),
-    (0, rest_1.response)(200, {
-        description: 'Get VTEX product details from the external API',
-    }),
-    tslib_1.__param(0, rest_1.param.path.string('categoryId')),
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [String]),
-    tslib_1.__metadata("design:returntype", Promise)
-], VtexController.prototype, "getVtexPlp", null);
-tslib_1.__decorate([
     (0, rest_1.get)('/vtex-cartDetail'),
     (0, rest_1.response)(200, {
         description: 'Get VTEX cart details from the external API',
@@ -194,6 +197,16 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:paramtypes", []),
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getBestSellingProducts", null);
+tslib_1.__decorate([
+    (0, rest_1.get)('/vtex-plp/{categoryId}'),
+    (0, rest_1.response)(200, {
+        description: 'Get VTEX product details from the external API',
+    }),
+    tslib_1.__param(0, rest_1.param.path.string('categoryId')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String]),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "getVtexPlp", null);
 tslib_1.__decorate([
     (0, rest_1.get)('/get-vtex-category-tree-loopback'),
     (0, rest_1.response)(200, {
