@@ -188,7 +188,7 @@ export class VtexController {
         }
       }
 
-      @get('/get-vtex-plp-products')
+    @get('/vtex-plp-by-category/{categoryId}')
 
     @response(200,{
 
@@ -196,11 +196,61 @@ export class VtexController {
 
     })
 
-    async getVtexProductByIntelSearch(): Promise<any>{
+    async getVtexProductByCategory(@param.path.string('categoryId') categoryId: any): Promise<any>{
 
       try{
 
-        const getVtexProducts = await this.vtexService.getVtexProductByIntelSearch();
+        const getVtexProducts = await this.vtexService.getVtexProductByCategory(categoryId);
+
+        return getVtexProducts;
+
+      }
+
+      catch(error){
+
+        throw error;
+
+      }
+
+    }
+    @get('/vtex-plp-by-subcategory/{subCategoryId}')
+
+    @response(200,{
+
+      description: 'Get VTEX Product List by intelegent search',
+
+    })
+
+    async getVtexProductBySubCategory(@param.path.string('subCategoryId') subCategoryId: any): Promise<any>{
+
+      try{
+
+        const getVtexProducts = await this.vtexService.getVtexProductBySubCategory(subCategoryId);
+
+        return getVtexProducts;
+
+      }
+
+      catch(error){
+
+        throw error;
+
+      }
+
+    }
+    @get('/vtex-plp-by-query/{query}')
+
+    @response(200,{
+
+      description: 'Get VTEX Product List by intelegent search',
+
+    })
+
+    async getVtexProductByQuery(@param.path.string('query') query: any): Promise<any>{
+
+      try{
+
+        const getVtexProducts = await this.vtexService.getVtexProductByQuery(query);
 
         return getVtexProducts;
 

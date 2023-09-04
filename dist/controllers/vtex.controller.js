@@ -138,6 +138,33 @@ let VtexController = exports.VtexController = class VtexController {
             throw error;
         }
     }
+    async getVtexProductByCategory(categoryId) {
+        try {
+            const getVtexProducts = await this.vtexService.getVtexProductByCategory(categoryId);
+            return getVtexProducts;
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    async getVtexProductBySubCategory(subCategoryId) {
+        try {
+            const getVtexProducts = await this.vtexService.getVtexProductBySubCategory(subCategoryId);
+            return getVtexProducts;
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    async getVtexProductByQuery(query) {
+        try {
+            const getVtexProducts = await this.vtexService.getVtexProductByQuery(query);
+            return getVtexProducts;
+        }
+        catch (error) {
+            throw error;
+        }
+    }
 };
 tslib_1.__decorate([
     (0, rest_1.get)('/get-vtex-category-tree'),
@@ -234,6 +261,36 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:paramtypes", []),
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getVtexCategoryTreeloopback", null);
+tslib_1.__decorate([
+    (0, rest_1.get)('/vtex-plp-by-category/{categoryId}'),
+    (0, rest_1.response)(200, {
+        description: 'Get VTEX Product List by intelegent search',
+    }),
+    tslib_1.__param(0, rest_1.param.path.string('categoryId')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [Object]),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "getVtexProductByCategory", null);
+tslib_1.__decorate([
+    (0, rest_1.get)('/vtex-plp-by-subcategory/{subCategoryId}'),
+    (0, rest_1.response)(200, {
+        description: 'Get VTEX Product List by intelegent search',
+    }),
+    tslib_1.__param(0, rest_1.param.path.string('subCategoryId')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [Object]),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "getVtexProductBySubCategory", null);
+tslib_1.__decorate([
+    (0, rest_1.get)('/vtex-plp-by-query/{query}'),
+    (0, rest_1.response)(200, {
+        description: 'Get VTEX Product List by intelegent search',
+    }),
+    tslib_1.__param(0, rest_1.param.path.string('query')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [Object]),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "getVtexProductByQuery", null);
 exports.VtexController = VtexController = tslib_1.__decorate([
     tslib_1.__param(0, (0, core_1.inject)('services.VtexService')),
     tslib_1.__metadata("design:paramtypes", [services_1.VtexService])

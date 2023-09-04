@@ -12,4 +12,7 @@ export declare class VtexController {
     getNewSellingProducts(): Promise<any>;
     getVtexPlp(categoryId: string): Promise<any>;
     getVtexCategoryTreeloopback(): Promise<any>;
+    getVtexProductByCategory(categoryId: any): Promise<any>;
+    getVtexProductBySubCategory(subCategoryId: any): Promise<any>;
+    getVtexProductByQuery(query: any): Promise<any>;
 }

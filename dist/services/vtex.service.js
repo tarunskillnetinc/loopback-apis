@@ -256,6 +256,78 @@ let VtexService = exports.VtexService = class VtexService {
         }));
         return emptyarray;
     }
+    async getVtexProductByCategory(categoryId) {
+        const endpoint = `/api/io/_v/api/intelligent-search/product_search/category-1/${categoryId}`;
+        const response = this.fetchFromEndpoint(endpoint);
+        const data = await response;
+        const product_arr = [];
+        await Promise.all(data === null || data === void 0 ? void 0 : data.products.map((items) => {
+            var _a;
+            product_arr.push({
+                product_id: items === null || items === void 0 ? void 0 : items.productId,
+                sku_id: "",
+                product_name: items === null || items === void 0 ? void 0 : items.productName,
+                product_image: (_a = items === null || items === void 0 ? void 0 : items.items[0]) === null || _a === void 0 ? void 0 : _a.images[0].imageUrl,
+                product_rating: "",
+                alt: "",
+                product_description: items === null || items === void 0 ? void 0 : items.description,
+                product_features: "",
+                product_price: items === null || items === void 0 ? void 0 : items.priceRange,
+                product_category: items === null || items === void 0 ? void 0 : items.categoryId,
+                product_category_id: items === null || items === void 0 ? void 0 : items.categoriesIds,
+                properties: items === null || items === void 0 ? void 0 : items.properties
+            });
+        }));
+        return product_arr;
+    }
+    async getVtexProductBySubCategory(subCategoryId) {
+        const endpoint = `/api/io/_v/api/intelligent-search/product_search/category-2/${subCategoryId}`;
+        const response = this.fetchFromEndpoint(endpoint);
+        const data = await response;
+        const product_arr = [];
+        await Promise.all(data === null || data === void 0 ? void 0 : data.products.map((items) => {
+            var _a;
+            product_arr.push({
+                product_id: items === null || items === void 0 ? void 0 : items.productId,
+                sku_id: "",
+                product_name: items === null || items === void 0 ? void 0 : items.productName,
+                product_image: (_a = items === null || items === void 0 ? void 0 : items.items[0]) === null || _a === void 0 ? void 0 : _a.images[0].imageUrl,
+                product_rating: "",
+                alt: "",
+                product_description: items === null || items === void 0 ? void 0 : items.description,
+                product_features: "",
+                product_price: items === null || items === void 0 ? void 0 : items.priceRange,
+                product_category: items === null || items === void 0 ? void 0 : items.categoryId,
+                product_category_id: items === null || items === void 0 ? void 0 : items.categoriesIds,
+                properties: items === null || items === void 0 ? void 0 : items.properties
+            });
+        }));
+        return product_arr;
+    }
+    async getVtexProductByQuery(query) {
+        const endpoint = `/api/io/_v/api/intelligent-search/product_search/${query}`;
+        const response = this.fetchFromEndpoint(endpoint);
+        const data = await response;
+        const product_arr = [];
+        await Promise.all(data === null || data === void 0 ? void 0 : data.products.map((items) => {
+            var _a;
+            product_arr.push({
+                product_id: items === null || items === void 0 ? void 0 : items.productId,
+                sku_id: "",
+                product_name: items === null || items === void 0 ? void 0 : items.productName,
+                product_image: (_a = items === null || items === void 0 ? void 0 : items.items[0]) === null || _a === void 0 ? void 0 : _a.images[0].imageUrl,
+                product_rating: "",
+                alt: "",
+                product_description: items === null || items === void 0 ? void 0 : items.description,
+                product_features: "",
+                product_price: items === null || items === void 0 ? void 0 : items.priceRange,
+                product_category: items === null || items === void 0 ? void 0 : items.categoryId,
+                product_category_id: items === null || items === void 0 ? void 0 : items.categoriesIds,
+                properties: items === null || items === void 0 ? void 0 : items.properties
+            });
+        }));
+        return product_arr;
+    }
     transformProductDetails(response) {
         return {
             productId: response.Id,
