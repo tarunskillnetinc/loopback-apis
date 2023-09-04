@@ -187,4 +187,30 @@ export class VtexController {
           throw error;
         }
       }
+
+      @get('/get-vtex-plp-products')
+
+    @response(200,{
+
+      description: 'Get VTEX Product List by intelegent search',
+
+    })
+
+    async getVtexProductByIntelSearch(): Promise<any>{
+
+      try{
+
+        const getVtexProducts = await this.vtexService.getVtexProductByIntelSearch();
+
+        return getVtexProducts;
+
+      }
+
+      catch(error){
+
+        throw error;
+
+      }
+
+    }
 }

@@ -315,6 +315,58 @@ export class VtexService {
     return emptyarray;
   }
 
+  async getVtexProductByIntelSearch(): Promise<any>{
+
+    const endpoint = `/api/io/_v/api/intelligent-search/product_search/category-1/TOPS`;
+
+    const response = this.fetchFromEndpoint(endpoint);
+
+    const data = await response;
+
+ 
+
+    const product_arr:any[] = [];
+
+    await Promise.all(
+
+      data?.products.map((items:any)=>{
+
+        product_arr.push({
+
+          product_id:items?.productId,
+
+          sku_id:"",
+
+         product_name:items?.productName,
+
+        product_image:items?.items[0]?.images[0].imageUrl,
+
+        product_rating:"",
+
+        alt:"",
+
+        product_description:items?.description,
+
+        product_features:"",
+
+        product_price:items?.priceRange,
+
+        product_category: items?.categoryId,
+
+        product_category_id: items?.categoriesIds,
+
+        properties: items?.properties
+
+        })
+
+      })
+
+    )
+
+    return product_arr;
+
+  }
+
   private transformProductDetails(response: any): any {
     return {
       productId: response.Id,
