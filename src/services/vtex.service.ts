@@ -115,12 +115,52 @@ export class VtexService {
       await categoryTreemap.push({
         id: item.id,
         title: item.name,
-        data: responseData?.products,
+        data: await this.functionVtexCategoryTreeLoopbackForData(responseData),
       });
     }));
   
     console.log('transformCategoryTree', categoryTreemap);
     return categoryTreemap;
+  }
+  async functionVtexCategoryTreeLoopbackForData(responseData:any){
+    const dataArr:any = [];
+   await responseData?.products.map(async(responseitem:any,index:any)=>{
+    const Ddatavar = await {
+      attributes:{
+        "sku": responseitem?.productId,
+        "isDiscontinued": false,
+        "discontinuedNote": null,
+        "averageRating": null,
+        "reviewCount": 0,
+        "productAbstractSku": "232",
+        "name": responseitem?.productName,
+        "description": responseitem?.description,
+        "attributes": [
+          
+        ],
+        "superAttributesDefinition": [
+          
+        ],
+        "metaTitle": null,
+        "metaKeywords": null,
+        "metaDescription": null,
+        "attributeNames": [
+          
+        ],
+        "productConfigurationInstance": null,
+        "abstractSku": "232",
+        "url":responseitem?.link,
+        "price": responseitem.priceRange.sellingPrice.highPrice,
+        "abstractName": responseitem?.productName,
+        "prices": responseitem?.priceRange,
+        "images": responseitem?.images
+      },
+    }
+
+    await dataArr.push(Ddatavar);
+      
+    })
+    return dataArr;
   }
   
   // private vtextransformCategoryTree1(response: any): any {

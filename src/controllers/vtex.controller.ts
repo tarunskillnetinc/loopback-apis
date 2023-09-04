@@ -11,6 +11,10 @@ export class VtexController {
   @response(200, {
     description: 'Get VTEX category tree from the external API',
   })
+
+  
+
+
   async getVtexCategoryTree(): Promise<any> {
     try {
       const vtexCategoryTree = await this.vtexService.getVtexCategoryTree();
@@ -159,27 +163,16 @@ export class VtexController {
         }
 
       }
-  @get('/get-vtex-category-tree-loopback')
-
-  @response(200, {
-
-    description: 'Get VTEX category tree from the external API',
-
-  })
-
-  async getVtexCategoryTreeloopback(): Promise<any> {
-
-    try {
-
-      const vtexCategoryTree = await this.vtexService.getVtexCategoryTreeloopback();
-
-      return vtexCategoryTree;
-
-    } catch (error) {
-
-      throw error;
-
-    }
-
-  }
+      @get('/get-vtex-category-tree-loopback')
+      @response(200, {
+        description: 'Get VTEX category tree from the external API',
+      })
+      async getVtexCategoryTreeloopback(): Promise<any> {
+        try {
+          const vtexCategoryTree = await this.vtexService.getVtexCategoryTreeloopback();
+          return vtexCategoryTree;
+        } catch (error) {
+          throw error;
+        }
+      }
 }
