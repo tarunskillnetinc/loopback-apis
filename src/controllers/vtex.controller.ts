@@ -263,4 +263,20 @@ export class VtexController {
       }
 
     }
+
+    @get('get-a-product-by-id/{pid}')
+    @response(200, {
+      description: "Get Vtex Products by their respective Id's",
+    })
+    async getAProductById(@param.path.string('pid') pid: string):Promise<any>{
+      try{
+        const data = await this.vtexService.getAProductById(pid)
+        const response = await data;
+        return response;
+      }
+      catch(error){
+        throw error;
+      }
+    }
+
 }

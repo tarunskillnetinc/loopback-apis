@@ -469,6 +469,14 @@ export class VtexService {
 
   }
 
+  //For single product (Updated API)
+  async getAProductById(pid:string): Promise<any> {
+    const endpoint = `api/catalog/pvt/product/${pid}`;
+    const response = this.fetchFromEndpoint(endpoint);
+    const data = await response;
+    return data;
+  }
+
   private transformProductDetails(response: any): any {
     return {
       productId: response.Id,
