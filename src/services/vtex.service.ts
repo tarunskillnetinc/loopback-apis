@@ -286,9 +286,10 @@ export class VtexService {
       data.Data.map(async (items: any, index: any) => {
         const endpoint_two = `api/pricing/prices/${items.SkuId}`;
         const product_price_response = await this.fetchFromEndpoint(endpoint_two);
-        console.log('danishis', product_price_response);
         items.basePrice = product_price_response.basePrice;
         items.listPrice = product_price_response.costPrice;
+        items.rating_avg = 3.2;
+        items.rating_count = 7;
         emptyarray.push({ ...items });
         return items;
       })
@@ -305,7 +306,6 @@ export class VtexService {
       data.Data.map(async (items: any, index: any) => {
         const endpoint_two = `api/pricing/prices/${items.SkuId}`;
         const product_price_response = await this.fetchFromEndpoint(endpoint_two);
-        console.log('danishis', product_price_response);
         items.basePrice = product_price_response.basePrice;
         items.listPrice = product_price_response.costPrice;
         emptyarray.push({ ...items });

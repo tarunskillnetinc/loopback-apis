@@ -165,6 +165,16 @@ let VtexController = exports.VtexController = class VtexController {
             throw error;
         }
     }
+    async getAProductById(pid) {
+        try {
+            const data = await this.vtexService.getAProductById(pid);
+            const response = await data;
+            return response;
+        }
+        catch (error) {
+            throw error;
+        }
+    }
 };
 tslib_1.__decorate([
     (0, rest_1.get)('/get-vtex-category-tree'),
@@ -291,6 +301,16 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:paramtypes", [Object]),
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getVtexProductByQuery", null);
+tslib_1.__decorate([
+    (0, rest_1.get)('get-a-product-by-id/{pid}'),
+    (0, rest_1.response)(200, {
+        description: "Get Vtex Products by their respective Id's",
+    }),
+    tslib_1.__param(0, rest_1.param.path.string('pid')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String]),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "getAProductById", null);
 exports.VtexController = VtexController = tslib_1.__decorate([
     tslib_1.__param(0, (0, core_1.inject)('services.VtexService')),
     tslib_1.__metadata("design:paramtypes", [services_1.VtexService])

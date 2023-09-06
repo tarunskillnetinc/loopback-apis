@@ -232,9 +232,10 @@ let VtexService = exports.VtexService = class VtexService {
         await Promise.all(data.Data.map(async (items, index) => {
             const endpoint_two = `api/pricing/prices/${items.SkuId}`;
             const product_price_response = await this.fetchFromEndpoint(endpoint_two);
-            console.log('danishis', product_price_response);
             items.basePrice = product_price_response.basePrice;
             items.listPrice = product_price_response.costPrice;
+            items.rating_avg = 3.2;
+            items.rating_count = 7;
             emptyarray.push({ ...items });
             return items;
         }));
@@ -248,7 +249,6 @@ let VtexService = exports.VtexService = class VtexService {
         await Promise.all(data.Data.map(async (items, index) => {
             const endpoint_two = `api/pricing/prices/${items.SkuId}`;
             const product_price_response = await this.fetchFromEndpoint(endpoint_two);
-            console.log('danishis', product_price_response);
             items.basePrice = product_price_response.basePrice;
             items.listPrice = product_price_response.costPrice;
             emptyarray.push({ ...items });
@@ -327,6 +327,13 @@ let VtexService = exports.VtexService = class VtexService {
             });
         }));
         return product_arr;
+    }
+    //For single product (Updated API)
+    async getAProductById(pid) {
+        const endpoint = `api/catalog/pvt/product/${pid}`;
+        const response = this.fetchFromEndpoint(endpoint);
+        const data = await response;
+        return data;
     }
     transformProductDetails(response) {
         return {

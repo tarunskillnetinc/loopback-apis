@@ -19,6 +19,7 @@ export declare class VtexService {
     getVtexProductByCategory(categoryId: any): Promise<any>;
     getVtexProductBySubCategory(subCategoryId: any): Promise<any>;
     getVtexProductByQuery(query: any): Promise<any>;
+    getAProductById(pid: string): Promise<any>;
     private transformProductDetails;
     private vtextransformCategoryTreeloopback;
     private CategroychildrenDataloopback;
