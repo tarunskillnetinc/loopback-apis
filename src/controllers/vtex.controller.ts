@@ -126,7 +126,7 @@ export class VtexController {
     }
   }
 
-  @get('/vtex-best-selling-products')
+  @get('/vtex-best-selling-products-demo')
   @response(200, {
     description: 'Get VTEX best selling products from the external API',
   })
@@ -138,6 +138,19 @@ export class VtexController {
       throw error;
     }
   }
+  @get('/vtex-best-selling-products')
+  @response(200, {
+    description: 'Get VTEX best selling products from the external API',
+  })
+  async getBestSellingProductsrating(): Promise<any> {
+    try {
+      const bestSellingProducts = await this.vtexService.getBestSellingProductsrating();
+      return bestSellingProducts;
+    } catch (error) {
+      throw error;
+    }
+  }
+  
   @get('/vtex-new-arrivals')
   @response(200, {
     description: 'Get VTEX best selling products from the external API',

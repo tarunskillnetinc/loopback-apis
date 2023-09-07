@@ -296,6 +296,65 @@ export class VtexService {
     );
     return emptyarray;
   }
+  async getBestSellingProductsrating(): Promise<any> {
+
+    const endpoint = `api/catalog/pvt/collection/143/products`;
+
+    const response =  this.fetchFromEndpoint(endpoint);
+
+    const data = await response;
+
+    var emptyarray:any[]=[]
+
+ 
+
+    await Promise.all(
+
+      data.Data.map(async (items: any) => {
+
+        const endpoint_two = `api/pricing/prices/${items.SkuId}`;
+
+        const endpoint_three = `https://skillnet.myvtex.com/reviews-and-ratings/api/rating/${items.sku_id}`;
+
+        const data_with_rating = await axios.get(endpoint_three,{
+
+          headers:{
+
+            'Content-Type':'application/json',
+
+            'X-VTEX-API-AppKey':'vtexappkey-skillnet-VOZXMR',
+
+            'X-VTEX-API-AppToken':'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT'
+
+          }
+
+        });
+
+        const response_with_rating = await data_with_rating;
+
+        const product_price_response = await this.fetchFromEndpoint(endpoint_two);
+
+        console.log('danishis', product_price_response);
+
+        items.basePrice = product_price_response.basePrice;
+
+        items.listPrice = product_price_response.costPrice;
+
+        items.ratings = response_with_rating.data.average;
+
+        emptyarray.push({ ...items });
+
+        return items; // Return the updated item
+
+      })
+
+    );
+
+    // return this.fetchFromEndpoint(endpoint);
+
+    return emptyarray;
+
+  }
   async getNewSellingProducts(): Promise<any> {
     const endpoint = `api/catalog/pvt/collection/137/products`;
     const response =  this.fetchFromEndpoint(endpoint);
