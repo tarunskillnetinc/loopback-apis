@@ -12,14 +12,17 @@ export declare class VtexService {
     getVtexProducListingPage(categoryId: String): Promise<any>;
     getVtexProductDetails(productId: string): Promise<any>;
     getProductById(pid: string): Promise<any>;
-    getVtexCartDetails(): Promise<any>;
+    getVtexCartDetails(cartId: any): Promise<any>;
     getTransformedVtexProductDetails(productId: string): Promise<any>;
     getBestSellingProducts(): Promise<any>;
+    getBestSellingProductsrating(): Promise<any>;
+    getTopSellingProductsrating(): Promise<any>;
     getNewSellingProducts(): Promise<any>;
     getVtexProductByCategory(categoryId: any): Promise<any>;
     getVtexProductBySubCategory(subCategoryId: any): Promise<any>;
     getVtexProductByQuery(query: any): Promise<any>;
     getAProductById(pid: string): Promise<any>;
+    getOrCreateCartId(): Promise<any>;
     private transformProductDetails;
     private vtextransformCategoryTreeloopback;
     private CategroychildrenDataloopback;

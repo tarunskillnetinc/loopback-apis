@@ -72,7 +72,6 @@ let VtexService = exports.VtexService = class VtexService {
         const endpoint = 'api/catalog_system/pub/category/tree/2';
         const response = await this.fetchFromEndpoint(endpoint);
         const transformCategoryTree = this.vtextransformCategoryTree(response);
-        console.log('transformCategoryTree', transformCategoryTree);
         return transformCategoryTree;
     }
     // async getVtexCategoryTreeloopback(): Promise<any> {
@@ -101,14 +100,12 @@ let VtexService = exports.VtexService = class VtexService {
         await Promise.all(response === null || response === void 0 ? void 0 : response.map(async (item, index) => {
             const endpoint = `https://skillnet.vtexcommercestable.com.br/api/io/_v/api/intelligent-search/product_search/category-1/${item.name}`;
             const responseData = await this.vtexCategoryTreeLoopbackFetchFromEndpoint(endpoint);
-            console.log("response", responseData);
             await categoryTreemap.push({
                 id: item.id,
                 title: item.name,
                 data: await this.functionVtexCategoryTreeLoopbackForData(responseData),
             });
         }));
-        console.log('transformCategoryTree', categoryTreemap);
         return categoryTreemap;
     }
     async functionVtexCategoryTreeLoopbackForData(responseData) {
@@ -188,9 +185,7 @@ let VtexService = exports.VtexService = class VtexService {
         return collectionPrice;
     }
     async getVtexProducListingPage(categoryId) {
-        console.log("rersrser", categoryId);
         const childrenendpoint = `api/catalog_system/pub/products/search?fq=C:/${categoryId}/`;
-        console.log('wdaw', await this.fetchFromEndpoint(childrenendpoint));
         return await this.fetchFromEndpoint(childrenendpoint);
     }
     async getVtexProductDetails(productId) {
@@ -207,14 +202,13 @@ let VtexService = exports.VtexService = class VtexService {
         product_variation_response['categoryId'] = data.CategoryId;
         product_variation_response['brandId'] = data.BrandId;
         product_variation_response['description'] = data.Description;
-        console.log('product_variation_response', product_variation_response);
         const transformVtexPdp = this.transformVtexProductDetailPage(product_variation_response);
         // console.log("transformVtexPdp",transformVtexPdp);
         return transformVtexPdp;
     }
-    async getVtexCartDetails() {
+    async getVtexCartDetails(cartId) {
         // a7be4a750c55442a865ca49fd22a4232 cart id
-        const endpoint = `api/checkout/pub/orderForm/a7be4a750c55442a865ca49fd22a4232`;
+        const endpoint = `api/checkout/pub/orderForm/${cartId}`;
         return this.cartFetchFromEndpoint(endpoint);
     }
     async getTransformedVtexProductDetails(productId) {
@@ -239,6 +233,61 @@ let VtexService = exports.VtexService = class VtexService {
             emptyarray.push({ ...items });
             return items;
         }));
+        return emptyarray;
+    }
+    async getBestSellingProductsrating() {
+        const endpoint = `api/catalog/pvt/collection/143/products`;
+        const response = this.fetchFromEndpoint(endpoint);
+        const data = await response;
+        var emptyarray = [];
+        await Promise.all(data.Data.map(async (items) => {
+            const endpoint_two = `api/pricing/prices/${items.SkuId}`;
+            const endpoint_three = `https://skillnet.myvtex.com/reviews-and-ratings/api/rating/${items.ProductId}`;
+            const data_with_rating = await axios_1.default.get(endpoint_three, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+                    'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT'
+                }
+            });
+            const response_with_rating = await data_with_rating;
+            const product_price_response = await this.fetchFromEndpoint(endpoint_two);
+            items.basePrice = product_price_response.basePrice;
+            items.listPrice = product_price_response.costPrice;
+            items.rating_avg = response_with_rating.data.average;
+            items.rarting_count = response_with_rating.data.totalCount;
+            console.log("rating", items.rating_avg);
+            emptyarray.push({ ...items });
+            return items; // Return the updated item
+        }));
+        // return this.fetchFromEndpoint(endpoint);
+        return emptyarray;
+    }
+    async getTopSellingProductsrating() {
+        const endpoint = `api/catalog/pvt/collection/147/products`;
+        const response = this.fetchFromEndpoint(endpoint);
+        const data = await response;
+        var emptyarray = [];
+        await Promise.all(data.Data.map(async (items) => {
+            const endpoint_two = `api/pricing/prices/${items.SkuId}`;
+            const endpoint_three = `https://skillnet.myvtex.com/reviews-and-ratings/api/rating/${items.ProductId}`;
+            const data_with_rating = await axios_1.default.get(endpoint_three, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+                    'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT'
+                }
+            });
+            const response_with_rating = await data_with_rating;
+            const product_price_response = await this.fetchFromEndpoint(endpoint_two);
+            items.basePrice = product_price_response.basePrice;
+            items.listPrice = product_price_response.costPrice;
+            items.rating_avg = response_with_rating.data.average;
+            items.rarting_count = response_with_rating.data.totalCount;
+            emptyarray.push({ ...items });
+            return items; // Return the updated item
+        }));
+        // return this.fetchFromEndpoint(endpoint);
         return emptyarray;
     }
     async getNewSellingProducts() {
@@ -335,6 +384,12 @@ let VtexService = exports.VtexService = class VtexService {
         const data = await response;
         return data;
     }
+    async getOrCreateCartId() {
+        const endpoint = `api/checkout/pub/orderForm`;
+        const response = this.fetchFromEndpoint(endpoint);
+        const data = await response;
+        return data;
+    }
     transformProductDetails(response) {
         return {
             productId: response.Id,
@@ -361,7 +416,6 @@ let VtexService = exports.VtexService = class VtexService {
         response === null || response === void 0 ? void 0 : response.map(async (childitem) => {
             const endpoint = `https://skillnet.vtexcommercestable.com.br/api/io/_v/api/intelligent-search/product_search/category-2/${childitem.name}`;
             const response = await this.vtexCategoryTreeLoopbackFetchFromEndpoint(endpoint);
-            console.log('CategroychildrenDataloopback', response);
             if (response) {
                 categoryChildren.push({
                     id: childitem.id,

@@ -101,13 +101,13 @@ export class VtexController {
       //     throw error;
       //   }
       // }
-      @get('/vtex-cartDetail')
+      @get('/vtex-cartDetail/{cartId}')
       @response(200, {
         description: 'Get VTEX cart details from the external API',
       })
-      async getVtexCartData(): Promise<any> {
+      async getVtexCartData(@param.path.string('cartId') cartId: any): Promise<any> {
         try {
-          const vtexCartDetail = await this.vtexService.getVtexCartDetails();
+          const vtexCartDetail = await this.vtexService.getVtexCartDetails(cartId);
           return vtexCartDetail;
         } catch (error) {
           throw error;
@@ -155,9 +155,9 @@ export class VtexController {
   @response(200, {
     description: 'Get VTEX best selling products from the external API',
   })
-  async getNewSellingProducts(): Promise<any> {
+  async getTopSellingProductsrating(): Promise<any> {
     try {
-      const bestSellingProducts = await this.vtexService.getBestSellingProducts();
+      const bestSellingProducts = await this.vtexService.getTopSellingProductsrating();
       return bestSellingProducts;
     } catch (error) {
       throw error;
@@ -291,5 +291,22 @@ export class VtexController {
         throw error;
       }
     }
+
+    @get('vtex-get-or-create-cart')
+    @response(200, {
+      description: "Get the current cart or create a new one if it doesn't exist yet.",
+    })
+    async getOrCreateCartId():Promise<any>{
+      try{
+        const data = await this.vtexService.getOrCreateCartId()
+        const response = await data;
+        return response;
+      }
+      catch(error){
+        console.log(error);
+        throw error;
+      }
+    }
+
 
 }

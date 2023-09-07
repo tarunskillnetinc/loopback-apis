@@ -83,9 +83,9 @@ let VtexController = exports.VtexController = class VtexController {
     //     throw error;
     //   }
     // }
-    async getVtexCartData() {
+    async getVtexCartData(cartId) {
         try {
-            const vtexCartDetail = await this.vtexService.getVtexCartDetails();
+            const vtexCartDetail = await this.vtexService.getVtexCartDetails(cartId);
             return vtexCartDetail;
         }
         catch (error) {
@@ -110,9 +110,18 @@ let VtexController = exports.VtexController = class VtexController {
             throw error;
         }
     }
-    async getNewSellingProducts() {
+    async getBestSellingProductsrating() {
         try {
-            const bestSellingProducts = await this.vtexService.getBestSellingProducts();
+            const bestSellingProducts = await this.vtexService.getBestSellingProductsrating();
+            return bestSellingProducts;
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    async getTopSellingProductsrating() {
+        try {
+            const bestSellingProducts = await this.vtexService.getTopSellingProductsrating();
             return bestSellingProducts;
         }
         catch (error) {
@@ -175,6 +184,17 @@ let VtexController = exports.VtexController = class VtexController {
             throw error;
         }
     }
+    async getOrCreateCartId() {
+        try {
+            const data = await this.vtexService.getOrCreateCartId();
+            const response = await data;
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
 };
 tslib_1.__decorate([
     (0, rest_1.get)('/get-vtex-category-tree'),
@@ -216,12 +236,13 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getVtexCollection", null);
 tslib_1.__decorate([
-    (0, rest_1.get)('/vtex-cartDetail'),
+    (0, rest_1.get)('/vtex-cartDetail/{cartId}'),
     (0, rest_1.response)(200, {
         description: 'Get VTEX cart details from the external API',
     }),
+    tslib_1.__param(0, rest_1.param.path.string('cartId')),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", []),
+    tslib_1.__metadata("design:paramtypes", [Object]),
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getVtexCartData", null);
 tslib_1.__decorate([
@@ -235,7 +256,7 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "gettransformedVtexProductDetails", null);
 tslib_1.__decorate([
-    (0, rest_1.get)('/vtex-best-selling-products'),
+    (0, rest_1.get)('/vtex-best-selling-products-demo'),
     (0, rest_1.response)(200, {
         description: 'Get VTEX best selling products from the external API',
     }),
@@ -244,6 +265,15 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getBestSellingProducts", null);
 tslib_1.__decorate([
+    (0, rest_1.get)('/vtex-best-selling-products'),
+    (0, rest_1.response)(200, {
+        description: 'Get VTEX best selling products from the external API',
+    }),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", []),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "getBestSellingProductsrating", null);
+tslib_1.__decorate([
     (0, rest_1.get)('/vtex-new-arrivals'),
     (0, rest_1.response)(200, {
         description: 'Get VTEX best selling products from the external API',
@@ -251,7 +281,7 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", []),
     tslib_1.__metadata("design:returntype", Promise)
-], VtexController.prototype, "getNewSellingProducts", null);
+], VtexController.prototype, "getTopSellingProductsrating", null);
 tslib_1.__decorate([
     (0, rest_1.get)('/vtex-plp/{categoryId}'),
     (0, rest_1.response)(200, {
@@ -311,6 +341,15 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:paramtypes", [String]),
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getAProductById", null);
+tslib_1.__decorate([
+    (0, rest_1.get)('vtex-get-or-create-cart'),
+    (0, rest_1.response)(200, {
+        description: "Get the current cart or create a new one if it doesn't exist yet.",
+    }),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", []),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "getOrCreateCartId", null);
 exports.VtexController = VtexController = tslib_1.__decorate([
     tslib_1.__param(0, (0, core_1.inject)('services.VtexService')),
     tslib_1.__metadata("design:paramtypes", [services_1.VtexService])
