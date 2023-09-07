@@ -80,7 +80,6 @@ export class VtexService {
     const endpoint = 'api/catalog_system/pub/category/tree/2';
     const response = await this.fetchFromEndpoint(endpoint);
     const transformCategoryTree = this.vtextransformCategoryTree(response);
-    console.log('transformCategoryTree', transformCategoryTree);
     return transformCategoryTree;
   }
 
@@ -111,15 +110,12 @@ export class VtexService {
     await Promise.all(response?.map(async (item: any, index: any) => {
       const endpoint = `https://skillnet.vtexcommercestable.com.br/api/io/_v/api/intelligent-search/product_search/category-1/${item.name}`;
       const responseData = await this.vtexCategoryTreeLoopbackFetchFromEndpoint(endpoint);
-      console.log("response", responseData);
       await categoryTreemap.push({
         id: item.id,
         title: item.name,
         data: await this.functionVtexCategoryTreeLoopbackForData(responseData),
       });
     }));
-  
-    console.log('transformCategoryTree', categoryTreemap);
     return categoryTreemap;
   }
   async functionVtexCategoryTreeLoopbackForData(responseData:any){
@@ -232,9 +228,7 @@ export class VtexService {
   }
 
   async getVtexProducListingPage(categoryId: String): Promise<any> {
-    console.log("rersrser",categoryId)
     const childrenendpoint = `api/catalog_system/pub/products/search?fq=C:/${categoryId}/`;
-    console.log('wdaw', await this.fetchFromEndpoint(childrenendpoint));
     return await this.fetchFromEndpoint(childrenendpoint);
   }
 
@@ -253,7 +247,6 @@ export class VtexService {
     product_variation_response['categoryId'] = data.CategoryId;
     product_variation_response['brandId'] = data.BrandId;
     product_variation_response['description'] = data.Description;
-    console.log('product_variation_response', product_variation_response);
     const transformVtexPdp = this.transformVtexProductDetailPage(
       product_variation_response,
     );
@@ -333,8 +326,6 @@ export class VtexService {
         const response_with_rating = await data_with_rating;
 
         const product_price_response = await this.fetchFromEndpoint(endpoint_two);
-
-        console.log('danishis', product_price_response);
 
         items.basePrice = product_price_response.basePrice;
 
@@ -564,7 +555,6 @@ export class VtexService {
       const response = await this.vtexCategoryTreeLoopbackFetchFromEndpoint(
         endpoint,
       );
-      console.log('CategroychildrenDataloopback',response);
       if (response) {
         categoryChildren.push({
           id: childitem.id,
