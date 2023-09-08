@@ -1,3 +1,4 @@
+import { AxiosResponse } from 'axios';
 import { VtexDataSource } from '../datasources';
 export declare class VtexService {
     protected dataSource: VtexDataSource;
@@ -29,4 +30,10 @@ export declare class VtexService {
     private vtextransformCategoryTree;
     private CategroychildrenData;
     private transformVtexProductDetailPage;
+    startLogin(email: string, password: string): Promise<any>;
+    validateLogin(email: string, password: string): Promise<any>;
+    startLogins(email: string): Promise<AxiosResponse<any>>;
+    vtexlogin(email: string): Promise<AxiosResponse<any>>;
+    validateLogins(email: string, password: string, auth: any): Promise<AxiosResponse<any>>;
+    login(email: any, password: any): Promise<any>;
 }

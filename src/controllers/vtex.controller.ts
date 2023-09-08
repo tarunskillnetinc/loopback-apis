@@ -1,6 +1,7 @@
-import { get, response, param } from '@loopback/rest';
+import { get, post, RestBindings, requestBody, response, param, Response } from '@loopback/rest';
 import { inject } from '@loopback/core';
 import { VtexService } from '../services';
+import axios from 'axios';
 
 export class VtexController {
   constructor(
@@ -308,5 +309,18 @@ export class VtexController {
       }
     }
 
+  @post('/login')
+  async login(
+    @requestBody() requestBody: { email: string; password: string },
+  ): Promise<any> {
+    try {
+      const { email, password } = requestBody;
+      const login = await this.vtexService.login(email, password);
+
+      return login
+    } catch (error) {
+      throw error;
+    }
+  }
 
 }

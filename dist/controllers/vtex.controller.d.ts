@@ -18,4 +18,11 @@ export declare class VtexController {
     getVtexProductByQuery(query: any): Promise<any>;
     getAProductById(pid: string): Promise<any>;
     getOrCreateCartId(): Promise<any>;
+    login(requestBody: {
+        email: string;
+        password: string;
+    }): Promise<any>;
+    startLogin(requestBody: {
+        email: string;
+    }): Promise<any>;
 }

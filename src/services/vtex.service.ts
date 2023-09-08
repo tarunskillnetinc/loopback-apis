@@ -1,7 +1,10 @@
 import {injectable, inject} from '@loopback/core';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import {VtexDataSource} from '../datasources';
+import FormData = require('form-data');
 import {response} from '@loopback/rest';
+import { CountSchema } from '@loopback/repository';
+
 
 @injectable()
 export class VtexService {
@@ -676,4 +679,142 @@ export class VtexService {
       skus: response.skus,
     };
   }
+    async startLogin(email: string, password: string) {
+  
+      const formData = new FormData();
+      formData.append('accountName', 'skillnet');
+      formData.append('scope', 'skillnet');
+      formData.append('returnUrl', 'https://skillnet.myvtex.com/');
+      formData.append('callbackUrl', 'https://skillnet.myvtex.com/api/vtexid/oauth/finish?popup=false'); 
+      formData.append('user', email);
+      formData.append('fingerprint', '');
+  
+      const response = await axios({
+        method: 'post',
+        url: 'https://skillnet.myvtex.com/api/vtexid/pub/authentication/startlogin',
+        data: formData
+      });
+  
+      return response.data;
+  
+    }
+  
+    async validateLogin(email: string, password: string) {
+      
+      const formData = new FormData();
+      formData.append('login', email);
+      formData.append('password', password);
+      formData.append('recaptcha', '');
+      formData.append('fingerprint', '');
+  
+      const response = await axios({
+        method: 'post',
+        url: 'https://skillnet.myvtex.com/api/vtexid/pub/authentication/classic/validate', 
+        headers: {
+          ...formData.getHeaders(),
+        },
+        data: formData  
+      });
+  
+      return response.data;
+  
+    }
+    async startLogins(email: string): Promise<AxiosResponse<any>> {
+      const formData = new FormData();
+      formData.append('accountName', 'skillnet');
+      formData.append('scope', 'skillnet');
+      formData.append('returnUrl', 'https://skillnet.myvtex.com/');
+      formData.append(
+        'callbackUrl',
+        'https://skillnet.myvtex.com/api/vtexid/oauth/finish?popup=false'
+      );
+      formData.append('user', email);
+  
+      try {
+        const response = await axios.post(
+          'https://skillnet.myvtex.com/api/vtexid/pub/authentication/startlogin',
+          formData
+        );
+        console.log('response', response);
+        return response;
+      } catch (error) {
+        throw error;
+      }
+    }
+    async vtexlogin(email: string): Promise<AxiosResponse<any>> {
+      const formDataObject = new FormData();  
+      formDataObject.append('scope', "skillnet");
+      formDataObject.append('accountName', "skillnet");
+      formDataObject.append('user', email);
+      formDataObject.append('appStart', "true");  
+      formDataObject.append('callbackUrl', "https://skillnet.myvtex.com/api/vtexid/oauth/finish");
+      const response: AxiosResponse<any> = await axios.post(
+        'https://skillnet.myvtex.com/api/vtexid/pub/authentication/start',
+        formDataObject,
+        {
+          headers: {
+            'accept': '*/*',
+          },
+        }
+      );
+
+      const token = response.data.authenticationToken;
+      console.log("token",token)
+  
+      // const response =  await this.fetchFromEndpointpost(endpoint,formDataObject);
+  
+      // const data = await response;
+  
+      // const validateresponse= await this.loginvalidate(response.authenticationToken,body.user,body.password)
+  
+      // console.log("validateresponse",validateresponse)
+  
+      return response;
+  
+    }
+
+    async validateLogins(email: string, password: string, auth: any): Promise<AxiosResponse<any>> {
+      try {
+        console.log("auth",auth)
+        const formData = new FormData();
+        formData.append('login', email);
+        formData.append('password', password);
+        formData.append('recaptcha', '');
+        formData.append('fingerprint', '');
+        const authToken = '_vss='+auth;
+        console.log("authToken",authToken)
+  
+        const response: AxiosResponse<any> = await axios.post(
+          'https://skillnet.myvtex.com/api/vtexid/pub/authentication/classic/validate',
+          formData,
+          {
+            headers: {
+              'accept': '*/*',
+              'sec-fetch-dest': 'empty',
+              'sec-fetch-mode': 'cors',
+              'sec-fetch-site': 'same-origin',
+              'sec-gpc': '1',
+              'Cookie': authToken,
+            },
+          }
+        );
+        console.log("response",formData)
+  
+        return response;
+      } catch (error) {
+        throw error;
+      }
+    }
+    async login(email: any, password: any) {
+      const start = await this.vtexlogin(email);
+      console.log("start",start)
+      const auth = await start.data.authenticationToken;
+      console.log("auth",auth)
+      const validate = await this.validateLogins(email, password, auth)
+      return validate.data;
+      // const validate = await this.validateLogin(email, password);
+  
+      
+    }
+
 }

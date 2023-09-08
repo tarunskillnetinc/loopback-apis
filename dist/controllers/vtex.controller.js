@@ -195,6 +195,30 @@ let VtexController = exports.VtexController = class VtexController {
             throw error;
         }
     }
+    async login(requestBody) {
+        try {
+            const { email, password } = requestBody;
+            const login = await this.vtexService.login(email, password);
+            return {
+                // startLogin: startLoginResponse,
+                // validateLogin: validateLoginResponse,
+                login: login
+            };
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    async startLogin(requestBody) {
+        try {
+            const { email } = requestBody;
+            const response = await this.vtexService.startLogins(email);
+            return response.data;
+        }
+        catch (error) {
+            throw error;
+        }
+    }
 };
 tslib_1.__decorate([
     (0, rest_1.get)('/get-vtex-category-tree'),
@@ -350,6 +374,20 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:paramtypes", []),
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getOrCreateCartId", null);
+tslib_1.__decorate([
+    (0, rest_1.post)('/login'),
+    tslib_1.__param(0, (0, rest_1.requestBody)()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [Object]),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "login", null);
+tslib_1.__decorate([
+    (0, rest_1.post)('/start-logins'),
+    tslib_1.__param(0, (0, rest_1.requestBody)()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [Object]),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "startLogin", null);
 exports.VtexController = VtexController = tslib_1.__decorate([
     tslib_1.__param(0, (0, core_1.inject)('services.VtexService')),
     tslib_1.__metadata("design:paramtypes", [services_1.VtexService])
