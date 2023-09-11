@@ -831,6 +831,7 @@ export class VtexService {
           },
         }
       );
+      console.log("sessionreponse123",sessionresponse)
       // const data:any = {
       //   resp:response,
       //   session:sessionresponse.data,
@@ -853,7 +854,9 @@ export class VtexService {
       }
       else{
       const session = await this.createSession(validate.data);
-      console.log("session", session);
+      console.log("session123", session);
+      validate.data.authCookie.Name = "VtexIdclientAutCookie"
+      validate.data.accountAuthCookie.Name = "VtexIdclientAutCookie_13ca6e38-75b0-4070-8cf2-5a61412e4919"
       return {
         validation: validate.data,
         session: session.data,
