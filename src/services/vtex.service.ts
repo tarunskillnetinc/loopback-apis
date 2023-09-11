@@ -865,4 +865,99 @@ export class VtexService {
       // const validate = await this.validateLogin(email, password);
     } 
 
+    //Function to generate Customer Cart:
+    async createCustomerCart(): Promise<any>{
+      const endpoint = `api/checkout/pub/orderForm?forceNewCart=true`;
+      const cart_response = this.fetchFromEndpoint(endpoint);
+      const order_form_id = await cart_response;
+      console.log("Cart",order_form_id.orderFormId);
+      return order_form_id;
+    }
+
+    //Function for adding items in cart:
+    async addItems(orderFormId:any , requestBody:any): Promise<any> {
+    // const body = {"orderItems":[{"quantity":3,"seller":"1","id":"880582"}]}
+    console.log('requestBody',requestBody);
+    const endpoint = `api/checkout/pub/orderForm/${orderFormId}/items`;
+    try{
+      const url = `${this.dataSource.settings.baseURL}/${endpoint}`;
+      console.log('urlis',url);
+      const response : AxiosResponse<any> = await axios.post(`${this.dataSource.settings.baseURL}/${endpoint}`,
+      requestBody,
+        {
+          headers: {
+            Accept: 'application/json',
+            'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
+            'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+          }
+        }
+      );
+      console.log('itemsaddedare',response);
+      return response.data;
+    }
+    catch(error){
+      throw error
+    }
+    }
+
+    // Function for updating items in cart
+    async updateCartItem(orderFormId:any,requestBody:any):Promise<any>{
+      // const body = {"orderItems":[{"quantity":5,"index":0}]}
+      console.log("request12345",requestBody)
+      const endpoint = `api/checkout/pub/orderForm/${orderFormId}/items/update`;
+      try{
+        const url = `${this.dataSource.settings.baseURL}/${endpoint}`;
+        console.log('urlis',url);
+        const response : AxiosResponse<any> = await axios.post(`${this.dataSource.settings.baseURL}/${endpoint}`,
+        requestBody,
+          {
+            headers: {
+              Accept: 'application/json',
+              'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
+              'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+            }
+          }
+        );
+        console.log('updateCartItems',response);
+        return response.data;
+      }
+      catch(error){
+        console.log(error)
+        throw error;
+      }
+    }
+
+    // Function for Deleting items in cart
+    async deleteCartItem(orderFormId:any,requestBody:any):Promise<any>{
+      const endpoint = `api/checkout/pub/orderForm/${orderFormId}/items/update`;
+      try{
+        const url = `${this.dataSource.settings.baseURL}/${endpoint}`;
+        console.log('urlis',url);
+        const response : AxiosResponse<any> = await axios.post(`${this.dataSource.settings.baseURL}/${endpoint}`,
+        requestBody,
+          {
+            headers: {
+              Accept: 'application/json',
+              'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
+              'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+            }
+          }
+        );
+        console.log('updateCartItems',response);
+        return response.data;
+      }
+      catch(error){
+        console.log(error)
+        throw error;
+      }
+    }
+
+    //Function for getting Cart Details Or Cart Items:
+    async getCartItems(orderFormId:any): Promise<any>{
+      const endpoint = `api/checkout/pub/orderForm/${orderFormId}`;
+      const response = this.fetchFromEndpoint(endpoint);
+      const data = await response;
+      return data;
+    }
+
 }

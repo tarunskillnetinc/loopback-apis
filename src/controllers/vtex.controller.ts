@@ -431,4 +431,96 @@ export class VtexController {
     
   }
 
+  //For Creating customer cart:
+  @get('/create-customer-cart')
+  @response(200, {
+    description: "Create Customer Cart",
+  })
+  async createCustomerCart():Promise<any>{
+    try{
+      const data = await this.vtexService.createCustomerCart();
+      const response = await data;
+      return response;
+    }
+    catch(error){
+      throw error;
+    }
+  }
+
+  //For adding items in cart:
+  @post('vtex-add-items/{orderFormId}')
+  @response(200, {
+    description: "Add items in cart using order form id",
+  })
+  async addItems(
+    @requestBody() requestBody:{orderItems:[]},
+    @param.path.string('orderFormId') orderFormId: string
+    ):Promise<any>{
+    try{
+      console.log(requestBody);
+      const data = await this.vtexService.addItems(orderFormId , requestBody);
+      const response = await data;
+      return response;
+    }
+    catch(error){
+      console.log(error);
+      throw error;
+    }
+  }
+
+  // For updating Cart details and cart items
+  @post('vtex-update-cart-items/{orderFormId}')
+  @response(200,{
+    description:"Updating Cart details based on Form Id",
+  })
+  async updateCartItem(
+    @requestBody() requestBody:{orderItems:[]},
+    @param.path.string('orderFormId') orderFormId:string):Promise<any>{
+    try{
+      const data = await this.vtexService.updateCartItem(orderFormId,requestBody)
+      const response = await data;
+      return response;
+    }
+    catch(error){
+      console.log(error);
+      throw error;
+    }
+  }
+
+   // For deleting cart item
+   @post('vtex-delete-cart-items/{orderFormId}')
+   @response(200,{
+     description:"Updating Cart details based on Form Id",
+   })
+   async deleteCartItem(
+     @requestBody() requestBody:{orderItems:[]},
+     @param.path.string('orderFormId') orderFormId:string):Promise<any>{
+     try{
+       const data = await this.vtexService.deleteCartItem(orderFormId,requestBody)
+       const response = await data;
+       return response;
+     }
+     catch(error){
+       console.log(error);
+       throw error;
+     }
+   }
+
+   //For getting Cart Details or Cart Items:
+    @get('vtex-get-cart-items/{orderFormId}')
+    @response(200, {
+      description: "Getting Cart details based on Order Form Id",
+    })
+    async getCartItems(@param.path.string('orderFormId') orderFormId: string):Promise<any>{
+      try{
+        const data = await this.vtexService.getCartItems(orderFormId);
+        const response = await data;
+        return response;
+      }
+      catch(error){
+        console.log(error);
+        throw error;
+      }
+    }
+
 }
