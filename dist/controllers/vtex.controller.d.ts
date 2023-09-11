@@ -1,7 +1,10 @@
+import { Request, ResponseObject } from '@loopback/rest';
 import { VtexService } from '../services';
+import { Response } from 'express';
 export declare class VtexController {
     private vtexService;
-    constructor(vtexService: VtexService);
+    private req;
+    constructor(vtexService: VtexService, req: Request);
     getVtexCategoryTree(): Promise<any>;
     getVtexProductDetails(productId: string): Promise<any>;
     getProductById(pid: string): Promise<any>;
@@ -21,8 +24,9 @@ export declare class VtexController {
     login(requestBody: {
         email: string;
         password: string;
-    }): Promise<any>;
-    startLogin(requestBody: {
+    }, response: Response): Promise<any>;
+    testLogin(requestBody: {
         email: string;
-    }): Promise<any>;
+        password: string;
+    }, response: Response): Promise<ResponseObject>;
 }

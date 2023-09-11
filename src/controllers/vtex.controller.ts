@@ -1,11 +1,16 @@
-import { get, post, RestBindings, requestBody, response, param, Response } from '@loopback/rest';
+import { get, post, RestBindings, requestBody, Request, response, param, ResponseObject } from '@loopback/rest';
 import { inject } from '@loopback/core';
 import { VtexService } from '../services';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
+import FormData = require('form-data');
+import { Response } from 'express';
+import { request } from 'http';
+// import axios from 'axios';
 
 export class VtexController {
   constructor(
     @inject('services.VtexService') private vtexService: VtexService,
+    @inject(RestBindings.Http.REQUEST) private req: Request,
   ) {}
 
   @get('/get-vtex-category-tree')
@@ -201,6 +206,21 @@ export class VtexController {
           throw error;
         }
       }
+    // @get('/get-session')
+    // @response(200, {
+    //   description: 'Get VTEX category tree from the external API',
+    // })
+    // async getSession(): Promise<any> {
+    //   try {
+    //     const headers = this.req.headers;
+    //     console.log('headers', headers.cookie);
+    //     const session = await this.vtexService.getSession(headers.cookie);
+    //     console.log('session', session.data);
+    //     return session.data;
+    //   } catch (error) {
+    //     throw error;
+    //   }
+    // }
 
     @get('/vtex-plp-by-category/{categoryId}')
 
@@ -312,15 +332,103 @@ export class VtexController {
   @post('/login')
   async login(
     @requestBody() requestBody: { email: string; password: string },
+    @inject(RestBindings.Http.RESPONSE) response: Response,
   ): Promise<any> {
     try {
       const { email, password } = requestBody;
       const login = await this.vtexService.login(email, password);
+      // const data = login.resp.authCookie.Value;
+      const authCookie = login.validation;
+      const session = login.session;
+      console.log('login', login.validation);
+      console.log('login1', login.session);
+      // console.log('login2', data);
+      // console.log('login3', await login.data.resp.authCookie);
+      // console.log('login4', await login.data.resp.accountAuthCookie);
+      // console.log('login3', await login.data.session.sessionToken);
+      response.cookie('VtexIdclientAutCookie_skillnet', authCookie.authCookie.Value, {
+        maxAge: 3600000*24,
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        path: '/',
+      });
+      response.cookie('VtexIdclientAutCookie_13ca6e38-75b0-4070-8cf2-5a61412e4919', authCookie.accountAuthCookie.Value, {
+        maxAge: 3600000*24,
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        path: '/',
+      });
+      response.cookie('sessionToken', session.sessionToken, {
+        // maxAge: 3600000*24,
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        path: '/',
+      });
+      response.cookie('segmentToken', session.segmentToken, {
+        // maxAge: 3600000*24,
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        path: '/',
+      });
 
       return login
     } catch (error) {
       throw error;
     }
+  }
+
+  @post('/test-login')
+  async testLogin(
+    @requestBody() requestBody: { email: string; password: string },
+    @inject(RestBindings.Http.RESPONSE) response: Response,
+  ): Promise<ResponseObject> {
+    const { email, password } = requestBody;
+    const formDataObject = new FormData();  
+      formDataObject.append('scope', "skillnet");
+      formDataObject.append('accountName', "skillnet");
+      formDataObject.append('user', email);
+      formDataObject.append('appStart', "true");  
+      formDataObject.append('callbackUrl', "https://skillnet.myvtex.com/api/vtexid/oauth/finish");
+      const response1: AxiosResponse<any> = await axios.post(
+        'https://skillnet.myvtex.com/api/vtexid/pub/authentication/start',
+        formDataObject,
+        {
+          headers: {
+            'accept': '*/*',
+          },
+        }
+      );
+      // console.log('response1', response1);
+      // console.log('response1', response1.data.authenticationToken);
+      response.cookie('_vss', 'response1.data.authenticationToken', {
+        maxAge: 3600000, // 1 hour in milliseconds
+        httpOnly: true,
+        secure: true,
+        domain: 'skillnet.myvtex.com',
+        sameSite: 'none',
+        path: '/',
+      });
+      const responseObject: ResponseObject = {
+        statusCode: 200,
+        description: 'Login successful',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              properties: {
+                message: { type: 'string' },
+              },
+            },
+            success: { message: 'Login successful' },
+          },
+        },
+      };
+      return responseObject;
+    
   }
 
 }

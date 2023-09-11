@@ -741,6 +741,18 @@ export class VtexService {
         throw error;
       }
     }
+    // async getSession(cookie : any): Promise<AxiosResponse<any>> {
+    //   const response = await axios.get(
+    //     'https://skillnet.myvtex.com/api/sessions?items=*',
+    //     {
+    //       headers: {
+    //         Cookie: cookie,
+    //       },
+    //     }
+    //   );
+    //   console.log('response', response.data);
+    //   return response;   
+    // }
     async vtexlogin(email: string): Promise<AxiosResponse<any>> {
       const formDataObject = new FormData();  
       formDataObject.append('scope', "skillnet");
@@ -773,48 +785,81 @@ export class VtexService {
   
     }
 
-    async validateLogins(email: string, password: string, auth: any): Promise<AxiosResponse<any>> {
+    async validateLogins(
+      email: string,
+      password: string,
+      auth: any
+    ): Promise<AxiosResponse<any>> {
       try {
-        console.log("auth",auth)
+        console.log("auth", auth);
         const formData = new FormData();
-        formData.append('login', email);
-        formData.append('password', password);
-        formData.append('recaptcha', '');
-        formData.append('fingerprint', '');
-        const authToken = '_vss='+auth;
-        console.log("authToken",authToken)
+        formData.append("login", email);
+        formData.append("password", password);
+        formData.append("recaptcha", "");
+        formData.append("fingerprint", "");
+        const authToken = "_vss=" + auth;
+        console.log("authToken", authToken);
   
         const response: AxiosResponse<any> = await axios.post(
-          'https://skillnet.myvtex.com/api/vtexid/pub/authentication/classic/validate',
+          "https://skillnet.myvtex.com/api/vtexid/pub/authentication/classic/validate",
           formData,
           {
             headers: {
-              'accept': '*/*',
-              'sec-fetch-dest': 'empty',
-              'sec-fetch-mode': 'cors',
-              'sec-fetch-site': 'same-origin',
-              'sec-gpc': '1',
-              'Cookie': authToken,
+              accept: "*/*",
+              "sec-fetch-dest": "empty",
+              "sec-fetch-mode": "cors",
+              "sec-fetch-site": "same-origin",
+              "sec-gpc": "1",
+              Cookie: authToken,
             },
           }
         );
-        console.log("response",formData)
-  
+        console.log("response", formData);
         return response;
       } catch (error) {
         throw error;
       }
     }
+    async createSession(response: any) {
+      const sessionresponse: AxiosResponse<any> = await axios.post(
+        "https://skillnet.myvtex.com/api/sessions",
+        {
+          headers: {
+            cookie: `${(response.accountAuthCookie.Name =
+              response.accountAuthCookie.Value)}+";"+${(response.authCookie.Name =
+              response.accountAuthCookie.Value)}`,
+          },
+        }
+      );
+      // const data:any = {
+      //   resp:response,
+      //   session:sessionresponse.data,
+      // };
+      // console.log("dataamber", data);
+      return sessionresponse;
+    }
     async login(email: any, password: any) {
       const start = await this.vtexlogin(email);
-      console.log("start",start)
+      console.log("start", start);
       const auth = await start.data.authenticationToken;
-      console.log("auth",auth)
-      const validate = await this.validateLogins(email, password, auth)
-      return validate.data;
-      // const validate = await this.validateLogin(email, password);
-  
-      
+      console.log("auth", auth);
+      const validate = await this.validateLogins(email, password, auth);
+      console.log("validate", validate);
+      if (await validate.data.authStatus != "Success") {
+        return {
+          validation: 'Validation failed',
+          session: "cannot create session due to invalid credentials",
+        };
+      }
+      else{
+      const session = await this.createSession(validate.data);
+      console.log("session", session);
+      return {
+        validation: validate.data,
+        session: session.data,
+      };
     }
+      // const validate = await this.validateLogin(email, password);
+    } 
 
 }

@@ -5,9 +5,13 @@ const tslib_1 = require("tslib");
 const rest_1 = require("@loopback/rest");
 const core_1 = require("@loopback/core");
 const services_1 = require("../services");
+const axios_1 = tslib_1.__importDefault(require("axios"));
+const FormData = require("form-data");
+// import axios from 'axios';
 let VtexController = exports.VtexController = class VtexController {
-    constructor(vtexService) {
+    constructor(vtexService, req) {
         this.vtexService = vtexService;
+        this.req = req;
     }
     async getVtexCategoryTree() {
         try {
@@ -147,6 +151,21 @@ let VtexController = exports.VtexController = class VtexController {
             throw error;
         }
     }
+    // @get('/get-session')
+    // @response(200, {
+    //   description: 'Get VTEX category tree from the external API',
+    // })
+    // async getSession(): Promise<any> {
+    //   try {
+    //     const headers = this.req.headers;
+    //     console.log('headers', headers.cookie);
+    //     const session = await this.vtexService.getSession(headers.cookie);
+    //     console.log('session', session.data);
+    //     return session.data;
+    //   } catch (error) {
+    //     throw error;
+    //   }
+    // }
     async getVtexProductByCategory(categoryId) {
         try {
             const getVtexProducts = await this.vtexService.getVtexProductByCategory(categoryId);
@@ -195,29 +214,92 @@ let VtexController = exports.VtexController = class VtexController {
             throw error;
         }
     }
-    async login(requestBody) {
+    async login(requestBody, response) {
         try {
             const { email, password } = requestBody;
             const login = await this.vtexService.login(email, password);
-            return {
-                // startLogin: startLoginResponse,
-                // validateLogin: validateLoginResponse,
-                login: login
-            };
+            // const data = login.resp.authCookie.Value;
+            const authCookie = login.validation;
+            const session = login.session;
+            console.log('login', login.validation);
+            console.log('login1', login.session);
+            // console.log('login2', data);
+            // console.log('login3', await login.data.resp.authCookie);
+            // console.log('login4', await login.data.resp.accountAuthCookie);
+            // console.log('login3', await login.data.session.sessionToken);
+            response.cookie('VtexIdclientAutCookie_skillnet', authCookie.authCookie.Value, {
+                maxAge: 3600000 * 24,
+                httpOnly: true,
+                secure: true,
+                sameSite: 'none',
+                path: '/',
+            });
+            response.cookie('VtexIdclientAutCookie_13ca6e38-75b0-4070-8cf2-5a61412e4919', authCookie.accountAuthCookie.Value, {
+                maxAge: 3600000 * 24,
+                httpOnly: true,
+                secure: true,
+                sameSite: 'none',
+                path: '/',
+            });
+            response.cookie('sessionToken', session.sessionToken, {
+                // maxAge: 3600000*24,
+                httpOnly: true,
+                secure: true,
+                sameSite: 'none',
+                path: '/',
+            });
+            response.cookie('segmentToken', session.segmentToken, {
+                // maxAge: 3600000*24,
+                httpOnly: true,
+                secure: true,
+                sameSite: 'none',
+                path: '/',
+            });
+            return login;
         }
         catch (error) {
             throw error;
         }
     }
-    async startLogin(requestBody) {
-        try {
-            const { email } = requestBody;
-            const response = await this.vtexService.startLogins(email);
-            return response.data;
-        }
-        catch (error) {
-            throw error;
-        }
+    async testLogin(requestBody, response) {
+        const { email, password } = requestBody;
+        const formDataObject = new FormData();
+        formDataObject.append('scope', "skillnet");
+        formDataObject.append('accountName', "skillnet");
+        formDataObject.append('user', email);
+        formDataObject.append('appStart', "true");
+        formDataObject.append('callbackUrl', "https://skillnet.myvtex.com/api/vtexid/oauth/finish");
+        const response1 = await axios_1.default.post('https://skillnet.myvtex.com/api/vtexid/pub/authentication/start', formDataObject, {
+            headers: {
+                'accept': '*/*',
+            },
+        });
+        // console.log('response1', response1);
+        // console.log('response1', response1.data.authenticationToken);
+        response.cookie('_vss', 'response1.data.authenticationToken', {
+            maxAge: 3600000,
+            httpOnly: true,
+            secure: true,
+            domain: 'skillnet.myvtex.com',
+            sameSite: 'none',
+            path: '/',
+        });
+        const responseObject = {
+            statusCode: 200,
+            description: 'Login successful',
+            content: {
+                'application/json': {
+                    schema: {
+                        type: 'object',
+                        properties: {
+                            message: { type: 'string' },
+                        },
+                    },
+                    success: { message: 'Login successful' },
+                },
+            },
+        };
+        return responseObject;
     }
 };
 tslib_1.__decorate([
@@ -377,19 +459,22 @@ tslib_1.__decorate([
 tslib_1.__decorate([
     (0, rest_1.post)('/login'),
     tslib_1.__param(0, (0, rest_1.requestBody)()),
+    tslib_1.__param(1, (0, core_1.inject)(rest_1.RestBindings.Http.RESPONSE)),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Object]),
+    tslib_1.__metadata("design:paramtypes", [Object, Object]),
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "login", null);
 tslib_1.__decorate([
-    (0, rest_1.post)('/start-logins'),
+    (0, rest_1.post)('/test-login'),
     tslib_1.__param(0, (0, rest_1.requestBody)()),
+    tslib_1.__param(1, (0, core_1.inject)(rest_1.RestBindings.Http.RESPONSE)),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Object]),
+    tslib_1.__metadata("design:paramtypes", [Object, Object]),
     tslib_1.__metadata("design:returntype", Promise)
-], VtexController.prototype, "startLogin", null);
+], VtexController.prototype, "testLogin", null);
 exports.VtexController = VtexController = tslib_1.__decorate([
     tslib_1.__param(0, (0, core_1.inject)('services.VtexService')),
-    tslib_1.__metadata("design:paramtypes", [services_1.VtexService])
+    tslib_1.__param(1, (0, core_1.inject)(rest_1.RestBindings.Http.REQUEST)),
+    tslib_1.__metadata("design:paramtypes", [services_1.VtexService, Object])
 ], VtexController);
 //# sourceMappingURL=vtex.controller.js.map

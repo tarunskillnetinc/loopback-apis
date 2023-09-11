@@ -35,5 +35,9 @@ export declare class VtexService {
     startLogins(email: string): Promise<AxiosResponse<any>>;
     vtexlogin(email: string): Promise<AxiosResponse<any>>;
     validateLogins(email: string, password: string, auth: any): Promise<AxiosResponse<any>>;
-    login(email: any, password: any): Promise<any>;
+    createSession(response: any): Promise<AxiosResponse<any, any>>;
+    login(email: any, password: any): Promise<{
+        validation: any;
+        session: any;
+    }>;
 }
