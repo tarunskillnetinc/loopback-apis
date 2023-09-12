@@ -737,6 +737,7 @@ let VtexService = exports.VtexService = class VtexService {
             console.log('List Price:', listPrice);
             products.push({
                 ProductId,
+                skuId: ProductId,
                 productName,
                 SkuImageUrl,
                 listPrice,
@@ -749,13 +750,12 @@ let VtexService = exports.VtexService = class VtexService {
     async salesForceProduct(pid) {
         const endpoint = `shop/v23_2/products/${pid}?null=null&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b&expand=images%2Cprices%2Cavailability%2Cvariations%2Cpromotions%2Cset_products&all_images=true`;
         const response = await this.fetchSfFromEndpoint(endpoint);
-        const data = await response;
+        const data = await response; // Parse JSON response
         console.log('res', data);
         const productId = data.id;
         const name = data.name;
         const available = data.inventory.orderable;
-        const products = [];
-        const skus = await data.variants.map((variant) => {
+        const skus = data.variants.map((variant) => {
             const sku = variant.product_id;
             const skuname = variant.product_name;
             const skuAvailable = variant.orderable;
@@ -786,13 +786,13 @@ let VtexService = exports.VtexService = class VtexService {
                 rewardValue
             };
         });
-        products.push({
+        return {
             productId,
+            SkuId: productId,
             name,
             available,
             skus
-        });
-        return products;
+        };
     }
 };
 exports.VtexService = VtexService = tslib_1.__decorate([
