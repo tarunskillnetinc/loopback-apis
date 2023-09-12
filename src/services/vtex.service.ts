@@ -1048,11 +1048,12 @@ export class VtexService {
     
         return {
           sku,
-          skuname,
+          skuname : sku,
           available: skuAvailable,
           availablequantity: availableQuantity,
           listPriceFormated,
           listPrice,
+          bestPrice : listPrice,
           image,
           sellerId,
           seller,
