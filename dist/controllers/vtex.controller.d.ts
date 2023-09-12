@@ -29,4 +29,17 @@ export declare class VtexController {
         email: string;
         password: string;
     }, response: Response): Promise<ResponseObject>;
+    createCustomerCart(): Promise<any>;
+    addItems(requestBody: {
+        orderItems: [];
+    }, orderFormId: string): Promise<any>;
+    updateCartItem(requestBody: {
+        orderItems: [];
+    }, orderFormId: string): Promise<any>;
+    deleteCartItem(requestBody: {
+        orderItems: [];
+    }, orderFormId: string): Promise<any>;
+    getCartItems(orderFormId: string): Promise<any>;
+    getSfBestSellingProducts(): Promise<any>;
+    salesForceProduct(productId: string): Promise<any>;
 }

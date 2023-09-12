@@ -523,4 +523,30 @@ export class VtexController {
       }
     }
 
+    @get('/sf-best-selling')
+  @response(200, {
+    description: 'Get VTEX best selling products from the external API',
+  })
+  async getSfBestSellingProducts(): Promise<any> {
+    try {
+      const bestSellingProducts = await this.vtexService.sfBestSelling();
+      return bestSellingProducts;
+    } catch (error) {
+      throw error;
+    }
+  }
+  @get('/sf-pdp/{productId}')
+  @response(200, {
+    description: 'Get VTEX product details from the external API',
+  })
+  async salesForceProduct(@param.path.string('productId') productId: string): Promise<any> {
+    try {
+      const vtexProductDetails = await this.vtexService.salesForceProduct(productId);
+      console.log('vtexProductDetails', vtexProductDetails);
+      return vtexProductDetails;
+    } catch (error) {
+      throw error;
+    }
+  }
+
 }

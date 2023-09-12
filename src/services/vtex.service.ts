@@ -56,6 +56,26 @@ export class VtexService {
       return data;
     }
   }
+  async fetchSfFromEndpoint(endpoint: string): Promise<any> {
+    try {
+      const response = await axios.get(`https://zzkd-004.dx.commercecloud.salesforce.com/s/RefArch/dw/${endpoint}`, {
+        headers: {
+          Accept: '*/*',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Cookie': 'BrowserId=cZTU7kWFEe6BcxsRNxYQ0g'
+          },
+        });
+    return response.data;
+    } catch (error) {
+      console.log('error', error);
+      const data = {
+        statusCode: error.response.status,
+        statusText: error.response.statusText,
+        data: error.response.data,
+      };
+      return data;
+    }
+  }
   async vtexCategoryTreeLoopbackFetchFromEndpoint(
     endpoint: string,
   ): Promise<any> {
@@ -951,6 +971,7 @@ export class VtexService {
         throw error;
       }
     }
+    
 
     //Function for getting Cart Details Or Cart Items:
     async getCartItems(orderFormId:any): Promise<any>{
@@ -958,6 +979,95 @@ export class VtexService {
       const response = this.fetchFromEndpoint(endpoint);
       const data = await response;
       return data;
+    }
+
+    
+    async sfBestSelling(): Promise<any> {
+      const endpoint = `shop/v23_2/product_search?refine=cgid%3Dmens&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b&expand=images%2Cprices%2Cavailability%2Cvariations`;
+      const response = await this.fetchSfFromEndpoint(endpoint);
+      // console.log('response', response.hits)
+    
+      const data = await response;
+      console.log('res', data);
+    
+      const products: any[] = [];
+    
+      for (const hit of data.hits) {
+        const ProductId = hit.product_id;
+        const productName = hit.product_name;
+        const SkuImageUrl = hit.image.link; // Extract image URL
+        const listPrice = hit.price; // Extract the price and name it as listPrice
+        const basePrice = hit.price;
+    
+        console.log('Product ID:', ProductId);
+        console.log('Product Name:', productName);
+        console.log('Product Image:', SkuImageUrl);
+        console.log('List Price:', listPrice);
+    
+        products.push({
+          ProductId,
+          productName,
+          SkuImageUrl,
+          listPrice,
+          basePrice
+        });
+      }
+    
+      console.log('Products:', products);
+    
+      return products;
+    }  
+  
+    async salesForceProduct(pid : any): Promise<any> {
+      const endpoint = `shop/v23_2/products/${pid}?null=null&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b&expand=images%2Cprices%2Cavailability%2Cvariations%2Cpromotions%2Cset_products&all_images=true`;
+      const response = await this.fetchSfFromEndpoint(endpoint);
+    
+      const data = await response;
+      console.log('res', data);
+      const productId = data.id;
+      const name = data.name;
+      const available = data.inventory.orderable;
+      const products: any[] = [];
+      const skus = await data.variants.map((variant: any) => {
+        const sku = variant.product_id;
+        const skuname = variant.product_name;
+        const skuAvailable = variant.orderable;
+        const availableQuantity = data.inventory.stock_level;
+        const listPriceFormated = variant.price_per_unit;
+        const listPrice = variant.price;
+        console.log('listPrice', variant.inventory);
+        console.log('listPriceVal', data);
+        console.log('listPriceValdsd', data.image_groups[0].images[0].link);
+        const image = data.image_groups[0].images[0].link;
+        const sellerId = variant.sellerId;
+        const seller = variant.seller;
+        const measures = variant.measures;
+        const unitMultiplier = variant.unitMultiplier;
+        const rewardValue = variant.rewardValue;
+  
+        return {
+          sku,
+          skuname,
+          available: skuAvailable,
+          availablequantity: availableQuantity,
+          listPriceFormated,
+          listPrice,
+          image,
+          sellerId,
+          seller,
+          measures,
+          unitMultiplier,
+          rewardValue
+        }
+      });
+    
+      products.push({
+          productId,
+          name,
+          available,
+          skus
+        });
+      return products;
     }
 
 }

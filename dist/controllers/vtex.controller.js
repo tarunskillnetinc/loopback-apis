@@ -301,6 +301,85 @@ let VtexController = exports.VtexController = class VtexController {
         };
         return responseObject;
     }
+    //For Creating customer cart:
+    async createCustomerCart() {
+        try {
+            const data = await this.vtexService.createCustomerCart();
+            const response = await data;
+            return response;
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    //For adding items in cart:
+    async addItems(requestBody, orderFormId) {
+        try {
+            console.log(requestBody);
+            const data = await this.vtexService.addItems(orderFormId, requestBody);
+            const response = await data;
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
+    // For updating Cart details and cart items
+    async updateCartItem(requestBody, orderFormId) {
+        try {
+            const data = await this.vtexService.updateCartItem(orderFormId, requestBody);
+            const response = await data;
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
+    // For deleting cart item
+    async deleteCartItem(requestBody, orderFormId) {
+        try {
+            const data = await this.vtexService.deleteCartItem(orderFormId, requestBody);
+            const response = await data;
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
+    //For getting Cart Details or Cart Items:
+    async getCartItems(orderFormId) {
+        try {
+            const data = await this.vtexService.getCartItems(orderFormId);
+            const response = await data;
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
+    async getSfBestSellingProducts() {
+        try {
+            const bestSellingProducts = await this.vtexService.sfBestSelling();
+            return bestSellingProducts;
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    async salesForceProduct(productId) {
+        try {
+            const vtexProductDetails = await this.vtexService.salesForceProduct(productId);
+            console.log('vtexProductDetails', vtexProductDetails);
+            return vtexProductDetails;
+        }
+        catch (error) {
+            throw error;
+        }
+    }
 };
 tslib_1.__decorate([
     (0, rest_1.get)('/get-vtex-category-tree'),
@@ -472,6 +551,77 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:paramtypes", [Object, Object]),
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "testLogin", null);
+tslib_1.__decorate([
+    (0, rest_1.get)('/create-customer-cart'),
+    (0, rest_1.response)(200, {
+        description: "Create Customer Cart",
+    }),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", []),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "createCustomerCart", null);
+tslib_1.__decorate([
+    (0, rest_1.post)('vtex-add-items/{orderFormId}'),
+    (0, rest_1.response)(200, {
+        description: "Add items in cart using order form id",
+    }),
+    tslib_1.__param(0, (0, rest_1.requestBody)()),
+    tslib_1.__param(1, rest_1.param.path.string('orderFormId')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [Object, String]),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "addItems", null);
+tslib_1.__decorate([
+    (0, rest_1.post)('vtex-update-cart-items/{orderFormId}'),
+    (0, rest_1.response)(200, {
+        description: "Updating Cart details based on Form Id",
+    }),
+    tslib_1.__param(0, (0, rest_1.requestBody)()),
+    tslib_1.__param(1, rest_1.param.path.string('orderFormId')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [Object, String]),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "updateCartItem", null);
+tslib_1.__decorate([
+    (0, rest_1.post)('vtex-delete-cart-items/{orderFormId}'),
+    (0, rest_1.response)(200, {
+        description: "Updating Cart details based on Form Id",
+    }),
+    tslib_1.__param(0, (0, rest_1.requestBody)()),
+    tslib_1.__param(1, rest_1.param.path.string('orderFormId')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [Object, String]),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "deleteCartItem", null);
+tslib_1.__decorate([
+    (0, rest_1.get)('vtex-get-cart-items/{orderFormId}'),
+    (0, rest_1.response)(200, {
+        description: "Getting Cart details based on Order Form Id",
+    }),
+    tslib_1.__param(0, rest_1.param.path.string('orderFormId')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String]),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "getCartItems", null);
+tslib_1.__decorate([
+    (0, rest_1.get)('/sf-best-selling'),
+    (0, rest_1.response)(200, {
+        description: 'Get VTEX best selling products from the external API',
+    }),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", []),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "getSfBestSellingProducts", null);
+tslib_1.__decorate([
+    (0, rest_1.get)('/sf-pdp/{productId}'),
+    (0, rest_1.response)(200, {
+        description: 'Get VTEX product details from the external API',
+    }),
+    tslib_1.__param(0, rest_1.param.path.string('productId')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String]),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "salesForceProduct", null);
 exports.VtexController = VtexController = tslib_1.__decorate([
     tslib_1.__param(0, (0, core_1.inject)('services.VtexService')),
     tslib_1.__param(1, (0, core_1.inject)(rest_1.RestBindings.Http.REQUEST)),

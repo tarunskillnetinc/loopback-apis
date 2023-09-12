@@ -5,6 +5,7 @@ export declare class VtexService {
     constructor(dataSource: VtexDataSource);
     fetchFromEndpoint(endpoint: string): Promise<any>;
     cartFetchFromEndpoint(endpoint: string): Promise<any>;
+    fetchSfFromEndpoint(endpoint: string): Promise<any>;
     vtexCategoryTreeLoopbackFetchFromEndpoint(endpoint: string): Promise<any>;
     getVtexCategoryTree(): Promise<any>;
     getVtexCategoryTreeloopback(): Promise<any>;
@@ -40,4 +41,11 @@ export declare class VtexService {
         validation: any;
         session: any;
     }>;
+    createCustomerCart(): Promise<any>;
+    addItems(orderFormId: any, requestBody: any): Promise<any>;
+    updateCartItem(orderFormId: any, requestBody: any): Promise<any>;
+    deleteCartItem(orderFormId: any, requestBody: any): Promise<any>;
+    getCartItems(orderFormId: any): Promise<any>;
+    sfBestSelling(): Promise<any>;
+    salesForceProduct(pid: any): Promise<any>;
 }

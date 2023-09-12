@@ -48,6 +48,27 @@ let VtexService = exports.VtexService = class VtexService {
             return data;
         }
     }
+    async fetchSfFromEndpoint(endpoint) {
+        try {
+            const response = await axios_1.default.get(`https://zzkd-004.dx.commercecloud.salesforce.com/s/RefArch/dw/${endpoint}`, {
+                headers: {
+                    Accept: '*/*',
+                    'Accept-Encoding': 'gzip, deflate, br',
+                    'Cookie': 'BrowserId=cZTU7kWFEe6BcxsRNxYQ0g'
+                },
+            });
+            return response.data;
+        }
+        catch (error) {
+            console.log('error', error);
+            const data = {
+                statusCode: error.response.status,
+                statusText: error.response.statusText,
+                data: error.response.data,
+            };
+            return data;
+        }
+    }
     async vtexCategoryTreeLoopbackFetchFromEndpoint(endpoint) {
         try {
             const response = await axios_1.default.get(`${endpoint}`, { timeout: 100000,
@@ -615,6 +636,163 @@ let VtexService = exports.VtexService = class VtexService {
             };
         }
         // const validate = await this.validateLogin(email, password);
+    }
+    //Function to generate Customer Cart:
+    async createCustomerCart() {
+        const endpoint = `api/checkout/pub/orderForm?forceNewCart=true`;
+        const cart_response = this.fetchFromEndpoint(endpoint);
+        const order_form_id = await cart_response;
+        console.log("Cart", order_form_id.orderFormId);
+        return order_form_id;
+    }
+    //Function for adding items in cart:
+    async addItems(orderFormId, requestBody) {
+        // const body = {"orderItems":[{"quantity":3,"seller":"1","id":"880582"}]}
+        console.log('requestBody', requestBody);
+        const endpoint = `api/checkout/pub/orderForm/${orderFormId}/items`;
+        try {
+            const url = `${this.dataSource.settings.baseURL}/${endpoint}`;
+            console.log('urlis', url);
+            const response = await axios_1.default.post(`${this.dataSource.settings.baseURL}/${endpoint}`, requestBody, {
+                headers: {
+                    Accept: 'application/json',
+                    'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
+                    'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+                }
+            });
+            console.log('itemsaddedare', response);
+            return response.data;
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    // Function for updating items in cart
+    async updateCartItem(orderFormId, requestBody) {
+        // const body = {"orderItems":[{"quantity":5,"index":0}]}
+        console.log("request12345", requestBody);
+        const endpoint = `api/checkout/pub/orderForm/${orderFormId}/items/update`;
+        try {
+            const url = `${this.dataSource.settings.baseURL}/${endpoint}`;
+            console.log('urlis', url);
+            const response = await axios_1.default.post(`${this.dataSource.settings.baseURL}/${endpoint}`, requestBody, {
+                headers: {
+                    Accept: 'application/json',
+                    'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
+                    'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+                }
+            });
+            console.log('updateCartItems', response);
+            return response.data;
+        }
+        catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
+    // Function for Deleting items in cart
+    async deleteCartItem(orderFormId, requestBody) {
+        const endpoint = `api/checkout/pub/orderForm/${orderFormId}/items/update`;
+        try {
+            const url = `${this.dataSource.settings.baseURL}/${endpoint}`;
+            console.log('urlis', url);
+            const response = await axios_1.default.post(`${this.dataSource.settings.baseURL}/${endpoint}`, requestBody, {
+                headers: {
+                    Accept: 'application/json',
+                    'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
+                    'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+                }
+            });
+            console.log('updateCartItems', response);
+            return response.data;
+        }
+        catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
+    //Function for getting Cart Details Or Cart Items:
+    async getCartItems(orderFormId) {
+        const endpoint = `api/checkout/pub/orderForm/${orderFormId}`;
+        const response = this.fetchFromEndpoint(endpoint);
+        const data = await response;
+        return data;
+    }
+    async sfBestSelling() {
+        const endpoint = `shop/v23_2/product_search?refine=cgid%3Dmens&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b&expand=images%2Cprices%2Cavailability%2Cvariations`;
+        const response = await this.fetchSfFromEndpoint(endpoint);
+        // console.log('response', response.hits)
+        const data = await response;
+        console.log('res', data);
+        const products = [];
+        for (const hit of data.hits) {
+            const ProductId = hit.product_id;
+            const productName = hit.product_name;
+            const SkuImageUrl = hit.image.link; // Extract image URL
+            const listPrice = hit.price; // Extract the price and name it as listPrice
+            const basePrice = hit.price;
+            console.log('Product ID:', ProductId);
+            console.log('Product Name:', productName);
+            console.log('Product Image:', SkuImageUrl);
+            console.log('List Price:', listPrice);
+            products.push({
+                ProductId,
+                productName,
+                SkuImageUrl,
+                listPrice,
+                basePrice
+            });
+        }
+        console.log('Products:', products);
+        return products;
+    }
+    async salesForceProduct(pid) {
+        const endpoint = `shop/v23_2/products/${pid}?null=null&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b&expand=images%2Cprices%2Cavailability%2Cvariations%2Cpromotions%2Cset_products&all_images=true`;
+        const response = await this.fetchSfFromEndpoint(endpoint);
+        const data = await response;
+        console.log('res', data);
+        const productId = data.id;
+        const name = data.name;
+        const available = data.inventory.orderable;
+        const products = [];
+        const skus = await data.variants.map((variant) => {
+            const sku = variant.product_id;
+            const skuname = variant.product_name;
+            const skuAvailable = variant.orderable;
+            const availableQuantity = data.inventory.stock_level;
+            const listPriceFormated = variant.price_per_unit;
+            const listPrice = variant.price;
+            console.log('listPrice', variant.inventory);
+            console.log('listPriceVal', data);
+            console.log('listPriceValdsd', data.image_groups[0].images[0].link);
+            const image = data.image_groups[0].images[0].link;
+            const sellerId = variant.sellerId;
+            const seller = variant.seller;
+            const measures = variant.measures;
+            const unitMultiplier = variant.unitMultiplier;
+            const rewardValue = variant.rewardValue;
+            return {
+                sku,
+                skuname,
+                available: skuAvailable,
+                availablequantity: availableQuantity,
+                listPriceFormated,
+                listPrice,
+                image,
+                sellerId,
+                seller,
+                measures,
+                unitMultiplier,
+                rewardValue
+            };
+        });
+        products.push({
+            productId,
+            name,
+            available,
+            skus
+        });
+        return products;
     }
 };
 exports.VtexService = VtexService = tslib_1.__decorate([
