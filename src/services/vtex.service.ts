@@ -457,7 +457,17 @@ export class VtexService {
 
     const data = await response;
 
- 
+    const available_facets: any[] = [];
+    const endpoint_two = `api/io/_v/api/intelligent-search/facets/category-1/${categoryId}?hideUnavailableItems=false`;
+    const facets_Data = this.fetchFromEndpoint(endpoint_two);
+    const new_facets_data = await facets_Data;
+    const my_new_data = new_facets_data.facets;
+    my_new_data.map((items: any, index: any) => {
+      available_facets.push({
+        name: items.values[0].key,
+        value: items.values,
+      });
+    });
 
     const product_arr:any[] = [];
 
@@ -497,7 +507,13 @@ export class VtexService {
 
     )
 
-    return product_arr;
+    const finalData:any = {
+      productData:product_arr,
+      valuesFacets:available_facets
+    }
+
+    return finalData;
+    // return product_arr;
 
   }
   async getVtexProductBySubCategory(subCategoryId: any): Promise<any>{
