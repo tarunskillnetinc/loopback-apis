@@ -330,6 +330,17 @@ let VtexService = exports.VtexService = class VtexService {
         const endpoint = `/api/io/_v/api/intelligent-search/product_search/category-1/${categoryId}`;
         const response = this.fetchFromEndpoint(endpoint);
         const data = await response;
+        const available_facets = [];
+        const endpoint_two = `api/io/_v/api/intelligent-search/facets/category-1/${categoryId}?hideUnavailableItems=false`;
+        const facets_Data = this.fetchFromEndpoint(endpoint_two);
+        const new_facets_data = await facets_Data;
+        const my_new_data = new_facets_data.facets;
+        my_new_data.map((items, index) => {
+            available_facets.push({
+                name: items.values[0].key,
+                value: items.values,
+            });
+        });
         const product_arr = [];
         await Promise.all(data === null || data === void 0 ? void 0 : data.products.map((items) => {
             var _a;
@@ -348,7 +359,12 @@ let VtexService = exports.VtexService = class VtexService {
                 properties: items === null || items === void 0 ? void 0 : items.properties
             });
         }));
-        return product_arr;
+        const finalData = {
+            productData: product_arr,
+            valuesFacets: available_facets
+        };
+        return finalData;
+        // return product_arr;
     }
     async getVtexProductBySubCategory(subCategoryId) {
         const endpoint = `/api/io/_v/api/intelligent-search/product_search/category-2/${subCategoryId}`;
@@ -773,11 +789,12 @@ let VtexService = exports.VtexService = class VtexService {
             const rewardValue = variant.rewardValue;
             return {
                 sku,
-                skuname,
+                skuname: sku,
                 available: skuAvailable,
                 availablequantity: availableQuantity,
                 listPriceFormated,
                 listPrice,
+                bestPrice: listPrice,
                 image,
                 sellerId,
                 seller,

@@ -5,4 +5,5 @@ const tslib_1 = require("tslib");
 tslib_1.__exportStar(require("./hello.controller"), exports);
 tslib_1.__exportStar(require("./category.controller"), exports);
 tslib_1.__exportStar(require("./vtex.controller"), exports);
+tslib_1.__exportStar(require("./spryker.controller"), exports);
 //# sourceMappingURL=index.js.map

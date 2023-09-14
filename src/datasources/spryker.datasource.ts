@@ -4,8 +4,8 @@ import {juggler} from '@loopback/repository';
 const config = {
   name: 'spryker',
   connector: 'rest',
-  baseURL: 'www.spryker.com',
-  crud: false
+  baseURL: 'http://103.113.36.20:9003',
+  crud: true
 };
 
 // Observe application's life cycle to disconnect the datasource when

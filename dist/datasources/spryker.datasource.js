@@ -7,8 +7,8 @@ const repository_1 = require("@loopback/repository");
 const config = {
     name: 'spryker',
     connector: 'rest',
-    baseURL: 'www.spryker.com',
-    crud: false
+    baseURL: 'http://103.113.36.20:9003',
+    crud: true
 };
 // Observe application's life cycle to disconnect the datasource when
 // application is stopped. This allows the application to be shut down
