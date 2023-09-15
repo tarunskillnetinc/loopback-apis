@@ -10,6 +10,7 @@ import {
   param,
   requestBody,
   ResponseObject,
+  patch,
 } from '@loopback/rest';
 
 
@@ -67,6 +68,22 @@ export class SprykerController {
       throw error;
     }
   }
+
+
+  @get('/demo-spryker-pdp/{abstractId}')
+  @response(200, {
+    description: 'Get Plp details from the external API',
+  })
+  async getProductDetail(@param.path.string('abstractId') productId: string): Promise<any> {
+    try {
+      const productDetails = await this.sprykerService.getSprykerProductDetails(productId);
+      return productDetails;
+    } catch (error) {
+      // Handle errors
+      throw error;
+    }
+  }
+
 
 
   @get('/demo-spryker-plp-by-query/{query}')
@@ -161,17 +178,17 @@ export class SprykerController {
       }
     }
 
-    @del('spryker-delete-cart-items/{cartId}')
+    @del('spryker-delete-cart-/{cartId}')
     @response(200,{
       description:"Updating Cart details based on Form Id",
     })
-    async deleteCartItem(
+    async deleteCart(
       @param.path.string('cartId') cartId: any,
       @param.header.string('bearer') bearer: string,
       ):Promise<any>{
       try{
         const header = this.request.headers.bearer;
-        const data = await this.sprykerService.deleteCartItem(cartId,header)
+        const data = await this.sprykerService.deleteCart(cartId,header)
         const response = await data;
         return response;
       }
@@ -209,7 +226,7 @@ export class SprykerController {
       description: "Delete Item in the current cart.",
     })
 
-    async postDeleteCartItem(
+ async postDeleteCartItem(
       @param.path.string('cartId') CartId: string,
       @param.path.string('itemId') itemId: string,
       @param.header.string('bearer') bearer: string,
@@ -228,5 +245,31 @@ export class SprykerController {
         throw error;
       }
     }
+
+    @patch('/demo-post-update-item-cart/{cartId}/{itemId}')
+    @response(200, {
+      description: "Delete Item in the current cart.",
+    })
+
+    async postUpdateCartItem(
+      @param.path.string('cartId') CartId: string,
+      @param.path.string('itemId') itemId: string,
+      @param.header.string('bearer') bearer: string,
+      @requestBody() requestBody:{data:any},
+      ):Promise<any>{
+        try{
+          console.log("cartID",CartId)
+        console.log("itemID",itemId)
+        const header = this.request.headers.bearer;
+        const data = await this.sprykerService.postUpdateCartItems(CartId,itemId,header,requestBody);
+        const response = data;
+        return response;
+      }
+      catch(error){
+        console.log("error1234",error.response.data);
+        return error.response
+        throw error;
+      }
+     }
 
 }

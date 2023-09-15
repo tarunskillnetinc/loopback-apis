@@ -128,6 +128,53 @@ export class SprykerService  {
     // return response;
   }
 
+  async getSprykerProductDetails(abstractId: string): Promise<any> {
+    const product_arr:any[] = [];
+    const endpoint = `abstract-products/${abstractId}?include=concrete-product-image-sets%2Cconcrete-product-prices%2Cconcrete-product-availabilities%2Cproduct-labels%2Cproduct-options%2Cproduct-reviews%2Cproduct-measurement-units%2Csales-units%2Cbundled-products%2Cproduct-offers`;
+    // return this.fetchFromEndpoint(endpoint);
+    const response = await this.fetchFromEndpoint(endpoint);
+    await Promise.all(response.data.attributes.attributeMap.product_concrete_ids?.map(async(item:any) =>{
+      var id = item;
+        const newendpoint = `concrete-products/${id}?include=concrete-product-image-sets%2Cconcrete-product-prices%2Cconcrete-product-availabilities%2Cproduct-labels%2Cproduct-options%2Cproduct-reviews%2Cproduct-measurement-units`
+        const concreteresponse= await this.fetchFromEndpoint(newendpoint);
+        product_arr.push(
+          concreteresponse
+          )
+      }));
+      const finalresponse=product_arr
+    const transformedResponse = this.sprykertransformProductDetailPage(finalresponse);
+
+    return transformedResponse;
+    // return response;
+  }
+
+  private sprykertransformProductDetailPage(response: any): any {
+    var price: any[] = [];
+    var availability: any[] = [];
+    var images: any[] = [];
+    const data=response.map((item:any) =>{
+    console.log("transform",response)
+  
+    item?.included?.map(async (item: any) => {
+      if (item?.type === 'concrete-product-prices') {
+        price.push(item);
+      } else if (item?.type == 'concrete-product-availabilities') {
+        availability.push(item);
+      } else if (item?.type == 'concrete-product-image-sets') {
+        images.push(item);
+      }
+    });
+  });
+  console.log('priceeeee',price);
+  console.log('imageseeee',images);
+  console.log('avail',availability);
+  // const transformedSuggestions = data[0]?.attributes?.map((item: any) => {
+    return response
+  // }) || [];
+
+  // return transformedSuggestions;
+  }
+
   async getSprykerProductBySubCategory(subCategoryId: any): Promise<any>{
     
     const endpoint = `catalog-search?${subCategoryId}&include=Concrete-products`;
@@ -256,7 +303,7 @@ export class SprykerService  {
     }
   }
 
-  async deleteCartItem(cartId: string, authorization:any): Promise<any> {
+  async deleteCart(cartId: string, authorization:any): Promise<any> {
     try {
       const response = await axios.delete(
         `http://103.113.36.20:9003/carts/${cartId}`,
@@ -291,6 +338,14 @@ export class SprykerService  {
     console.log('afren', reqBody);
     const endpoint = `carts/${cartId}/items/${itemId}`;
     const response = this.cartDeleteFetchFromEndpoint(endpoint, reqBody);
+    const data = await response;
+    return data;
+  }
+
+  async postUpdateCartItems(cartId: any,itemId:any, reqBody: any, authorization:any): Promise<any> {
+    console.log('afren', reqBody);
+    const endpoint = `carts/${cartId}/items/${itemId}`;
+    const response = this.patchCartFetchFromEndpoint(endpoint,reqBody,authorization);
     const data = await response;
     return data;
   }
@@ -346,5 +401,34 @@ export class SprykerService  {
       throw error;
     }
   }
+  
+  async patchCartFetchFromEndpoint(
+    endpoint: string,
+    reqBody: any,
+    authorization:any,
+  ): Promise<any> {
+    try {
+      console.log("url123",`http://103.113.36.20:9003/${endpoint}`)
+      const response = await axios.patch(
+        `http://103.113.36.20:9003/${endpoint}`,
+        reqBody,
+        {
+          headers: {
+            Authorization: `Bearer ${authorization}`
+          },
+        },
+      );
+
+      console.log('postcartresponse', response);
+      return response.data;
+    } catch (error) {
+      console.log('error', error);
+      throw error;
+    }
+
+  }
+  
+
+
 
 } 
