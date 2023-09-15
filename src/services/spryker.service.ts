@@ -183,7 +183,7 @@ export class SprykerService  {
     formData.append('grant_type',type );
     // formData.append('client_id',"" );
     console.log(' form datA' , formData)
-    const response =  await axios.post('https://glue.de.faas-suite-prod.cloud.spryker.toys/token',
+    const response =  await axios.post('http://103.113.36.20:9003/token',
     formData,
     {
       headers: {
@@ -205,7 +205,7 @@ export class SprykerService  {
 
   async getCartId(authorizationHeader: any): Promise<any> {
     console.log('afren',authorizationHeader);
-    const endpoint = `​/carts`;
+    const endpoint = `/carts`;
     const response = this.cartFetchFromEndpoint(endpoint,authorizationHeader);
     const data = await response;
     return data;
@@ -221,7 +221,7 @@ export class SprykerService  {
       const formData = new FormData();
     // formData.append('data', data);
       const response = await axios.post(
-        `https://glue.de.faas-suite-prod.cloud.spryker.toys/carts`,
+        `http://103.113.36.20:9003/carts`,
       data,
         {
           headers: {
@@ -239,15 +239,16 @@ export class SprykerService  {
 
   async cartFetchFromEndpoint(endpoint: string, authorization:string): Promise<any> {
     try {
+      console.log(endpoint);
       const response = await axios.get(
-        `https://glue.de.faas-suite-prod.cloud.spryker.toys${endpoint}`,
+        `http://103.113.36.20:9003${endpoint}`,
         {
           headers: {
             'Authorization':`Bearer ${authorization}`,
           },
         },
       ); 
-      console.log('ashuuuuuuuuu',response.data);
+      console.log('afreeee',response.data);
       return response.data;
     } catch (error) {
       console.log('error', error);
@@ -258,7 +259,7 @@ export class SprykerService  {
   async deleteCartItem(cartId: string, authorization:any): Promise<any> {
     try {
       const response = await axios.delete(
-        `https://glue.de.faas-suite-prod.cloud.spryker.toys/carts/${cartId}`,
+        `http://103.113.36.20:9003/carts/${cartId}`,
         {
           headers: {
             'Authorization':`Bearer ${authorization}`,
@@ -274,7 +275,76 @@ export class SprykerService  {
     }
   }
 
-  
+  async postAddCartItems(cartId: any, reqBody: any, authorization:any): Promise<any> {
+    console.log('afren', reqBody);
+    const endpoint = `carts/${cartId}/items`;
+    const response = this.postCartFetchFromEndpoint(endpoint, reqBody,authorization);
+    const data = await response;
+    return data;
+  }
 
-  
+  async postDeleteCartItems(
+    cartId: any,
+    itemId: any,
+    reqBody: any,
+  ): Promise<any> {
+    console.log('afren', reqBody);
+    const endpoint = `carts/${cartId}/items/${itemId}`;
+    const response = this.cartDeleteFetchFromEndpoint(endpoint, reqBody);
+    const data = await response;
+    return data;
+  }
+
+  async postCartFetchFromEndpoint(
+    endpoint: string,
+    reqBody: string,
+    authorization:any,
+  ): Promise<any> {
+    try {
+      console.log("url123",`http://103.113.36.20:9003/${endpoint}`)
+      const response = await axios.post(
+        `http://103.113.36.20:9003/${endpoint}`,
+        reqBody,
+        {
+          headers: {
+            Authorization: `Bearer ${authorization}`
+          },
+        },
+      );
+
+      console.log('postcartresponse', response);
+      return response.data;
+    } catch (error) {
+      console.log('error', error);
+      throw error;
+    }
+
+  }
+
+  async cartDeleteFetchFromEndpoint(
+    endpoint: string,
+    authorization: string,
+  ): Promise<any> {
+
+    try {
+      console.log("url123",`http://103.113.36.20:9003/${endpoint}`)
+      const response = await axios.delete(
+        `http://103.113.36.20:9003/${endpoint}`,
+        {
+          headers: {
+            Authorization:
+              `Bearer ${authorization} `,
+          },
+        },
+      );
+      console.log('postcartresponse', response);
+      return response.statusText;
+
+    } catch (error) {
+
+      console.log('error', error);
+      throw error;
+    }
+  }
+
 } 

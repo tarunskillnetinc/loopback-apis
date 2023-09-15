@@ -122,7 +122,6 @@ export class SprykerController {
       }
     }
 
-
     @post('/demo-spryker-create-cart')
     @response(200, {
       description: "Get the current cart.",
@@ -178,6 +177,54 @@ export class SprykerController {
       }
       catch(error){
         console.log(error);
+        throw error;
+      }
+    }
+
+    @post('/demo-post-add-item-cart/{cartId}')
+    @response(200, {
+      description: "Add Item in the current cart.",
+    })
+
+    async postAddCartItem(
+      @param.path.string('cartId') CartId: string,
+      @requestBody() requestBody:{data:any},
+      @param.header.string('bearer') bearer: string,
+      ):Promise<any>{
+        try{
+          const header = this.request.headers.bearer;
+        const data = await this.sprykerService.postAddCartItems(CartId,requestBody,header);
+        const response = data;
+        return response;
+      }
+      catch(error){
+        console.log("error1234",error);
+        return error.response.data
+        throw error;
+      }
+    }
+
+@del('/demo-post-delete-item-cart/{cartId}/{itemId}')
+    @response(200, {
+      description: "Delete Item in the current cart.",
+    })
+
+    async postDeleteCartItem(
+      @param.path.string('cartId') CartId: string,
+      @param.path.string('itemId') itemId: string,
+      @param.header.string('bearer') bearer: string,
+      ):Promise<any>{
+        try{
+          console.log("cartID",CartId)
+        console.log("itemID",itemId)
+        const header = this.request.headers.bearer;
+        const data = await this.sprykerService.postDeleteCartItems(CartId,itemId,header);
+        const response = data;
+        return response;
+      }
+      catch(error){
+        console.log("error1234",error.response.data);
+        return error.response
         throw error;
       }
     }
