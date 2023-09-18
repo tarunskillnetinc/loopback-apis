@@ -1,5 +1,4 @@
 "use strict";
-// Uncomment these imports to begin using these cool features!
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CategoryController = void 0;
 const tslib_1 = require("tslib");
@@ -50,6 +49,9 @@ let CategoryController = exports.CategoryController = class CategoryController {
             throw error;
         }
     }
+    async import(xml) {
+        return this.treesService.import(xml);
+    }
 };
 tslib_1.__decorate([
     (0, rest_1.get)('/get-category-trees'),
@@ -89,6 +91,24 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:paramtypes", [String]),
     tslib_1.__metadata("design:returntype", Promise)
 ], CategoryController.prototype, "getCatalogSearchSuggestions", null);
+tslib_1.__decorate([
+    (0, rest_1.post)('/data/import', {
+        responses: {
+            '200': {
+                description: 'Import XML',
+                content: { 'application/xml': {} },
+            },
+        },
+    }),
+    tslib_1.__param(0, (0, rest_1.requestBody)({
+        content: {
+            'text/plain': {},
+        },
+    })),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String]),
+    tslib_1.__metadata("design:returntype", Promise)
+], CategoryController.prototype, "import", null);
 exports.CategoryController = CategoryController = tslib_1.__decorate([
     tslib_1.__param(0, (0, core_1.inject)('services.TreesService')),
     tslib_1.__metadata("design:paramtypes", [services_1.TreesService])

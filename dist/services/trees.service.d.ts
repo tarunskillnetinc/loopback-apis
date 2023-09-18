@@ -8,4 +8,5 @@ export declare class TreesService {
     private extractDesiredFields;
     getCatalogSearchSuggestions(query: string): Promise<any[]>;
     private transformCatalogSearchSuggestions;
+    import(xmlData1: string): Promise<string>;
 }

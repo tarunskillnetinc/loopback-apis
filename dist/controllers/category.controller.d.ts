@@ -6,4 +6,5 @@ export declare class CategoryController {
     getConcreteProductDetails(productId: string): Promise<any>;
     getBestSellingProducts(): Promise<any>;
     getCatalogSearchSuggestions(query: string): Promise<any[]>;
+    import(xml: string): Promise<string>;
 }

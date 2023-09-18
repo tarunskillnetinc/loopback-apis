@@ -343,7 +343,7 @@ let VtexService = exports.VtexService = class VtexService {
         });
         const product_arr = [];
         await Promise.all(data === null || data === void 0 ? void 0 : data.products.map((items) => {
-            var _a;
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j;
             product_arr.push({
                 product_id: items === null || items === void 0 ? void 0 : items.productId,
                 sku_id: "",
@@ -353,7 +353,7 @@ let VtexService = exports.VtexService = class VtexService {
                 alt: "",
                 product_description: items === null || items === void 0 ? void 0 : items.description,
                 product_features: "",
-                product_price: items === null || items === void 0 ? void 0 : items.priceRange,
+                product_price: { "sellingPrice": (_c = (_b = items === null || items === void 0 ? void 0 : items.priceRange) === null || _b === void 0 ? void 0 : _b.sellingPrice) === null || _c === void 0 ? void 0 : _c.highPrice, "listPrice": (_e = (_d = items === null || items === void 0 ? void 0 : items.priceRange) === null || _d === void 0 ? void 0 : _d.listPrice) === null || _e === void 0 ? void 0 : _e.highPrice, "discount": ((_g = (_f = items === null || items === void 0 ? void 0 : items.priceRange) === null || _f === void 0 ? void 0 : _f.sellingPrice) === null || _g === void 0 ? void 0 : _g.highPrice) - ((_j = (_h = items === null || items === void 0 ? void 0 : items.priceRange) === null || _h === void 0 ? void 0 : _h.listPrice) === null || _j === void 0 ? void 0 : _j.highPrice) },
                 product_category: items === null || items === void 0 ? void 0 : items.categoryId,
                 product_category_id: items === null || items === void 0 ? void 0 : items.categoriesIds,
                 properties: items === null || items === void 0 ? void 0 : items.properties
