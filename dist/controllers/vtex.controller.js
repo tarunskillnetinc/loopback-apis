@@ -380,6 +380,18 @@ let VtexController = exports.VtexController = class VtexController {
             throw error;
         }
     }
+    //Search for products with filter:
+    async searchByFacets(category, color, size, minprice, maxprice, sortbyprice, sortbyname) {
+        try {
+            const data = await this.vtexService.searchByFacets(category, color, size, minprice, maxprice, sortbyprice, sortbyname);
+            const response = await data;
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
 };
 tslib_1.__decorate([
     (0, rest_1.get)('/get-vtex-category-tree'),
@@ -622,6 +634,22 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:paramtypes", [String]),
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "salesForceProduct", null);
+tslib_1.__decorate([
+    (0, rest_1.get)('vtex-search-by-facets/{category}'),
+    (0, rest_1.response)(200, {
+        description: "Search for products using facets",
+    }),
+    tslib_1.__param(0, rest_1.param.path.string('category')),
+    tslib_1.__param(1, rest_1.param.query.string('color')),
+    tslib_1.__param(2, rest_1.param.query.string('size')),
+    tslib_1.__param(3, rest_1.param.query.string('minprice')),
+    tslib_1.__param(4, rest_1.param.query.string('maxprice')),
+    tslib_1.__param(5, rest_1.param.query.string('sortbyprice')),
+    tslib_1.__param(6, rest_1.param.query.string('sortbyname')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String, Object, Object, Object, Object, Object, Object]),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "searchByFacets", null);
 exports.VtexController = VtexController = tslib_1.__decorate([
     tslib_1.__param(0, (0, core_1.inject)('services.VtexService')),
     tslib_1.__param(1, (0, core_1.inject)(rest_1.RestBindings.Http.REQUEST)),

@@ -811,6 +811,31 @@ let VtexService = exports.VtexService = class VtexService {
             skus
         };
     }
+    //Function for getting products using facets on PLP Page:
+    async searchByFacets(category, color, size, minprice, maxprice, sortbyprice, sortbyname) {
+        let facets_colors;
+        let facets_size;
+        let prices;
+        console.log("color", color, size);
+        if (color) {
+            facets_colors = color.replace(/,/g, "/color/");
+        }
+        if (size) {
+            facets_size = size.replace(/,/g, "/size/");
+        }
+        if (minprice && maxprice) {
+            prices = true;
+        }
+        console.log('prices', prices);
+        console.log("colors are", facets_colors);
+        console.log("sizes are", facets_size);
+        const endpoint = `api/io/_v/api/intelligent-search/product_search/category-2/${category}/${prices ? `price/${minprice}:${maxprice}` : ""}${facets_colors != undefined ? `/color/${facets_colors}` : ""}/${facets_size ? `size/${facets_size}` : ""}?${sortbyprice ? `sort=price:${sortbyprice}` : ""}${sortbyname ? `sort=name:${sortbyname}` : ""}`;
+        const response = this.fetchFromEndpoint(endpoint);
+        const data = await response;
+        console.log("response is", data);
+        // const data = await response;
+        return response;
+    }
 };
 exports.VtexService = VtexService = tslib_1.__decorate([
     (0, core_1.injectable)(),

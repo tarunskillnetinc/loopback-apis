@@ -48,4 +48,5 @@ export declare class VtexService {
     getCartItems(orderFormId: any): Promise<any>;
     sfBestSelling(): Promise<any>;
     salesForceProduct(pid: any): Promise<any>;
+    searchByFacets(category: string, color: any, size: any, minprice: any, maxprice: any, sortbyprice: any, sortbyname: any): Promise<any>;
 }

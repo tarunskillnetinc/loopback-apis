@@ -1157,4 +1157,4 @@ export class VtexService {
 
 }
 
-}
+
