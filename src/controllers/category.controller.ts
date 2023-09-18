@@ -1,11 +1,11 @@
-// Uncomment these imports to begin using these cool features!
-
 import {inject} from '@loopback/core';
 import { TreesService} from '../services';
 import {
   Request,
   RestBindings,
   get,
+  post,
+  requestBody,
   response,
   param,
   ResponseObject,
@@ -72,5 +72,26 @@ export class CategoryController {
       throw error;
     }
   }
+
+  @post('/data/import', {
+    responses: {
+      '200': {
+        description: 'Import XML',
+        content: {'application/xml': {}},
+      },
+    },
+  })
+  async import(
+    @requestBody({
+      content: {
+        'text/plain': {
+        },
+      },
+    })
+    xml : string,
+  ): Promise<string> {
+    return this.treesService.import(xml);
+  }
+
 
 }
