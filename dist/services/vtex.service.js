@@ -391,7 +391,7 @@ let VtexService = exports.VtexService = class VtexService {
         return product_arr;
     }
     async getVtexProductByQuery(query) {
-        const endpoint = `/api/io/_v/api/intelligent-search/product_search/${query}`;
+        const endpoint = `/api/io/_v/api/intelligent-search/product_search/?query=${query}`;
         const response = this.fetchFromEndpoint(endpoint);
         const data = await response;
         const product_arr = [];

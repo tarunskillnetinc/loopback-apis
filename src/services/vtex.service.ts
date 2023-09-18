@@ -569,7 +569,7 @@ export class VtexService {
   }
   async getVtexProductByQuery(query: any): Promise<any>{
 
-    const endpoint = `/api/io/_v/api/intelligent-search/product_search/${query}`;
+    const endpoint = `/api/io/_v/api/intelligent-search/product_search/?query=${query}`;
 
     const response = this.fetchFromEndpoint(endpoint);
 
