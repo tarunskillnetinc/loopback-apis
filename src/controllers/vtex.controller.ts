@@ -549,4 +549,54 @@ export class VtexController {
     }
   }
 
+  //Search for products with filter:
+
+  @get('vtex-search-by-facets/{category}')
+
+  @response(200, {
+
+    description: "Search for products using facets",
+
+  })
+
+  async searchByFacets(
+
+    @param.path.string('category') category: string,
+
+    @param.query.string('color') color?: any,
+
+    @param.query.string('size') size?: any,
+
+    @param.query.string('minprice') minprice?: any,
+
+    @param.query.string('maxprice') maxprice?: any,
+
+    @param.query.string('sortbyprice') sortbyprice?: any,
+
+    @param.query.string('sortbyname') sortbyname?: any,
+
+    ):Promise<any>{
+
+     
+
+    try{
+
+      const data = await this.vtexService.searchByFacets(category,color,size,minprice,maxprice,sortbyprice,sortbyname);
+
+      const response = await data;
+
+      return response;
+
+    }
+
+    catch(error){
+
+      console.log(error);
+
+      throw error;
+
+    }
+
+  }
+
 }
