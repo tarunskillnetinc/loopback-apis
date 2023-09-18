@@ -493,7 +493,7 @@ export class VtexService {
 
         product_features:"",
 
-        product_price:items?.priceRange,
+        product_price:{"sellingPrice":items?.priceRange?.sellingPrice?.highPrice,"listPrice":items?.priceRange?.listPrice?.highPrice,"discount":items?.priceRange?.sellingPrice?.highPrice-items?.priceRange?.listPrice?.highPrice},
 
         product_category: items?.categoryId,
 
