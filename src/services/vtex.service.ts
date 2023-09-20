@@ -501,6 +501,32 @@ export class VtexService {
 
       data?.products.map((items:any)=>{
 
+        //For product prices and discount prices:
+        const price_data = items.items;
+        let list_price:Number =0;
+        let sales_price:Number = 0;
+        let new_discount_percentage:any;
+        price_data.map((newItems:any)=>{
+          newItems?.sellers.map((newNewItem:any,newIndex:any)=>{
+            if(newNewItem?.commertialOffer?.discountHighlights[0]){
+              list_price = newNewItem?.commertialOffer?.ListPrice;
+              sales_price = newNewItem?.commertialOffer?.spotPrice;
+              //@ts-ignore
+              const percentageAsNumber = Number(list_price - sales_price) / Number(list_price) * 100;
+              var discount_percentage = percentageAsNumber.toFixed(2);
+              new_discount_percentage = discount_percentage;
+            }
+            else{
+              list_price = newNewItem?.commertialOffer?.ListPrice;
+              sales_price = newNewItem?.commertialOffer?.spotPrice;
+              //@ts-ignore
+              const percentageAsNumber = Number(list_price - sales_price) / Number(list_price) * 100;
+              var discount_percentage = percentageAsNumber.toFixed(2);
+              new_discount_percentage = discount_percentage;
+            }
+          });
+        });
+
         product_arr.push({
 
           product_id:items?.productId,
@@ -517,15 +543,8 @@ export class VtexService {
 
         product_description:items?.description,
 
-        product_features:"",
-
-        product_price:{"sellingPrice":items?.priceRange?.sellingPrice?.highPrice,"listPrice":items?.priceRange?.listPrice?.highPrice,"discount":items?.priceRange?.sellingPrice?.highPrice-items?.priceRange?.listPrice?.highPrice},
-
-        product_category: items?.categoryId,
-
-        product_category_id: items?.categoriesIds,
-
-        properties: items?.properties
+        //@ts-ignore
+        product_price:{"sellingPrice":sales_price,"listPrice":list_price,"discount":Number(list_price-sales_price),"discountPercentage":new_discount_percentage},
 
         })
 
