@@ -267,6 +267,32 @@ export class VtexService {
     const endpoint1 = `api/catalog_system/pub/products/variations/${data.Id}`;
     const product_variation = this.fetchFromEndpoint(endpoint1);
     const product_variation_response = await product_variation;
+
+    //Product prices and discount:
+    product_variation_response.skus.map((items:any,index:any)=>{
+      delete(items.measures);
+      const specification_data = items.dimensions;
+      if(items.hasOwnProperty("dimensions")){
+        items["specifications"] = specification_data;
+        delete(items.dimensions);
+      }
+      var dollerAmount_list_price = items.listPriceFormated;
+      var dollerAmount_sell_price = items.bestPriceFormated;
+
+      var numericValueListPrice = dollerAmount_list_price.replace(/[$,]/g,'');
+      var numericValueSellPrice = dollerAmount_sell_price.replace(/[$,]/g,'');
+
+      var intValue_list_price = parseInt(numericValueListPrice,10);
+      var intValue_sell_price = parseInt(numericValueSellPrice);
+
+      var intValue_discount = Math.round(intValue_list_price - intValue_sell_price);
+      var intValue_discount_percentage = Math.round((intValue_discount/intValue_list_price)*100);
+      items.discountValue = intValue_discount;
+      items.discountPercentage = intValue_discount_percentage;
+      console.log("mylistPrice",intValue_list_price,"mysellprice",intValue_sell_price);
+
+    })
+
     product_variation_response['categoryId'] = data.CategoryId;
     product_variation_response['brandId'] = data.BrandId;
     product_variation_response['description'] = data.Description;
