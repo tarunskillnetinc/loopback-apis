@@ -278,10 +278,6 @@ export class VtexService {
         "productId":items.productId,
         "productName":items.productName,
         "imageUrl":items.items[0].images[0].imageUrl,
-        "brand":items.brand,
-        "brandId":items.brandId,
-        "brandImageUrl":items.brandImageUrl,
-        "categoryId":items.categoryId,
         "productTitle":items.productTitle,
         "productPrice":items.items[0].sellers[0].commertialOffer.Price
       }
