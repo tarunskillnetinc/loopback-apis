@@ -268,6 +268,26 @@ export class VtexService {
     const product_variation = this.fetchFromEndpoint(endpoint1);
     const product_variation_response = await product_variation;
 
+    //Cross Sell products:
+    let crossSellProducts:any[] = [];
+    const cross_sell_endpoint = `api/catalog_system/pub/products/crossselling/similars/${pid}`;
+    const cross_sell_response = this.fetchFromEndpoint(cross_sell_endpoint);
+    const cross_sell_data = await cross_sell_response;
+    cross_sell_data.map((items:any)=>{
+      let cross_sell_product = {
+        "productId":items.productId,
+        "productName":items.productName,
+        "imageUrl":items.items[0].images[0].imageUrl,
+        "brand":items.brand,
+        "brandId":items.brandId,
+        "brandImageUrl":items.brandImageUrl,
+        "categoryId":items.categoryId,
+        "productTitle":items.productTitle,
+        "productPrice":items.items[0].sellers[0].commertialOffer.Price
+      }
+      crossSellProducts.push(cross_sell_product)
+    });
+
     //Product prices and discount:
     product_variation_response.skus.map((items:any,index:any)=>{
       delete(items.measures);
@@ -297,7 +317,7 @@ export class VtexService {
     product_variation_response['brandId'] = data.BrandId;
     product_variation_response['description'] = data.Description;
     const transformVtexPdp = this.transformVtexProductDetailPage(
-      product_variation_response,
+      product_variation_response,crossSellProducts
     );
     // console.log("transformVtexPdp",transformVtexPdp);
     return transformVtexPdp;
@@ -748,16 +768,17 @@ export class VtexService {
     });
     return categoryChildren;
   }
-  private transformVtexProductDetailPage(response: any): any {
+  private transformVtexProductDetailPage(response: any,crossSellProducts:any): any {
     return {
       productId: response.productId,
       name: response.name,
       available: response.available,
       skus: response.skus,
+      crossSellProduct: crossSellProducts
     };
   }
     async startLogin(email: string, password: string) {
-  
+
       const formData = new FormData();
       formData.append('accountName', 'skillnet');
       formData.append('scope', 'skillnet');
