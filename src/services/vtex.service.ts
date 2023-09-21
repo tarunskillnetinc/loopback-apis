@@ -267,11 +267,53 @@ export class VtexService {
     const endpoint1 = `api/catalog_system/pub/products/variations/${data.Id}`;
     const product_variation = this.fetchFromEndpoint(endpoint1);
     const product_variation_response = await product_variation;
+
+    //Cross Sell products:
+    let crossSellProducts:any[] = [];
+    const cross_sell_endpoint = `api/catalog_system/pub/products/crossselling/similars/${pid}`;
+    const cross_sell_response = this.fetchFromEndpoint(cross_sell_endpoint);
+    const cross_sell_data = await cross_sell_response;
+    cross_sell_data.map((items:any)=>{
+      let cross_sell_product = {
+        "productId":items.productId,
+        "productName":items.productName,
+        "imageUrl":items.items[0].images[0].imageUrl,
+        "productTitle":items.productTitle,
+        "productPrice":items.items[0].sellers[0].commertialOffer.Price
+      }
+      crossSellProducts.push(cross_sell_product)
+    });
+
+    //Product prices and discount:
+    product_variation_response.skus.map((items:any,index:any)=>{
+      delete(items.measures);
+      const specification_data = items.dimensions;
+      if(items.hasOwnProperty("dimensions")){
+        items["specifications"] = specification_data;
+        delete(items.dimensions);
+      }
+      var dollerAmount_list_price = items.listPriceFormated;
+      var dollerAmount_sell_price = items.bestPriceFormated;
+
+      var numericValueListPrice = dollerAmount_list_price.replace(/[$,]/g,'');
+      var numericValueSellPrice = dollerAmount_sell_price.replace(/[$,]/g,'');
+
+      var intValue_list_price = parseInt(numericValueListPrice,10);
+      var intValue_sell_price = parseInt(numericValueSellPrice);
+
+      var intValue_discount = Math.round(intValue_list_price - intValue_sell_price);
+      var intValue_discount_percentage = Math.round((intValue_discount/intValue_list_price)*100);
+      items.discountValue = intValue_discount;
+      items.discountPercentage = intValue_discount_percentage;
+      console.log("mylistPrice",intValue_list_price,"mysellprice",intValue_sell_price);
+
+    })
+
     product_variation_response['categoryId'] = data.CategoryId;
     product_variation_response['brandId'] = data.BrandId;
     product_variation_response['description'] = data.Description;
     const transformVtexPdp = this.transformVtexProductDetailPage(
-      product_variation_response,
+      product_variation_response,crossSellProducts
     );
     // console.log("transformVtexPdp",transformVtexPdp);
     return transformVtexPdp;
@@ -475,11 +517,37 @@ export class VtexService {
 
       data?.products.map((items:any)=>{
 
+        //For product prices and discount prices:
+        const price_data = items.items;
+        let list_price:Number =0;
+        let sales_price:Number = 0;
+        let new_discount_percentage:any;
+        price_data.map((newItems:any)=>{
+          newItems?.sellers.map((newNewItem:any,newIndex:any)=>{
+            if(newNewItem?.commertialOffer?.discountHighlights[0]){
+              list_price = newNewItem?.commertialOffer?.ListPrice;
+              sales_price = newNewItem?.commertialOffer?.spotPrice;
+              //@ts-ignore
+              const percentageAsNumber = Number(list_price - sales_price) / Number(list_price) * 100;
+              var discount_percentage = percentageAsNumber.toFixed(2);
+              new_discount_percentage = discount_percentage;
+            }
+            else{
+              list_price = newNewItem?.commertialOffer?.ListPrice;
+              sales_price = newNewItem?.commertialOffer?.spotPrice;
+              //@ts-ignore
+              const percentageAsNumber = Number(list_price - sales_price) / Number(list_price) * 100;
+              var discount_percentage = percentageAsNumber.toFixed(2);
+              new_discount_percentage = discount_percentage;
+            }
+          });
+        });
+
         product_arr.push({
 
           product_id:items?.productId,
 
-          sku_id:"",
+          sku_id:items?.productId,
 
          product_name:items?.productName,
 
@@ -487,19 +555,8 @@ export class VtexService {
 
         product_rating:"",
 
-        alt:"",
-
-        product_description:items?.description,
-
-        product_features:"",
-
-        product_price:{"sellingPrice":items?.priceRange?.sellingPrice?.highPrice,"listPrice":items?.priceRange?.listPrice?.highPrice,"discount":items?.priceRange?.sellingPrice?.highPrice-items?.priceRange?.listPrice?.highPrice},
-
-        product_category: items?.categoryId,
-
-        product_category_id: items?.categoriesIds,
-
-        properties: items?.properties
+        //@ts-ignore
+        product_price:{"sellingPrice":sales_price,"listPrice":list_price,"discount":Number(list_price-sales_price),"discountPercentage":new_discount_percentage},
 
         })
 
@@ -707,16 +764,17 @@ export class VtexService {
     });
     return categoryChildren;
   }
-  private transformVtexProductDetailPage(response: any): any {
+  private transformVtexProductDetailPage(response: any,crossSellProducts:any): any {
     return {
       productId: response.productId,
       name: response.name,
       available: response.available,
       skus: response.skus,
+      crossSellProduct: crossSellProducts
     };
   }
     async startLogin(email: string, password: string) {
-  
+
       const formData = new FormData();
       formData.append('accountName', 'skillnet');
       formData.append('scope', 'skillnet');
