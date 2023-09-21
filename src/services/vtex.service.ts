@@ -531,17 +531,13 @@ export class VtexService {
 
           product_id:items?.productId,
 
-          sku_id:"",
+          sku_id:items?.productId,
 
          product_name:items?.productName,
 
         product_image:items?.items[0]?.images[0].imageUrl,
 
         product_rating:"",
-
-        alt:"",
-
-        product_description:items?.description,
 
         //@ts-ignore
         product_price:{"sellingPrice":sales_price,"listPrice":list_price,"discount":Number(list_price-sales_price),"discountPercentage":new_discount_percentage},
