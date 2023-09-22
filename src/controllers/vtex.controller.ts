@@ -599,4 +599,19 @@ export class VtexController {
 
   }
 
+  // Get the user-details or profile
+  @get('/user-details/{email}')
+  @response(200, {
+    description: 'Get VTEX user details from the external API',
+  })
+  async getUserProfileDetails(@param.path.string('email') email: string): Promise < any > {
+    try {
+      const userProfile = await this.vtexService.getUserProfileDetails(email);
+      console.log(userProfile, "userProfile")
+      return userProfile;
+    } catch (error) {
+        throw error;
+    }
+  }
+
 }

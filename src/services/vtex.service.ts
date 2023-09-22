@@ -1213,6 +1213,31 @@ export class VtexService {
 
   }
 
+  //Function for getting user Details Or Profile :
+  async getUserProfileDetails(email:string): Promise<any>{
+    const endpoint = `api/checkout/pub/profiles/?email=${email}`;
+    const response = this.fetchFromEndpoint(endpoint);
+    const data = await response;
+    console.log("data",data)
+    const formattedData = {
+      userProfile: {
+        email: `${data.userProfile.email}`,
+        firstName: data.userProfile.firstName,
+        lastName: data.userProfile.lastName,
+        receiverName: data.availableAddresses[0].receiverName,
+        addressId: data.availableAddresses[0].addressId,
+        postalCode: data.availableAddresses[0].postalCode,
+        city: data.availableAddresses[0].city,
+        state: data.availableAddresses[0].state,
+        country: data.availableAddresses[0].country,
+        street: data.availableAddresses[0].street,
+        addressNumber: data.availableAddresses[0].number || "N/A",
+        phone: `${data.userProfile.phone}`
+      }
+    };
+    return formattedData;
+  }
+
 }
 
 
