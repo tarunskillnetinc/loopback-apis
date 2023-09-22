@@ -575,13 +575,17 @@ export class VtexController {
 
     @param.query.string('sortbyname') sortbyname?: any,
 
+    @param.query.string('productsperpage') count?: any,
+
+    @param.query.string('page') page?: any,
+
     ):Promise<any>{
 
      
 
     try{
 
-      const data = await this.vtexService.searchByFacets(category,color,size,minprice,maxprice,sortbyprice,sortbyname);
+      const data = await this.vtexService.searchByFacets(category,color,size,minprice,maxprice,sortbyprice,sortbyname,count,page);
 
       const response = await data;
 
@@ -597,6 +601,21 @@ export class VtexController {
 
     }
 
+  }
+
+  // Get the user-details or profile
+  @get('/user-details/{email}')
+  @response(200, {
+    description: 'Get VTEX user details from the external API',
+  })
+  async getUserProfileDetails(@param.path.string('email') email: string): Promise < any > {
+    try {
+      const userProfile = await this.vtexService.getUserProfileDetails(email);
+      console.log(userProfile, "userProfile")
+      return userProfile;
+    } catch (error) {
+        throw error;
+    }
   }
 
 }

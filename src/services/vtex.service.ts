@@ -1149,7 +1149,12 @@ export class VtexService {
 
     //Function for getting products using facets on PLP Page:
 
-  async searchByFacets(category: string, color: any, size: any, minprice:any, maxprice:any, sortbyprice:any, sortbyname:any): Promise<any> {
+  async searchByFacets(category: string, color: any, size: any, minprice:any, maxprice:any, sortbyprice:any, sortbyname:any , count:Number, page:Number): Promise<any> {
+    let filteredData :any = {};
+
+    let nextIndex:any;
+
+    let prevIndex:any;
 
     let facets_colors;
 
@@ -1197,7 +1202,7 @@ export class VtexService {
 
       facets_colors != undefined ? `/color/${facets_colors}` : ""
 
-    }/${facets_size ? `size/${facets_size}` : ""}?${sortbyprice ? `sort=price:${sortbyprice}`:""}${sortbyname ? `sort=name:${sortbyname}`:""}`;
+    }/${facets_size ? `size/${facets_size}` : ""}?${sortbyprice ? `sort=price:${sortbyprice}`:""}${sortbyname ? `sort=name:${sortbyname}`:""}${count ? `count=${count}`:""}${page ? `page=${page}`:""}`;
 
     const response = this.fetchFromEndpoint(endpoint);
 
@@ -1205,12 +1210,51 @@ export class VtexService {
 
     console.log("response is", data);
 
- 
+    filteredData["products"] = data.products;
+    filteredData["recordsFiltered"] = data.recordsFiltered;
+
+    if(page<data.pagination.count){
+      //@ts-ignore
+      nextIndex = Number(page) + 1;
+    }else{nextIndex = 0}
+
+    //@ts-ignore
+    if(page>1){
+      //@ts-ignore
+      prevIndex = page-1;
+    }else{prevIndex = 0}
+
+    filteredData["pagination"] = {"totalPages":data.pagination.count,"currentIndex":Number(page),"perPage":data.pagination.perPage,"next":nextIndex,"previous":prevIndex};
 
     // const data = await response;
 
-    return response;
+    return filteredData;
 
+  }
+
+  //Function for getting user Details Or Profile :
+  async getUserProfileDetails(email:string): Promise<any>{
+    const endpoint = `api/checkout/pub/profiles/?email=${email}`;
+    const response = this.fetchFromEndpoint(endpoint);
+    const data = await response;
+    console.log("data",data)
+    const formattedData = {
+      userProfile: {
+        email: `${data.userProfile.email}`,
+        firstName: data.userProfile.firstName,
+        lastName: data.userProfile.lastName,
+        receiverName: data.availableAddresses[0].receiverName,
+        addressId: data.availableAddresses[0].addressId,
+        postalCode: data.availableAddresses[0].postalCode,
+        city: data.availableAddresses[0].city,
+        state: data.availableAddresses[0].state,
+        country: data.availableAddresses[0].country,
+        street: data.availableAddresses[0].street,
+        addressNumber: data.availableAddresses[0].number || "N/A",
+        phone: `${data.userProfile.phone}`
+      }
+    };
+    return formattedData;
   }
 
 }
