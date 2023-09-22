@@ -42,5 +42,6 @@ export declare class VtexController {
     getCartItems(orderFormId: string): Promise<any>;
     getSfBestSellingProducts(): Promise<any>;
     salesForceProduct(productId: string): Promise<any>;
-    searchByFacets(category: string, color?: any, size?: any, minprice?: any, maxprice?: any, sortbyprice?: any, sortbyname?: any): Promise<any>;
+    searchByFacets(category: string, color?: any, size?: any, minprice?: any, maxprice?: any, sortbyprice?: any, sortbyname?: any, count?: any, page?: any): Promise<any>;
+    getUserProfileDetails(email: string): Promise<any>;
 }

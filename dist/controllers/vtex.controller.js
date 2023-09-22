@@ -381,14 +381,25 @@ let VtexController = exports.VtexController = class VtexController {
         }
     }
     //Search for products with filter:
-    async searchByFacets(category, color, size, minprice, maxprice, sortbyprice, sortbyname) {
+    async searchByFacets(category, color, size, minprice, maxprice, sortbyprice, sortbyname, count, page) {
         try {
-            const data = await this.vtexService.searchByFacets(category, color, size, minprice, maxprice, sortbyprice, sortbyname);
+            const data = await this.vtexService.searchByFacets(category, color, size, minprice, maxprice, sortbyprice, sortbyname, count, page);
             const response = await data;
             return response;
         }
         catch (error) {
             console.log(error);
+            throw error;
+        }
+    }
+    // Get the user-details or profile
+    async getUserProfileDetails(email) {
+        try {
+            const userProfile = await this.vtexService.getUserProfileDetails(email);
+            console.log(userProfile, "userProfile");
+            return userProfile;
+        }
+        catch (error) {
             throw error;
         }
     }
@@ -646,10 +657,22 @@ tslib_1.__decorate([
     tslib_1.__param(4, rest_1.param.query.string('maxprice')),
     tslib_1.__param(5, rest_1.param.query.string('sortbyprice')),
     tslib_1.__param(6, rest_1.param.query.string('sortbyname')),
+    tslib_1.__param(7, rest_1.param.query.string('productsperpage')),
+    tslib_1.__param(8, rest_1.param.query.string('page')),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [String, Object, Object, Object, Object, Object, Object]),
+    tslib_1.__metadata("design:paramtypes", [String, Object, Object, Object, Object, Object, Object, Object, Object]),
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "searchByFacets", null);
+tslib_1.__decorate([
+    (0, rest_1.get)('/user-details/{email}'),
+    (0, rest_1.response)(200, {
+        description: 'Get VTEX user details from the external API',
+    }),
+    tslib_1.__param(0, rest_1.param.path.string('email')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String]),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "getUserProfileDetails", null);
 exports.VtexController = VtexController = tslib_1.__decorate([
     tslib_1.__param(0, (0, core_1.inject)('services.VtexService')),
     tslib_1.__param(1, (0, core_1.inject)(rest_1.RestBindings.Http.REQUEST)),

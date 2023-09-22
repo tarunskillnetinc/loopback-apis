@@ -15,6 +15,10 @@ export declare class VtexService {
     getVtexProductDetails(productId: string): Promise<any>;
     getProductById(pid: string): Promise<any>;
     getVtexCartDetails(cartId: any): Promise<any>;
+    getTransformCartDetails(cartData: any): Promise<{
+        products: any[];
+        totalizers: any;
+    }>;
     getTransformedVtexProductDetails(productId: string): Promise<any>;
     getBestSellingProducts(): Promise<any>;
     getBestSellingProductsrating(): Promise<any>;
@@ -48,5 +52,6 @@ export declare class VtexService {
     getCartItems(orderFormId: any): Promise<any>;
     sfBestSelling(): Promise<any>;
     salesForceProduct(pid: any): Promise<any>;
-    searchByFacets(category: string, color: any, size: any, minprice: any, maxprice: any, sortbyprice: any, sortbyname: any): Promise<any>;
+    searchByFacets(category: string, color: any, size: any, minprice: any, maxprice: any, sortbyprice: any, sortbyname: any, count: Number, page: Number): Promise<any>;
+    getUserProfileDetails(email: string): Promise<any>;
 }

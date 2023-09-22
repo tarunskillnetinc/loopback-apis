@@ -221,17 +221,76 @@ let VtexService = exports.VtexService = class VtexService {
         const endpoint1 = `api/catalog_system/pub/products/variations/${data.Id}`;
         const product_variation = this.fetchFromEndpoint(endpoint1);
         const product_variation_response = await product_variation;
+        //Cross Sell products:
+        let crossSellProducts = [];
+        const cross_sell_endpoint = `api/catalog_system/pub/products/crossselling/similars/${pid}`;
+        const cross_sell_response = this.fetchFromEndpoint(cross_sell_endpoint);
+        const cross_sell_data = await cross_sell_response;
+        cross_sell_data.map((items) => {
+            let cross_sell_product = {
+                "productId": items.productId,
+                "productName": items.productName,
+                "imageUrl": items.items[0].images[0].imageUrl,
+                "productTitle": items.productTitle,
+                "productPrice": items.items[0].sellers[0].commertialOffer.Price
+            };
+            crossSellProducts.push(cross_sell_product);
+        });
+        //Product prices and discount:
+        product_variation_response.skus.map((items, index) => {
+            delete (items.measures);
+            const specification_data = items.dimensions;
+            if (items.hasOwnProperty("dimensions")) {
+                items["specifications"] = specification_data;
+                delete (items.dimensions);
+            }
+            var dollerAmount_list_price = items.listPriceFormated;
+            var dollerAmount_sell_price = items.bestPriceFormated;
+            var numericValueListPrice = dollerAmount_list_price.replace(/[$,]/g, '');
+            var numericValueSellPrice = dollerAmount_sell_price.replace(/[$,]/g, '');
+            var intValue_list_price = parseInt(numericValueListPrice, 10);
+            var intValue_sell_price = parseInt(numericValueSellPrice);
+            var intValue_discount = Math.round(intValue_list_price - intValue_sell_price);
+            var intValue_discount_percentage = Math.round((intValue_discount / intValue_list_price) * 100);
+            items.discountValue = intValue_discount;
+            items.discountPercentage = intValue_discount_percentage;
+            console.log("mylistPrice", intValue_list_price, "mysellprice", intValue_sell_price);
+        });
         product_variation_response['categoryId'] = data.CategoryId;
         product_variation_response['brandId'] = data.BrandId;
         product_variation_response['description'] = data.Description;
-        const transformVtexPdp = this.transformVtexProductDetailPage(product_variation_response);
+        const transformVtexPdp = this.transformVtexProductDetailPage(product_variation_response, crossSellProducts);
         // console.log("transformVtexPdp",transformVtexPdp);
         return transformVtexPdp;
     }
     async getVtexCartDetails(cartId) {
         // a7be4a750c55442a865ca49fd22a4232 cart id
         const endpoint = `api/checkout/pub/orderForm/${cartId}`;
-        return this.cartFetchFromEndpoint(endpoint);
+        const response = this.cartFetchFromEndpoint(endpoint);
+        const cartData = this.getTransformCartDetails(response);
+        return cartData;
+    }
+    async getTransformCartDetails(cartData) {
+        const data = await cartData;
+        //For Products:
+        const products = [];
+        data.items.map((items) => {
+            const products_data = {
+                "productName": items.name,
+                "price": items.price / 100,
+                "sellingPrice": items.sellingPrice / 100,
+                "quantity": items.quantity,
+                "imageUrl": items.imageUrl
+            };
+            products.push(products_data);
+        });
+        //For Totals:
+        let totalizers = { "CartTotal": (data.value) / 100 };
+        data.totalizers.map((items) => {
+            totalizers[items.id] = (items.value) / 100;
+        });
+        const final_result = { "products": products, "totalizers": totalizers };
+        return final_result;
     }
     async getTransformedVtexProductDetails(productId) {
         const endpoint = `api/catalog/pvt/product/${productId}`;
@@ -343,20 +402,41 @@ let VtexService = exports.VtexService = class VtexService {
         });
         const product_arr = [];
         await Promise.all(data === null || data === void 0 ? void 0 : data.products.map((items) => {
-            var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+            var _a;
+            //For product prices and discount prices:
+            const price_data = items.items;
+            let list_price = 0;
+            let sales_price = 0;
+            let new_discount_percentage;
+            price_data.map((newItems) => {
+                newItems === null || newItems === void 0 ? void 0 : newItems.sellers.map((newNewItem, newIndex) => {
+                    var _a, _b, _c, _d, _e;
+                    if ((_a = newNewItem === null || newNewItem === void 0 ? void 0 : newNewItem.commertialOffer) === null || _a === void 0 ? void 0 : _a.discountHighlights[0]) {
+                        list_price = (_b = newNewItem === null || newNewItem === void 0 ? void 0 : newNewItem.commertialOffer) === null || _b === void 0 ? void 0 : _b.ListPrice;
+                        sales_price = (_c = newNewItem === null || newNewItem === void 0 ? void 0 : newNewItem.commertialOffer) === null || _c === void 0 ? void 0 : _c.spotPrice;
+                        //@ts-ignore
+                        const percentageAsNumber = Number(list_price - sales_price) / Number(list_price) * 100;
+                        var discount_percentage = percentageAsNumber.toFixed(2);
+                        new_discount_percentage = discount_percentage;
+                    }
+                    else {
+                        list_price = (_d = newNewItem === null || newNewItem === void 0 ? void 0 : newNewItem.commertialOffer) === null || _d === void 0 ? void 0 : _d.ListPrice;
+                        sales_price = (_e = newNewItem === null || newNewItem === void 0 ? void 0 : newNewItem.commertialOffer) === null || _e === void 0 ? void 0 : _e.spotPrice;
+                        //@ts-ignore
+                        const percentageAsNumber = Number(list_price - sales_price) / Number(list_price) * 100;
+                        var discount_percentage = percentageAsNumber.toFixed(2);
+                        new_discount_percentage = discount_percentage;
+                    }
+                });
+            });
             product_arr.push({
                 product_id: items === null || items === void 0 ? void 0 : items.productId,
-                sku_id: "",
+                sku_id: items === null || items === void 0 ? void 0 : items.productId,
                 product_name: items === null || items === void 0 ? void 0 : items.productName,
                 product_image: (_a = items === null || items === void 0 ? void 0 : items.items[0]) === null || _a === void 0 ? void 0 : _a.images[0].imageUrl,
                 product_rating: "",
-                alt: "",
-                product_description: items === null || items === void 0 ? void 0 : items.description,
-                product_features: "",
-                product_price: { "sellingPrice": (_c = (_b = items === null || items === void 0 ? void 0 : items.priceRange) === null || _b === void 0 ? void 0 : _b.sellingPrice) === null || _c === void 0 ? void 0 : _c.highPrice, "listPrice": (_e = (_d = items === null || items === void 0 ? void 0 : items.priceRange) === null || _d === void 0 ? void 0 : _d.listPrice) === null || _e === void 0 ? void 0 : _e.highPrice, "discount": ((_g = (_f = items === null || items === void 0 ? void 0 : items.priceRange) === null || _f === void 0 ? void 0 : _f.sellingPrice) === null || _g === void 0 ? void 0 : _g.highPrice) - ((_j = (_h = items === null || items === void 0 ? void 0 : items.priceRange) === null || _h === void 0 ? void 0 : _h.listPrice) === null || _j === void 0 ? void 0 : _j.highPrice) },
-                product_category: items === null || items === void 0 ? void 0 : items.categoryId,
-                product_category_id: items === null || items === void 0 ? void 0 : items.categoriesIds,
-                properties: items === null || items === void 0 ? void 0 : items.properties
+                //@ts-ignore
+                product_price: { "sellingPrice": sales_price, "listPrice": list_price, "discount": Number(list_price - sales_price), "discountPercentage": new_discount_percentage },
             });
         }));
         const finalData = {
@@ -498,12 +578,13 @@ let VtexService = exports.VtexService = class VtexService {
         });
         return categoryChildren;
     }
-    transformVtexProductDetailPage(response) {
+    transformVtexProductDetailPage(response, crossSellProducts) {
         return {
             productId: response.productId,
             name: response.name,
             available: response.available,
             skus: response.skus,
+            crossSellProduct: crossSellProducts
         };
     }
     async startLogin(email, password) {
@@ -812,7 +893,10 @@ let VtexService = exports.VtexService = class VtexService {
         };
     }
     //Function for getting products using facets on PLP Page:
-    async searchByFacets(category, color, size, minprice, maxprice, sortbyprice, sortbyname) {
+    async searchByFacets(category, color, size, minprice, maxprice, sortbyprice, sortbyname, count, page) {
+        let filteredData = {};
+        let nextIndex;
+        let prevIndex;
         let facets_colors;
         let facets_size;
         let prices;
@@ -829,12 +913,54 @@ let VtexService = exports.VtexService = class VtexService {
         console.log('prices', prices);
         console.log("colors are", facets_colors);
         console.log("sizes are", facets_size);
-        const endpoint = `api/io/_v/api/intelligent-search/product_search/category-2/${category}/${prices ? `price/${minprice}:${maxprice}` : ""}${facets_colors != undefined ? `/color/${facets_colors}` : ""}/${facets_size ? `size/${facets_size}` : ""}?${sortbyprice ? `sort=price:${sortbyprice}` : ""}${sortbyname ? `sort=name:${sortbyname}` : ""}`;
+        const endpoint = `api/io/_v/api/intelligent-search/product_search/category-2/${category}/${prices ? `price/${minprice}:${maxprice}` : ""}${facets_colors != undefined ? `/color/${facets_colors}` : ""}/${facets_size ? `size/${facets_size}` : ""}?${sortbyprice ? `sort=price:${sortbyprice}` : ""}${sortbyname ? `sort=name:${sortbyname}` : ""}${count ? `count=${count}` : ""}${page ? `page=${page}` : ""}`;
         const response = this.fetchFromEndpoint(endpoint);
         const data = await response;
         console.log("response is", data);
+        filteredData["products"] = data.products;
+        filteredData["recordsFiltered"] = data.recordsFiltered;
+        if (page < data.pagination.count) {
+            //@ts-ignore
+            nextIndex = Number(page) + 1;
+        }
+        else {
+            nextIndex = 0;
+        }
+        //@ts-ignore
+        if (page > 1) {
+            //@ts-ignore
+            prevIndex = page - 1;
+        }
+        else {
+            prevIndex = 0;
+        }
+        filteredData["pagination"] = { "totalPages": data.pagination.count, "currentIndex": Number(page), "perPage": data.pagination.perPage, "next": nextIndex, "previous": prevIndex };
         // const data = await response;
-        return response;
+        return filteredData;
+    }
+    //Function for getting user Details Or Profile :
+    async getUserProfileDetails(email) {
+        const endpoint = `api/checkout/pub/profiles/?email=${email}`;
+        const response = this.fetchFromEndpoint(endpoint);
+        const data = await response;
+        console.log("data", data);
+        const formattedData = {
+            userProfile: {
+                email: `${data.userProfile.email}`,
+                firstName: data.userProfile.firstName,
+                lastName: data.userProfile.lastName,
+                receiverName: data.availableAddresses[0].receiverName,
+                addressId: data.availableAddresses[0].addressId,
+                postalCode: data.availableAddresses[0].postalCode,
+                city: data.availableAddresses[0].city,
+                state: data.availableAddresses[0].state,
+                country: data.availableAddresses[0].country,
+                street: data.availableAddresses[0].street,
+                addressNumber: data.availableAddresses[0].number || "N/A",
+                phone: `${data.userProfile.phone}`
+            }
+        };
+        return formattedData;
     }
 };
 exports.VtexService = VtexService = tslib_1.__decorate([
