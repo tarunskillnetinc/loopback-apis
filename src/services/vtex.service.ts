@@ -1149,7 +1149,12 @@ export class VtexService {
 
     //Function for getting products using facets on PLP Page:
 
-  async searchByFacets(category: string, color: any, size: any, minprice:any, maxprice:any, sortbyprice:any, sortbyname:any): Promise<any> {
+  async searchByFacets(category: string, color: any, size: any, minprice:any, maxprice:any, sortbyprice:any, sortbyname:any , count:Number, page:Number): Promise<any> {
+    let filteredData :any = {};
+
+    let nextIndex:any;
+
+    let prevIndex:any;
 
     let facets_colors;
 
@@ -1197,7 +1202,7 @@ export class VtexService {
 
       facets_colors != undefined ? `/color/${facets_colors}` : ""
 
-    }/${facets_size ? `size/${facets_size}` : ""}?${sortbyprice ? `sort=price:${sortbyprice}`:""}${sortbyname ? `sort=name:${sortbyname}`:""}`;
+    }/${facets_size ? `size/${facets_size}` : ""}?${sortbyprice ? `sort=price:${sortbyprice}`:""}${sortbyname ? `sort=name:${sortbyname}`:""}${count ? `count=${count}`:""}${page ? `page=${page}`:""}`;
 
     const response = this.fetchFromEndpoint(endpoint);
 
@@ -1205,11 +1210,25 @@ export class VtexService {
 
     console.log("response is", data);
 
- 
+    filteredData["products"] = data.products;
+    filteredData["recordsFiltered"] = data.recordsFiltered;
+
+    if(page<data.pagination.count){
+      //@ts-ignore
+      nextIndex = Number(page) + 1;
+    }else{nextIndex = 0}
+
+    //@ts-ignore
+    if(page>1){
+      //@ts-ignore
+      prevIndex = page-1;
+    }else{prevIndex = 0}
+
+    filteredData["pagination"] = {"totalPages":data.pagination.count,"currentIndex":Number(page),"perPage":data.pagination.perPage,"next":nextIndex,"previous":prevIndex};
 
     // const data = await response;
 
-    return response;
+    return filteredData;
 
   }
 

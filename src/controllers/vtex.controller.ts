@@ -575,13 +575,17 @@ export class VtexController {
 
     @param.query.string('sortbyname') sortbyname?: any,
 
+    @param.query.string('productsperpage') count?: any,
+
+    @param.query.string('page') page?: any,
+
     ):Promise<any>{
 
      
 
     try{
 
-      const data = await this.vtexService.searchByFacets(category,color,size,minprice,maxprice,sortbyprice,sortbyname);
+      const data = await this.vtexService.searchByFacets(category,color,size,minprice,maxprice,sortbyprice,sortbyname,count,page);
 
       const response = await data;
 
