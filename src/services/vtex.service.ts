@@ -322,7 +322,34 @@ export class VtexService {
   async getVtexCartDetails(cartId: any): Promise<any> {
     // a7be4a750c55442a865ca49fd22a4232 cart id
     const endpoint = `api/checkout/pub/orderForm/${cartId}`;
-    return this.cartFetchFromEndpoint(endpoint);
+    const response = this.cartFetchFromEndpoint(endpoint);
+    const cartData = this.getTransformCartDetails(response);
+    return cartData;
+  }
+
+  async getTransformCartDetails(cartData:any){
+    const data = await cartData;
+    //For Products:
+    const products : any[] = [];
+    data.items.map((items:any)=>{
+      const products_data = {
+        "productName":items.name,
+        "price":items.price/100,
+        "sellingPrice":items.sellingPrice/100,
+        "quantity":items.quantity,
+        "imageUrl":items.imageUrl
+      };
+      products.push(products_data);
+    });
+
+    //For Totals:
+    let totalizers :any = {"CartTotal":(data.value)/100};
+    data.totalizers.map((items:any)=>{
+      totalizers[items.id] = (items.value)/100;
+    })
+
+    const final_result = {"products":products,"totalizers":totalizers}
+    return final_result;
   }
 
   async getTransformedVtexProductDetails(productId: string): Promise<any> {
