@@ -1284,6 +1284,60 @@ export class VtexService {
     return formattedData;
   }
 
+  //Function for getting filter results for parent categories:
+  async facetsResults(parentCategory: string, color: any, size: any, minprice:any, maxprice:any, sortbyprice:any, sortbyname:any, count:Number, page:Number): Promise<any> {
+    console.log("parentcat",parentCategory);
+    let filteredData :any = {};
+    let nextIndex:any;
+    let prevIndex:any;
+    let facets_colors;
+    let facets_size;
+    let prices;
+
+    console.log("color", color, size);
+
+    if (color) {
+      facets_colors = color.replace(/,/g, "/color/");
+    }
+
+    if (size) {
+      facets_size = size.replace(/,/g, "/size/");
+    }
+
+    if(minprice && maxprice){
+      prices = true;
+    }
+
+    const endpoint = `api/io/_v/api/intelligent-search/product_search/category-1/${parentCategory}/${prices ? `price/${minprice}:${maxprice}`:""}${
+      facets_colors != undefined ? `/color/${facets_colors}` : ""
+    }/${facets_size ? `size/${facets_size}` : ""}?${sortbyprice ? `sort=price:${sortbyprice}`:""}${sortbyname ? `sort=name:${sortbyname}`:""}${count ? `count=${count}`:""}${page ? `page=${page}`:""}`;
+
+    const response = this.fetchFromEndpoint(endpoint);
+    const data = await response;
+    console.log("response is", data);
+
+    filteredData["products"] = data.products;
+    filteredData["recordsFiltered"] = data.recordsFiltered;
+
+    console.log("pageis",page,"total",data.pagination.totalPages);
+    if(page<data.pagination.count){
+      //@ts-ignore
+      nextIndex = Number(page) + 1;
+    }else{nextIndex = 0}
+
+    //@ts-ignore
+    if(page>1){
+      //@ts-ignore
+      prevIndex = page-1;
+    }else{prevIndex = 0}
+    filteredData["pagination"] = {"totalPages":data.pagination.count,"currentIndex":Number(page),"perPage":data.pagination.perPage,"next":nextIndex,"previous":prevIndex};
+
+    // const data = await response;
+
+    return filteredData;
+    // return response;
+  }
+
 }
 
 
