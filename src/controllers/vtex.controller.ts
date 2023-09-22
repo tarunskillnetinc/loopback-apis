@@ -618,4 +618,34 @@ export class VtexController {
     }
   }
 
+  //Search for product with filter for parent categories:
+  @get('vtex-facets-results/{parentCategory}')
+  @response(200, {
+    description: "Search for parent category products using facets",
+  })
+
+  async facetsResults(
+    @param.path.string('parentCategory') parentCategory: string,
+    @param.query.string('color') color?: any,
+    @param.query.string('size') size?: any,
+    @param.query.string('minprice') minprice?: any,
+    @param.query.string('maxprice') maxprice?: any,
+    @param.query.string('sortbyprice') sortbyprice?: any,
+    @param.query.string('sortbyname') sortbyname?: any,
+    @param.query.string('productsperpage') count?: any,
+    @param.query.string('page') page?: any,
+    ):Promise<any>{
+
+    try{
+      console.log("myparentcat",parentCategory);
+      const data = await this.vtexService.facetsResults(parentCategory,color,size,minprice,maxprice,sortbyprice,sortbyname,count,page);
+      const response = await data;
+      return response;
+    }
+    catch(error){
+      console.log(error);
+      throw error;
+    }
+  }
+
 }
