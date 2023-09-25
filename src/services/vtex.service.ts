@@ -652,55 +652,71 @@ export class VtexService {
 
   }
   async getVtexProductByQuery(query: any): Promise<any>{
-
     const endpoint = `/api/io/_v/api/intelligent-search/product_search/?query=${query}`;
-
     const response = this.fetchFromEndpoint(endpoint);
-
     const data = await response;
 
- 
+    //For available facets:
+    const available_facets: any[] = [];
+    const endpoint_two = `/api/io/_v/api/intelligent-search/facets?q=${query}`;
+    const facets_Data = this.fetchFromEndpoint(endpoint_two);
+    const new_facets_data = await facets_Data;
+    const my_new_data = new_facets_data.facets;
+    my_new_data.map((items: any, index: any) => {
+      available_facets.push({
+        name: items.values[0].key,
+        value: items.values,
+      });
+    });
 
     const product_arr:any[] = [];
 
     await Promise.all(
-
       data?.products.map((items:any)=>{
-
-        product_arr.push({
-
-          product_id:items?.productId,
-
-          sku_id:"",
-
-         product_name:items?.productName,
-
-        product_image:items?.items[0]?.images[0].imageUrl,
-
-        product_rating:"",
-
-        alt:"",
-
-        product_description:items?.description,
-
-        product_features:"",
-
-        product_price:items?.priceRange,
-
-        product_category: items?.categoryId,
-
-        product_category_id: items?.categoriesIds,
-
-        properties: items?.properties
-
+        //For product prices and discount prices:
+        const price_data = items.items;
+        let list_price:Number =0;
+        let sales_price:Number = 0;
+        let new_discount_percentage:any;
+        price_data.map((newItems:any)=>{
+          newItems?.sellers.map((newNewItem:any,newIndex:any)=>{
+            if(newNewItem?.commertialOffer?.discountHighlights[0]){
+              list_price = newNewItem?.commertialOffer?.ListPrice;
+              sales_price = newNewItem?.commertialOffer?.spotPrice;
+              //@ts-ignore
+              const percentageAsNumber = Number(list_price - sales_price) / Number(list_price) * 100;
+              var discount_percentage = percentageAsNumber.toFixed(2);
+              new_discount_percentage = discount_percentage;
+            }
+            else{
+              list_price = newNewItem?.commertialOffer?.ListPrice;
+              sales_price = newNewItem?.commertialOffer?.spotPrice;
+              //@ts-ignore
+              const percentageAsNumber = Number(list_price - sales_price) / Number(list_price) * 100;
+              var discount_percentage = percentageAsNumber.toFixed(2);
+              new_discount_percentage = discount_percentage;
+            }
+          });
         })
 
+        product_arr.push({
+          product_id:items?.productId,
+          sku_id:items?.productId,
+          product_name:items?.productName,
+          product_image:items?.items[0]?.images[0].imageUrl,
+          product_rating:"",
+          //@ts-ignore
+          product_price:{"sellingPrice":sales_price,"listPrice":list_price,"discount":Number(list_price-sales_price),"discountPercentage":new_discount_percentage},
+        })
       })
-
     )
 
-    return product_arr;
+    const finalData:any = {
+      productData:product_arr,
+      valuesFacets:available_facets
+    }
 
+    return finalData;
   }
 
   //For single product (Updated API)
