@@ -12,6 +12,7 @@ const config = {
   },
 };
 
+
 @lifeCycleObserver('datasource')
 export class CategoryDataSource extends juggler.DataSource
   implements LifeCycleObserver {

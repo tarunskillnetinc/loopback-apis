@@ -107,11 +107,15 @@ export class SprykerService  {
     const endpoint = `catalog-search?category=${categoryId}&include=Concrete-products`;
     const response = await this.fetchFromEndpoint(endpoint);
     const data =  response.data[0];
+    const value = response.data[0].attributes.valueFacets;
     console.log('data',data)
     const product_arr:any[] = [];
+    const valueFacets =
+    this.getvalueFacets(value);
     await Promise.all(
       data?.attributes?.abstractProducts?.map((items:any)=>{
         product_arr.push({
+        product_id:items?.abstractSku,
         sku_id:items?.abstractSku,
         product_name:items?.abstractName,
         product_image:items?.images[0].externalUrlLarge,
@@ -124,55 +128,101 @@ export class SprykerService  {
       })
     )
 
-    return product_arr;
+    return {"ProductData":product_arr,
+            "valueFacets": valueFacets};
     // return response;
   }
 
+  
+  // newonw
   async getSprykerProductDetails(abstractId: string): Promise<any> {
-    const product_arr:any[] = [];
-    const endpoint = `abstract-products/${abstractId}?include=concrete-product-image-sets%2Cconcrete-product-prices%2Cconcrete-product-availabilities%2Cproduct-labels%2Cproduct-options%2Cproduct-reviews%2Cproduct-measurement-units%2Csales-units%2Cbundled-products%2Cproduct-offers`;
+    const product_arr: any[] = [];
+    const endpoint = `abstract-products/${abstractId}?include=abstract-product-image-sets%2Cabstract-product-prices%2Cconcrete-product-availabilities%2Cproduct-labels%2Cproduct-options%2Cproduct-reviews%2Cproduct-measurement-units%2Csales-units%2Cbundled-products%2Cproduct-offers`;
     // return this.fetchFromEndpoint(endpoint);
     const response = await this.fetchFromEndpoint(endpoint);
-    await Promise.all(response.data.attributes.attributeMap.product_concrete_ids?.map(async(item:any) =>{
-      var id = item;
-        const newendpoint = `concrete-products/${id}?include=concrete-product-image-sets%2Cconcrete-product-prices%2Cconcrete-product-availabilities%2Cproduct-labels%2Cproduct-options%2Cproduct-reviews%2Cproduct-measurement-units`
-        const concreteresponse= await this.fetchFromEndpoint(newendpoint);
-        product_arr.push(
-          concreteresponse
-          )
-      }));
-      const finalresponse=product_arr
-    const transformedResponse = this.sprykertransformProductDetailPage(finalresponse);
-
-    return transformedResponse;
+    console.log("abstract",response)
+    await Promise.all(
+      response.data.attributes.attributeMap.product_concrete_ids?.map(
+        async (item: any) => {
+          var id = item;
+          const newendpoint = `concrete-products/${id}?include=concrete-product-image-sets%2Cconcrete-product-prices%2Cconcrete-product-availabilities%2Cproduct-labels%2Cproduct-options%2Cproduct-reviews%2Cproduct-measurement-units%2cproduct-offer-prices`;
+          const concreteresponse = await this.fetchFromEndpoint(newendpoint);
+          product_arr.push(concreteresponse);
+        }
+      )
+    );
+    const finalresponse = product_arr;
+    // console.log("finalresponse",finalresponse)
+    const transformedResponse =
+      this.sprykertransformProductDetailPage(finalresponse);
+    // return finalresponse
+    return {
+    "productId":response.data.id,
+    "name":response.data.attributes.name,
+    "available":" ",
+    "description":response.data.attributes.description,
+    "skus": transformedResponse
+  };
     // return response;
   }
+
 
   private sprykertransformProductDetailPage(response: any): any {
     var price: any[] = [];
     var availability: any[] = [];
     var images: any[] = [];
-    const data=response.map((item:any) =>{
-    console.log("transform",response)
-  
-    item?.included?.map(async (item: any) => {
-      if (item?.type === 'concrete-product-prices') {
-        price.push(item);
-      } else if (item?.type == 'concrete-product-availabilities') {
-        availability.push(item);
-      } else if (item?.type == 'concrete-product-image-sets') {
-        images.push(item);
+    response.map((item: any) => {
+      item?.included?.map(async (item: any) => {
+        if (item?.type === "concrete-product-prices") {
+          price.push(item);
+        } else if (item?.type == "concrete-product-availabilities") {
+          availability.push(item);
+        } else if (item?.type == "concrete-product-image-sets") {
+          images.push(item);
+        }
+      });
+    });
+    const dataresponse: any[] = [];
+    const skuresponse: any[] = [];
+    response.map(async (item: any, index: any) => {
+      if (
+        item.data.id === price[index].id &&
+        item.data.id === availability[index].id &&
+        item.data.id === images[index].id
+      ) {
+        dataresponse.push({
+          ...item?.data,
+          price: price[index],
+          image: images[index],
+          availability: availability[index],
+        });
       }
     });
-  });
-  console.log('priceeeee',price);
-  console.log('imageseeee',images);
-  console.log('avail',availability);
-  // const transformedSuggestions = data[0]?.attributes?.map((item: any) => {
-    return response
-  // }) || [];
 
-  // return transformedSuggestions;
+    console.log("dataresponse12345567", dataresponse);
+    dataresponse.map(async (item: any) => {
+      skuresponse.push({
+        sku: item?.attributes?.sku,
+        skuname: item?.attributes?.name,
+        dimensions: " ",
+        available: item?.availability?.attributes?.availability,
+        availablequantity: item?.availability?.attributes?.quantity,
+        listPriceFormated: "$0.00",
+        listPrice: item.price.length,
+        bestPriceFormated: item?.price?.attributes?.prices[0].currency.symbol+ item?.price?.attributes?.price,
+        disocountPercent: 23,
+        bestPrice: item?.price?.attributes?.price,
+        spotPrice: 2684,
+        images: {
+          image1:
+            // "https://skillnet.vteximg.com.br/arquivos/ids/156198-292-292/x8u1i946.png?v=638294985271830000",
+            item?.image?.attributes?.imageSets[0]?.images[0]?.externalUrlSmall,
+        },
+        measures: " ",
+        unitMultiplier: " ",
+      });
+    });
+    return  skuresponse ;
   }
 
   async getSprykerProductBySubCategory(subCategoryId: any): Promise<any>{
@@ -203,6 +253,7 @@ export class SprykerService  {
     return product_arr;
     // return response;
   }
+
 
   async getSprykerProductByQuery(query: any): Promise<any>{
     const endpoint = `catalog-search-suggestions?q=${query}`;
@@ -429,6 +480,20 @@ export class SprykerService  {
   }
   
 
-
+  private getvalueFacets(response: any): any {
+    const value_arr:any[] = [];
+  console.log("aafreeee",response);
+    response?.map((item: any) => {
+      value_arr.push({
+         name: item.name,
+         value: item.values.map((valueObj:any) => {
+          // Create a new object without the "doc_count" property
+          const { doc_count, ...newValueObj } = valueObj;
+          return newValueObj;
+        }),
+    });
+  });
+  return value_arr;
 
 } 
+}

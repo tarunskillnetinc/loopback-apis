@@ -6,4 +6,5 @@ tslib_1.__exportStar(require("./hello.controller"), exports);
 tslib_1.__exportStar(require("./category.controller"), exports);
 tslib_1.__exportStar(require("./vtex.controller"), exports);
 tslib_1.__exportStar(require("./spryker.controller"), exports);
+tslib_1.__exportStar(require("./commercecloud.controller"), exports);
 //# sourceMappingURL=index.js.map
