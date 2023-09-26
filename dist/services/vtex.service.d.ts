@@ -54,4 +54,5 @@ export declare class VtexService {
     salesForceProduct(pid: any): Promise<any>;
     searchByFacets(category: string, color: any, size: any, minprice: any, maxprice: any, sortbyprice: any, sortbyname: any, count: Number, page: Number): Promise<any>;
     getUserProfileDetails(email: string): Promise<any>;
+    facetsResults(parentCategory: string, color: any, size: any, minprice: any, maxprice: any, sortbyprice: any, sortbyname: any, count: Number, page: Number): Promise<any>;
 }

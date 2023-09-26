@@ -474,25 +474,62 @@ let VtexService = exports.VtexService = class VtexService {
         const endpoint = `/api/io/_v/api/intelligent-search/product_search/?query=${query}`;
         const response = this.fetchFromEndpoint(endpoint);
         const data = await response;
+        //For available facets:
+        const available_facets = [];
+        const endpoint_two = `/api/io/_v/api/intelligent-search/facets?q=${query}`;
+        const facets_Data = this.fetchFromEndpoint(endpoint_two);
+        const new_facets_data = await facets_Data;
+        const my_new_data = new_facets_data.facets;
+        my_new_data.map((items, index) => {
+            available_facets.push({
+                name: items.values[0].key,
+                value: items.values,
+            });
+        });
         const product_arr = [];
         await Promise.all(data === null || data === void 0 ? void 0 : data.products.map((items) => {
             var _a;
+            //For product prices and discount prices:
+            const price_data = items.items;
+            let list_price = 0;
+            let sales_price = 0;
+            let new_discount_percentage;
+            price_data.map((newItems) => {
+                newItems === null || newItems === void 0 ? void 0 : newItems.sellers.map((newNewItem, newIndex) => {
+                    var _a, _b, _c, _d, _e;
+                    if ((_a = newNewItem === null || newNewItem === void 0 ? void 0 : newNewItem.commertialOffer) === null || _a === void 0 ? void 0 : _a.discountHighlights[0]) {
+                        list_price = (_b = newNewItem === null || newNewItem === void 0 ? void 0 : newNewItem.commertialOffer) === null || _b === void 0 ? void 0 : _b.ListPrice;
+                        sales_price = (_c = newNewItem === null || newNewItem === void 0 ? void 0 : newNewItem.commertialOffer) === null || _c === void 0 ? void 0 : _c.spotPrice;
+                        //@ts-ignore
+                        const percentageAsNumber = Number(list_price - sales_price) / Number(list_price) * 100;
+                        var discount_percentage = percentageAsNumber.toFixed(2);
+                        new_discount_percentage = discount_percentage;
+                    }
+                    else {
+                        list_price = (_d = newNewItem === null || newNewItem === void 0 ? void 0 : newNewItem.commertialOffer) === null || _d === void 0 ? void 0 : _d.ListPrice;
+                        sales_price = (_e = newNewItem === null || newNewItem === void 0 ? void 0 : newNewItem.commertialOffer) === null || _e === void 0 ? void 0 : _e.spotPrice;
+                        //@ts-ignore
+                        const percentageAsNumber = Number(list_price - sales_price) / Number(list_price) * 100;
+                        var discount_percentage = percentageAsNumber.toFixed(2);
+                        new_discount_percentage = discount_percentage;
+                    }
+                });
+            });
             product_arr.push({
                 product_id: items === null || items === void 0 ? void 0 : items.productId,
-                sku_id: "",
+                sku_id: items === null || items === void 0 ? void 0 : items.productId,
                 product_name: items === null || items === void 0 ? void 0 : items.productName,
                 product_image: (_a = items === null || items === void 0 ? void 0 : items.items[0]) === null || _a === void 0 ? void 0 : _a.images[0].imageUrl,
                 product_rating: "",
-                alt: "",
-                product_description: items === null || items === void 0 ? void 0 : items.description,
-                product_features: "",
-                product_price: items === null || items === void 0 ? void 0 : items.priceRange,
-                product_category: items === null || items === void 0 ? void 0 : items.categoryId,
-                product_category_id: items === null || items === void 0 ? void 0 : items.categoriesIds,
-                properties: items === null || items === void 0 ? void 0 : items.properties
+                //@ts-ignore
+                product_price: { "sellingPrice": sales_price, "listPrice": list_price, "discount": Number(list_price - sales_price), "discountPercentage": new_discount_percentage },
             });
         }));
-        return product_arr;
+        const finalData = {
+            productData: product_arr,
+            valuesFacets: available_facets
+        };
+        return finalData;
     }
     //For single product (Updated API)
     async getAProductById(pid) {
@@ -961,6 +998,52 @@ let VtexService = exports.VtexService = class VtexService {
             }
         };
         return formattedData;
+    }
+    //Function for getting filter results for parent categories:
+    async facetsResults(parentCategory, color, size, minprice, maxprice, sortbyprice, sortbyname, count, page) {
+        console.log("parentcat", parentCategory);
+        let filteredData = {};
+        let nextIndex;
+        let prevIndex;
+        let facets_colors;
+        let facets_size;
+        let prices;
+        console.log("color", color, size);
+        if (color) {
+            facets_colors = color.replace(/,/g, "/color/");
+        }
+        if (size) {
+            facets_size = size.replace(/,/g, "/size/");
+        }
+        if (minprice && maxprice) {
+            prices = true;
+        }
+        const endpoint = `api/io/_v/api/intelligent-search/product_search/category-1/${parentCategory}/${prices ? `price/${minprice}:${maxprice}` : ""}${facets_colors != undefined ? `/color/${facets_colors}` : ""}/${facets_size ? `size/${facets_size}` : ""}?${sortbyprice ? `sort=price:${sortbyprice}` : ""}${sortbyname ? `sort=name:${sortbyname}` : ""}${count ? `count=${count}` : ""}${page ? `page=${page}` : ""}`;
+        const response = this.fetchFromEndpoint(endpoint);
+        const data = await response;
+        console.log("response is", data);
+        filteredData["products"] = data.products;
+        filteredData["recordsFiltered"] = data.recordsFiltered;
+        console.log("pageis", page, "total", data.pagination.totalPages);
+        if (page < data.pagination.count) {
+            //@ts-ignore
+            nextIndex = Number(page) + 1;
+        }
+        else {
+            nextIndex = 0;
+        }
+        //@ts-ignore
+        if (page > 1) {
+            //@ts-ignore
+            prevIndex = page - 1;
+        }
+        else {
+            prevIndex = 0;
+        }
+        filteredData["pagination"] = { "totalPages": data.pagination.count, "currentIndex": Number(page), "perPage": data.pagination.perPage, "next": nextIndex, "previous": prevIndex };
+        // const data = await response;
+        return filteredData;
+        // return response;
     }
 };
 exports.VtexService = VtexService = tslib_1.__decorate([
