@@ -251,31 +251,25 @@ export class VtexController {
       }
 
     }
+
     @get('/vtex-plp-by-subcategory/{subCategoryId}')
-
     @response(200,{
-
       description: 'Get VTEX Product List by intelegent search',
-
     })
-
-    async getVtexProductBySubCategory(@param.path.string('subCategoryId') subCategoryId: any): Promise<any>{
-
+    async getVtexProductBySubCategory(
+      @param.path.string('subCategoryId') subCategoryId: any,
+      @param.query.string('productsPerPage') count?: any,
+      @param.query.string('page') page?: any,
+      ): Promise<any>{
       try{
-
-        const getVtexProducts = await this.vtexService.getVtexProductBySubCategory(subCategoryId);
-
+        const getVtexProducts = await this.vtexService.getVtexProductBySubCategory(subCategoryId,count,page);
         return getVtexProducts;
-
       }
-
       catch(error){
-
         throw error;
-
       }
-
     }
+
     @get('/vtex-plp-by-query/{query}')
 
     @response(200,{
