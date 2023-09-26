@@ -518,9 +518,9 @@ export class VtexService {
     return emptyarray;
   }
 
-  async getVtexProductByCategory(categoryId: any): Promise<any>{
+  async getVtexProductByCategory(categoryId: any, count:any, page: any): Promise<any>{
 
-    const endpoint = `/api/io/_v/api/intelligent-search/product_search/category-1/${categoryId}`;
+    const endpoint = `/api/io/_v/api/intelligent-search/product_search/category-1/${categoryId}?${count!==undefined ? `count=${count}`: 'count='}&${page!==undefined ? `page=${page}`: 'page='}`;
 
     const response = this.fetchFromEndpoint(endpoint);
 
@@ -591,9 +591,32 @@ export class VtexService {
 
     )
 
+    let nextIndex:any;
+    let prevIndex:any;
+
+    if(page<data.pagination.count){
+      //@ts-ignore
+      nextIndex = Number(page) + 1;
+    }else{nextIndex = 0}
+
+    //@ts-ignore
+    if(page>1){
+      //@ts-ignore
+      prevIndex = page-1;
+    }else{prevIndex = 0}
+
+    const availablePagination:any ={
+      "totalPages": data.pagination.count,
+      "currentIndex": page,
+      "perPage": data.pagination.perPage,
+      "next":nextIndex,
+      "previous":prevIndex
+    }
+
     const finalData:any = {
       productData:product_arr,
-      valuesFacets:available_facets
+      valuesFacets:available_facets,
+      pagination:availablePagination
     }
 
     return finalData;

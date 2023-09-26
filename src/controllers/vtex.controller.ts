@@ -230,11 +230,15 @@ export class VtexController {
 
     })
 
-    async getVtexProductByCategory(@param.path.string('categoryId') categoryId: any): Promise<any>{
+    async getVtexProductByCategory(
+      @param.path.string('categoryId') categoryId: any,
+      @param.query.string('productsPerPage') count?: any,
+      @param.query.string('page') page?: any,
+      ): Promise<any>{
 
       try{
 
-        const getVtexProducts = await this.vtexService.getVtexProductByCategory(categoryId);
+        const getVtexProducts = await this.vtexService.getVtexProductByCategory(categoryId, count, page);
 
         return getVtexProducts;
 
