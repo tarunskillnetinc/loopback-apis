@@ -385,8 +385,8 @@ let VtexService = exports.VtexService = class VtexService {
         }));
         return emptyarray;
     }
-    async getVtexProductByCategory(categoryId) {
-        const endpoint = `/api/io/_v/api/intelligent-search/product_search/category-1/${categoryId}`;
+    async getVtexProductByCategory(categoryId, count, page) {
+        const endpoint = `/api/io/_v/api/intelligent-search/product_search/category-1/${categoryId}?${count !== undefined ? `count=${count}` : 'count='}&${page !== undefined ? `page=${page}` : 'page='}`;
         const response = this.fetchFromEndpoint(endpoint);
         const data = await response;
         const available_facets = [];
@@ -439,39 +439,128 @@ let VtexService = exports.VtexService = class VtexService {
                 product_price: { "sellingPrice": sales_price, "listPrice": list_price, "discount": Number(list_price - sales_price), "discountPercentage": new_discount_percentage },
             });
         }));
+        let nextIndex;
+        let prevIndex;
+        if (page < data.pagination.count) {
+            //@ts-ignore
+            nextIndex = Number(page) + 1;
+        }
+        else {
+            nextIndex = 0;
+        }
+        //@ts-ignore
+        if (page > 1) {
+            //@ts-ignore
+            prevIndex = page - 1;
+        }
+        else {
+            prevIndex = 0;
+        }
+        const availablePagination = {
+            "totalPages": data.pagination.count,
+            "currentIndex": page,
+            "perPage": data.pagination.perPage,
+            "next": nextIndex,
+            "previous": prevIndex
+        };
         const finalData = {
             productData: product_arr,
-            valuesFacets: available_facets
+            valuesFacets: available_facets,
+            pagination: availablePagination
         };
         return finalData;
         // return product_arr;
     }
-    async getVtexProductBySubCategory(subCategoryId) {
-        const endpoint = `/api/io/_v/api/intelligent-search/product_search/category-2/${subCategoryId}`;
+    async getVtexProductBySubCategory(subCategoryId, count, page) {
+        const endpoint = `/api/io/_v/api/intelligent-search/product_search/category-2/${subCategoryId}?${count !== undefined ? `count=${count}` : 'count='}&${page !== undefined ? `page=${page}` : 'page='}`;
         const response = this.fetchFromEndpoint(endpoint);
         const data = await response;
         const product_arr = [];
+        //For available facets:
+        const available_facets = [];
+        const endpoint_two = `api/io/_v/api/intelligent-search/facets/category-2/${subCategoryId}?hideUnavailableItems=false`;
+        const facets_Data = this.fetchFromEndpoint(endpoint_two);
+        const new_facets_data = await facets_Data;
+        const my_new_data = new_facets_data.facets;
+        my_new_data.map((items, index) => {
+            available_facets.push({
+                name: items.values[0].key,
+                value: items.values,
+            });
+        });
         await Promise.all(data === null || data === void 0 ? void 0 : data.products.map((items) => {
             var _a;
+            //For product prices and discount prices:
+            const price_data = items.items;
+            let list_price = 0;
+            let sales_price = 0;
+            let new_discount_percentage;
+            price_data.map((newItems) => {
+                newItems === null || newItems === void 0 ? void 0 : newItems.sellers.map((newNewItem, newIndex) => {
+                    var _a, _b, _c, _d, _e;
+                    if ((_a = newNewItem === null || newNewItem === void 0 ? void 0 : newNewItem.commertialOffer) === null || _a === void 0 ? void 0 : _a.discountHighlights[0]) {
+                        list_price = (_b = newNewItem === null || newNewItem === void 0 ? void 0 : newNewItem.commertialOffer) === null || _b === void 0 ? void 0 : _b.ListPrice;
+                        sales_price = (_c = newNewItem === null || newNewItem === void 0 ? void 0 : newNewItem.commertialOffer) === null || _c === void 0 ? void 0 : _c.spotPrice;
+                        //@ts-ignore
+                        const percentageAsNumber = Number(list_price - sales_price) / Number(list_price) * 100;
+                        var discount_percentage = percentageAsNumber.toFixed(2);
+                        new_discount_percentage = discount_percentage;
+                    }
+                    else {
+                        list_price = (_d = newNewItem === null || newNewItem === void 0 ? void 0 : newNewItem.commertialOffer) === null || _d === void 0 ? void 0 : _d.ListPrice;
+                        sales_price = (_e = newNewItem === null || newNewItem === void 0 ? void 0 : newNewItem.commertialOffer) === null || _e === void 0 ? void 0 : _e.spotPrice;
+                        //@ts-ignore
+                        const percentageAsNumber = Number(list_price - sales_price) / Number(list_price) * 100;
+                        var discount_percentage = percentageAsNumber.toFixed(2);
+                        new_discount_percentage = discount_percentage;
+                    }
+                });
+            });
             product_arr.push({
                 product_id: items === null || items === void 0 ? void 0 : items.productId,
-                sku_id: "",
+                sku_id: items === null || items === void 0 ? void 0 : items.productId,
                 product_name: items === null || items === void 0 ? void 0 : items.productName,
                 product_image: (_a = items === null || items === void 0 ? void 0 : items.items[0]) === null || _a === void 0 ? void 0 : _a.images[0].imageUrl,
                 product_rating: "",
-                alt: "",
-                product_description: items === null || items === void 0 ? void 0 : items.description,
-                product_features: "",
                 product_price: items === null || items === void 0 ? void 0 : items.priceRange,
-                product_category: items === null || items === void 0 ? void 0 : items.categoryId,
-                product_category_id: items === null || items === void 0 ? void 0 : items.categoriesIds,
-                properties: items === null || items === void 0 ? void 0 : items.properties
+                //@ts-ignore
+                product_price: { "sellingPrice": sales_price, "listPrice": list_price, "discount": Number(list_price - sales_price), "discountPercentage": new_discount_percentage },
             });
         }));
-        return product_arr;
+        //For Pagination:
+        let nextIndex;
+        let prevIndex;
+        if (page < data.pagination.count) {
+            //@ts-ignore
+            nextIndex = Number(page) + 1;
+        }
+        else {
+            nextIndex = 0;
+        }
+        //@ts-ignore
+        if (page > 1) {
+            //@ts-ignore
+            prevIndex = page - 1;
+        }
+        else {
+            prevIndex = 0;
+        }
+        const availablePagination = {
+            "totalPages": data.pagination.count,
+            "currentIndex": page,
+            "perPage": data.pagination.perPage,
+            "next": nextIndex,
+            "previous": prevIndex
+        };
+        const finalData = {
+            productData: product_arr,
+            valuesFacets: available_facets,
+            pagination: availablePagination
+        };
+        return finalData;
     }
-    async getVtexProductByQuery(query) {
-        const endpoint = `/api/io/_v/api/intelligent-search/product_search/?query=${query}`;
+    async getVtexProductByQuery(query, count, page) {
+        const endpoint = `/api/io/_v/api/intelligent-search/product_search/?query=${query}&${count !== undefined ? `count=${count}` : 'count='}&${page !== undefined ? `page=${page}` : 'page='}`;
         const response = this.fetchFromEndpoint(endpoint);
         const data = await response;
         //For available facets:
@@ -525,9 +614,35 @@ let VtexService = exports.VtexService = class VtexService {
                 product_price: { "sellingPrice": sales_price, "listPrice": list_price, "discount": Number(list_price - sales_price), "discountPercentage": new_discount_percentage },
             });
         }));
+        //Pagination:
+        let nextIndex;
+        let prevIndex;
+        if (page < data.pagination.count) {
+            //@ts-ignore
+            nextIndex = Number(page) + 1;
+        }
+        else {
+            nextIndex = 0;
+        }
+        //@ts-ignore
+        if (page > 1) {
+            //@ts-ignore
+            prevIndex = page - 1;
+        }
+        else {
+            prevIndex = 0;
+        }
+        const availablePagination = {
+            "totalPages": data.pagination.count,
+            "currentIndex": page,
+            "perPage": data.pagination.perPage,
+            "next": nextIndex,
+            "previous": prevIndex
+        };
         const finalData = {
             productData: product_arr,
-            valuesFacets: available_facets
+            valuesFacets: available_facets,
+            pagination: availablePagination
         };
         return finalData;
     }

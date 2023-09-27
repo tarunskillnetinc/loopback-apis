@@ -40,4 +40,17 @@ export class CommercecloudController {
 
   }
 
+  @get('/salesforce-pdp/{productId}')
+  @response(200, {
+    description: 'Get Salesforce product details from the external API',
+  })
+  async salesForceProduct(@param.path.string('productId') productId: string): Promise<any> {
+    try {
+      const salesforceProductDetails = await this.sprykerService.getsalesForceProductById(productId);
+      console.log('salesforceProductDetails', salesforceProductDetails);
+      return salesforceProductDetails;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

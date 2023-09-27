@@ -311,7 +311,7 @@ export class SprykerService  {
   }
 
   async getSprykerCartDetails(cartId: any,authorizationHeader:any): Promise<any> {
-    const endpoint = `/carts/${cartId}`;
+    const endpoint = `/carts/${cartId}?include=items`;
     return this.cartFetchFromEndpoint(endpoint,authorizationHeader);
   }
 
@@ -540,4 +540,6 @@ async getSprykerUsersData(customerId: any, authorization: any): Promise<any> {
   console.log("object", formattedData);
   return formattedData;
 }
+
+
 }

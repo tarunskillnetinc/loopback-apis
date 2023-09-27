@@ -16,9 +16,9 @@ export declare class VtexController {
     getTopSellingProductsrating(): Promise<any>;
     getVtexPlp(categoryId: string): Promise<any>;
     getVtexCategoryTreeloopback(): Promise<any>;
-    getVtexProductByCategory(categoryId: any): Promise<any>;
-    getVtexProductBySubCategory(subCategoryId: any): Promise<any>;
-    getVtexProductByQuery(query: any): Promise<any>;
+    getVtexProductByCategory(categoryId: any, count?: any, page?: any): Promise<any>;
+    getVtexProductBySubCategory(subCategoryId: any, count?: any, page?: any): Promise<any>;
+    getVtexProductByQuery(query: any, count?: any, page?: any): Promise<any>;
     getAProductById(pid: string): Promise<any>;
     getOrCreateCartId(): Promise<any>;
     login(requestBody: {
