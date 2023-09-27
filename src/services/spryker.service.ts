@@ -19,6 +19,7 @@ export class SprykerService  {
       const response = await axios.get(`${this.dataSource.settings.baseURL}/${endpoint}`);
       return response.data;
     } catch (error) {
+      console.log(error);
       throw error;
     }
   }
@@ -111,7 +112,7 @@ export class SprykerService  {
     console.log('data',data)
     const product_arr:any[] = [];
     const valueFacets =
-    this.getvalueFacets(value);
+ this.getvalueFacets(value);
     await Promise.all(
       data?.attributes?.abstractProducts?.map((items:any)=>{
         product_arr.push({
@@ -310,7 +311,7 @@ export class SprykerService  {
   }
 
   async getSprykerCartDetails(cartId: any,authorizationHeader:any): Promise<any> {
-    const endpoint = `/carts/${cartId}`;
+    const endpoint = `/carts/${cartId}?include=items`;
     return this.cartFetchFromEndpoint(endpoint,authorizationHeader);
   }
 
@@ -496,4 +497,49 @@ export class SprykerService  {
   return value_arr;
 
 } 
+
+async getSprykerUsersData(customerId: any, authorization: any): Promise<any> {
+  const endpoint = `/customers/${customerId}/addresses`;
+  const response = this.cartFetchFromEndpoint(endpoint, authorization);
+  const apiResponse = await response;
+  const endpoint2 = `/customers`
+  const newData = await this.cartFetchFromEndpoint(endpoint2,authorization)
+  const EmailData = newData.data[0] || {};
+  console.log('newData',newData);
+  // Extract user profile data
+
+  const userProfile = {
+    // email: apiResponse.data[0].attributes.email || "soniaWagner@gmail.com",
+    email: EmailData.attributes.email || apiResponse.data[0].attributes.email || "soniaWagner@gmail.com",
+    firstName: apiResponse.data[0].attributes.firstName,
+    lastName: apiResponse.data[0].attributes.lastName,
+    phone: apiResponse.data[0].attributes.phone,
+    gender: null, // You can set this value as needed
+    dateOfBirth: null, // You can set this value as needed
+  };
+  // Extract available addresses data
+  const availableAddresses = apiResponse.data.map((address:any) => ({
+    addressType: address.attributes.addressType || "",
+    receiverName: address.attributes.receiverName || "",
+    addressId: address.id || "",
+    postalCode: address.attributes.zipCode || "",
+    city: address.attributes.city || "",
+    state: address.attributes.address3 || "", // Assuming "address3" should be used for the state
+    country: address.attributes.country || "",
+    street: `${address.attributes.address1 || ""} ${address.attributes.address2 || ""}`,
+    number: address.attributes.address2 || "N/A",
+    neighborhood: null, // You can set this value as needed
+    complement: null, // You can set this value as needed
+
+  }));
+  // Create the final formatted response
+  const formattedData = {
+    userProfile,
+    availableAddresses,
+  };
+  console.log("object", formattedData);
+  return formattedData;
+}
+
+
 }

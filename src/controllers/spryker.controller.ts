@@ -271,7 +271,24 @@ export class SprykerController {
         throw error;
       }
      }
+     @get('/demo-spryker-usersDetail/customers/{customerId}/addresses')
+     @response(200, {
+       description: 'Get VTEX user details from the external API',
+     })
+     async getSprykerUsersData(
+       @param.path.string('customerId') customerId: any,
+       @param.header.string('bearer') bearer: string,
+       ): Promise<any> {
+       try {
+         const header = this.request.headers.bearer;
+         console.log("header",header)
+         const sprykerUserDetail = await this.sprykerService.getSprykerUsersData(customerId,header);
+         console.log("sprykerUserDetail",sprykerUserDetail)
+         return sprykerUserDetail;
+       } catch (error) {
+         throw error;
+       }
+     }
 
-     
-
+    
 }

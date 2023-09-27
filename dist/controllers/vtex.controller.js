@@ -166,27 +166,27 @@ let VtexController = exports.VtexController = class VtexController {
     //     throw error;
     //   }
     // }
-    async getVtexProductByCategory(categoryId) {
+    async getVtexProductByCategory(categoryId, count, page) {
         try {
-            const getVtexProducts = await this.vtexService.getVtexProductByCategory(categoryId);
+            const getVtexProducts = await this.vtexService.getVtexProductByCategory(categoryId, count, page);
             return getVtexProducts;
         }
         catch (error) {
             throw error;
         }
     }
-    async getVtexProductBySubCategory(subCategoryId) {
+    async getVtexProductBySubCategory(subCategoryId, count, page) {
         try {
-            const getVtexProducts = await this.vtexService.getVtexProductBySubCategory(subCategoryId);
+            const getVtexProducts = await this.vtexService.getVtexProductBySubCategory(subCategoryId, count, page);
             return getVtexProducts;
         }
         catch (error) {
             throw error;
         }
     }
-    async getVtexProductByQuery(query) {
+    async getVtexProductByQuery(query, count, page) {
         try {
-            const getVtexProducts = await this.vtexService.getVtexProductByQuery(query);
+            const getVtexProducts = await this.vtexService.getVtexProductByQuery(query, count, page);
             return getVtexProducts;
         }
         catch (error) {
@@ -403,6 +403,19 @@ let VtexController = exports.VtexController = class VtexController {
             throw error;
         }
     }
+    //Search for product with filter for parent categories:
+    async facetsResults(parentCategory, color, size, minprice, maxprice, sortbyprice, sortbyname, count, page) {
+        try {
+            console.log("myparentcat", parentCategory);
+            const data = await this.vtexService.facetsResults(parentCategory, color, size, minprice, maxprice, sortbyprice, sortbyname, count, page);
+            const response = await data;
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
 };
 tslib_1.__decorate([
     (0, rest_1.get)('/get-vtex-category-tree'),
@@ -515,8 +528,10 @@ tslib_1.__decorate([
         description: 'Get VTEX Product List by intelegent search',
     }),
     tslib_1.__param(0, rest_1.param.path.string('categoryId')),
+    tslib_1.__param(1, rest_1.param.query.string('productsPerPage')),
+    tslib_1.__param(2, rest_1.param.query.string('page')),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Object]),
+    tslib_1.__metadata("design:paramtypes", [Object, Object, Object]),
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getVtexProductByCategory", null);
 tslib_1.__decorate([
@@ -525,8 +540,10 @@ tslib_1.__decorate([
         description: 'Get VTEX Product List by intelegent search',
     }),
     tslib_1.__param(0, rest_1.param.path.string('subCategoryId')),
+    tslib_1.__param(1, rest_1.param.query.string('productsPerPage')),
+    tslib_1.__param(2, rest_1.param.query.string('page')),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Object]),
+    tslib_1.__metadata("design:paramtypes", [Object, Object, Object]),
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getVtexProductBySubCategory", null);
 tslib_1.__decorate([
@@ -535,8 +552,10 @@ tslib_1.__decorate([
         description: 'Get VTEX Product List by intelegent search',
     }),
     tslib_1.__param(0, rest_1.param.path.string('query')),
+    tslib_1.__param(1, rest_1.param.query.string('productsPerPage')),
+    tslib_1.__param(2, rest_1.param.query.string('page')),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Object]),
+    tslib_1.__metadata("design:paramtypes", [Object, Object, Object]),
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getVtexProductByQuery", null);
 tslib_1.__decorate([
@@ -673,6 +692,24 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:paramtypes", [String]),
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getUserProfileDetails", null);
+tslib_1.__decorate([
+    (0, rest_1.get)('vtex-facets-results/{parentCategory}'),
+    (0, rest_1.response)(200, {
+        description: "Search for parent category products using facets",
+    }),
+    tslib_1.__param(0, rest_1.param.path.string('parentCategory')),
+    tslib_1.__param(1, rest_1.param.query.string('color')),
+    tslib_1.__param(2, rest_1.param.query.string('size')),
+    tslib_1.__param(3, rest_1.param.query.string('minprice')),
+    tslib_1.__param(4, rest_1.param.query.string('maxprice')),
+    tslib_1.__param(5, rest_1.param.query.string('sortbyprice')),
+    tslib_1.__param(6, rest_1.param.query.string('sortbyname')),
+    tslib_1.__param(7, rest_1.param.query.string('productsperpage')),
+    tslib_1.__param(8, rest_1.param.query.string('page')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String, Object, Object, Object, Object, Object, Object, Object, Object]),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "facetsResults", null);
 exports.VtexController = VtexController = tslib_1.__decorate([
     tslib_1.__param(0, (0, core_1.inject)('services.VtexService')),
     tslib_1.__param(1, (0, core_1.inject)(rest_1.RestBindings.Http.REQUEST)),
