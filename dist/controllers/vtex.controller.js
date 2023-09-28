@@ -203,9 +203,9 @@ let VtexController = exports.VtexController = class VtexController {
             throw error;
         }
     }
-    async getOrCreateCartId() {
+    async getOrCreateCartId(token) {
         try {
-            const data = await this.vtexService.getOrCreateCartId();
+            const data = await this.vtexService.getOrCreateCartId(token);
             const response = await data;
             return response;
         }
@@ -569,12 +569,13 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getAProductById", null);
 tslib_1.__decorate([
-    (0, rest_1.get)('vtex-get-or-create-cart'),
+    (0, rest_1.post)('vtex-get-or-create-cart'),
     (0, rest_1.response)(200, {
         description: "Get the current cart or create a new one if it doesn't exist yet.",
     }),
+    tslib_1.__param(0, rest_1.param.header.string('token')),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", []),
+    tslib_1.__metadata("design:paramtypes", [String]),
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getOrCreateCartId", null);
 tslib_1.__decorate([

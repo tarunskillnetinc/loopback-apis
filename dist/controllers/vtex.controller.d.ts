@@ -20,7 +20,7 @@ export declare class VtexController {
     getVtexProductBySubCategory(subCategoryId: any, count?: any, page?: any): Promise<any>;
     getVtexProductByQuery(query: any, count?: any, page?: any): Promise<any>;
     getAProductById(pid: string): Promise<any>;
-    getOrCreateCartId(): Promise<any>;
+    getOrCreateCartId(token: string): Promise<any>;
     login(requestBody: {
         email: string;
         password: string;
