@@ -53,4 +53,37 @@ export class CommercecloudController {
       throw error;
     }
   }
+  @get('/salesforce-category-tree')
+  @response(200, {
+    description: 'Get Salesforce product details from the external API',
+  })
+  async salesForceCategory(): Promise<any> {
+    try {
+      const salesforceProductDetails = await this.sprykerService.getSalesForceCategory();
+      console.log('salesforceProductDetails', salesforceProductDetails);
+      return salesforceProductDetails;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @post('/cloudcommerce-add-items/{cartId}')
+  @response(200,{
+    description: 'Add Products in Cart',
+  })
+  async addItems(
+    @param.path.string('cartId') cartId: any,
+    @param.header.string('bearer') bearer: string,
+    @requestBody() requestBody:{orderItems:[]},
+  ): Promise<any>{
+    try{
+      const header = this.request.headers.bearer;
+      const items = await this.sprykerService.addItems(cartId, requestBody, header);
+      return items;
+    }
+    catch(error){
+      throw error;
+    }
+  }
+
 }

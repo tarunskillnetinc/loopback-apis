@@ -28,7 +28,7 @@ export declare class VtexService {
     getVtexProductBySubCategory(subCategoryId: any, count: any, page: any): Promise<any>;
     getVtexProductByQuery(query: any, count: any, page: any): Promise<any>;
     getAProductById(pid: string): Promise<any>;
-    getOrCreateCartId(): Promise<any>;
+    getOrCreateCartId(token: any): Promise<any>;
     private transformProductDetails;
     private vtextransformCategoryTreeloopback;
     private CategroychildrenDataloopback;

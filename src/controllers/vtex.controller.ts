@@ -303,13 +303,13 @@ export class VtexController {
       }
     }
 
-    @get('vtex-get-or-create-cart')
+    @post('vtex-get-or-create-cart')
     @response(200, {
       description: "Get the current cart or create a new one if it doesn't exist yet.",
     })
-    async getOrCreateCartId():Promise<any>{
+    async getOrCreateCartId(@param.header.string('token') token: string):Promise<any>{
       try{
-        const data = await this.vtexService.getOrCreateCartId()
+        const data = await this.vtexService.getOrCreateCartId(token)
         const response = await data;
         return response;
       }

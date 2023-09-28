@@ -817,10 +817,14 @@ export class VtexService {
     return data;
   }
 
-  async getOrCreateCartId(): Promise<any> {
-    const endpoint = `api/checkout/pub/orderForm`;
-    const response = this.fetchFromEndpoint(endpoint);
-    const data = await response;
+  async getOrCreateCartId(token:any): Promise<any> {
+    const endpoint = `https://skillnet.vtexcommercestable.com.br/api/checkout/pub/orderForm?forceNewCart=true`;
+    const response = await axios.post(endpoint,null,{
+      headers:{
+        Cookie: `${token}`,
+      }
+    });
+    const data = await response.data
     return data;
   }
 
