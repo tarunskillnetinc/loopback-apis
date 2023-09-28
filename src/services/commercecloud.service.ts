@@ -112,5 +112,22 @@ private async getVariationData(response: any): Promise<any[]> {
   );
   return skuData;
 }
-  
+
+  async addItems(cartId: any, requestBody: any, header: any): Promise<any>{
+    try{
+      const headers = {
+        "Authorization":`Bearer ${header}`
+      }
+
+      const endpoint = `https://zzkd-003.dx.commercecloud.salesforce.com/s/Ref-VinodCSQT/dw/shop/v23_2/baskets/${cartId}/items?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+
+      const response = await axios.post(endpoint,[requestBody],{headers});
+      const data = await response;
+      const response_data = data.data
+      return response_data;
+    }
+    catch(error){
+      console.log("error is",error);
+    }
+  }
 }
