@@ -364,4 +364,25 @@ export class CommercecloudService {
       throw error;
     }
   }
+
+  async removeItem(cart_Id:any, requestBody:any, bearer:any):Promise<any>{
+    const endpoint = `/s/Ref-VinodCSQT/dw/shop/v23_2/baskets/${cart_Id}/items/${requestBody.item_id}?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const header = {
+      'Authorization':`Bearer ${bearer}`
+    }
+    const response = this.deleteCartItem(endpoint,header);
+    return response;
+  }
+  async deleteCartItem(endpoint:any,header:any){
+    try{
+      console.log("headers",header);
+      const response = await axios.delete(`${this.dataSource.settings.baseURL}/${endpoint}`, {
+        headers: header
+      });
+      return response.data;
+    }
+    catch(error){
+      throw error;
+    }
+  }
 }

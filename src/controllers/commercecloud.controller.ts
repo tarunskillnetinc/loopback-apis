@@ -188,4 +188,23 @@ export class CommercecloudController {
       throw error;
     }
   }
+
+  //Deleting Cart Items:
+  @post('/sfcc/removeItem/{cart_Id}')
+  @response(200,{
+    message: "API to remove product from cart"
+  })
+  async removeItem(
+    @requestBody() requestBody:{itemId:[]},
+    @param.header.string('bearer') bearer: any,
+    @param.path.string('cart_Id') cart_Id : any
+  ): Promise<any>{
+    try{
+      const data = await this.sprykerService.removeItem(cart_Id,requestBody,bearer);
+      return data;
+    }
+    catch(error){
+      throw error;
+    }
+  }
 }
