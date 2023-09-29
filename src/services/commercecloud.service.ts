@@ -242,6 +242,94 @@ export class CommercecloudService {
       console.log("error is",error);
     }
   }
+
+  async cartFetchFromEndpoint(endpoint: string,header:string): Promise<any> {
+      try {
+        console.log("response")
+        const response = await axios.get(`${this.dataSource.settings.baseURL}/${endpoint}`,
+      {
+        headers: {
+          'Authorization':`Bearer ${header}`,
+          // 'Content-Type':'application/json'
+        },
+      },
+      );
+      console.log("responsesss",response)
+        return response.data;
+      } catch (error) {
+        console.log(error)
+        throw error;
+      }
+    }
+
+    async getSalesforceProductItems(baskets_id:any,header:any): Promise<any>{
+      const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_2/baskets/${baskets_id}?&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+      console.log(endpoint,"endpoitn");
+      const response = await this.cartFetchFromEndpoint(endpoint,header);
+      const data = response.product_items;
+      const products: any[] = [];
+      const productDataPromise = data.map(async (items:any)=>{
+        const product_data:any = {
+          "productName": items.product_name,
+          "price":items.base_price,
+          "sellingPrice":items.price,
+          "quantity":items.quantity
+        }
+        const endpoint_two = `s/Ref-VinodCSQT/dw/shop/v23_2/products/${items.product_id}/images`;
+        const product_images_response = this.cartFetchFromEndpoint(endpoint_two,header);
+        const product_data_images = this.transformResponse(product_images_response);
+        const images_datas = await product_data_images
+        product_data["imageUrl"]= images_datas;
+        products.push(product_data);
+      })
+      await Promise.all(productDataPromise);
+      const cartTotals = {
+        CartTotal: response.order_total,
+        Items: response.product_total,
+        Discounts: response.order_total - response.product_total,
+        Shipping: response.shipping_total,
+        Tax: response.tax_total,  
+      }
+      const finalData = {
+        "products":products,
+        "totalizers":cartTotals
+      }
+      return finalData;
+    }
+    // Transformation function
+    async transformResponse(inputData:any) {
+      const response = await inputData;
+      const image_url = response.image_groups[0].images[0].link;
+      return image_url;
+    } 
+    async cartUpdateFromEndpoint(endpoint:string,_requestBody:any, header:string):Promise<any>{
+      try{
+        console.log("hiiihhhh",endpoint,_requestBody,header)
+        const response = await axios.patch(`${this.dataSource.settings.baseURL}/${endpoint}`,
+        _requestBody,  
+        {
+          headers:{
+            'Authorization':`Bearer ${header}`,
+          },
+          // body:JSON.stringify(_requestBody),
+        },
+        );
+        console.log(response, "responsetttt")
+        console.log("responssssesss",response.data)
+        return response.data;
+      }catch(error){
+        console.log(error)
+        throw error;
+      }
+    }
+    async updateSalesforceProductItems(baskets_id:any,items_id:any,requestBody:any,header:any):Promise<any>{
+      const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_2/baskets/${baskets_id}/items/${items_id}`;
+      console.log(endpoint,"updateSalesforceProductItems");
+      const response = await this.cartUpdateFromEndpoint(endpoint,requestBody,header);
+      const data = response;
+      console.log('datas',data)
+      return response;
+    }
   async getSalesForceCategory(): Promise<any> {
     const product_arr: any[] = [];
     const endpoint = `/s/Ref-VinodCSQT/dw/shop/v23_2/categories/root?levels=6&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;

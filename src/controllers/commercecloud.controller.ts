@@ -145,4 +145,47 @@ export class CommercecloudController {
     }
   }
 
+  @get('/sfcc/getCartDetails/{baskets_id}')
+  @response(200,{
+    description: 'Get Salesforce Product Items using customers api',
+  })
+  async getSalesforceProductItems(
+    @param.path.string('baskets_id') baskets_id: any,
+    @param.header.string('bearer') bearer: string,
+    ): Promise<any>{
+    try{
+      console.log('aamir');
+      const header = this.request.headers.bearer;
+      const getSalesForceProducts = await this.sprykerService.getSalesforceProductItems(baskets_id,header);
+      return getSalesForceProducts;
+    }
+    catch(error){
+      throw error;
+    }
+  }
+
+  @patch('/sfcc/update-cart/{baskets_id}/items/{items_id}')
+
+  @response(200,{
+
+    description: 'patch Salesforce Product Items using baskets api',
+
+  })
+  async updateSalesforceProductItems(
+    @param.path.string('baskets_id') baskets_id: any,
+    @param.path.string('items_id') items_id:any,
+    @param.header.string('bearer') bearer: string,
+    @requestBody() requestBody:{quantity:any}
+    ): Promise<any>{
+    try{
+      console.log('aaaaa');
+      const header = this.request.headers.bearer;
+      const getSalesForceProducts = await this.sprykerService.updateSalesforceProductItems(baskets_id,items_id,requestBody,header);
+      console.log('getSalesForceProductsbbbb',getSalesForceProducts);
+      return getSalesForceProducts;
+    } 
+    catch(error){
+      throw error;
+    }
+  }
 }
