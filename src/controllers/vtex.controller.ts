@@ -232,13 +232,19 @@ export class VtexController {
 
     async getVtexProductByCategory(
       @param.path.string('categoryId') categoryId: any,
+      @param.query.string('color') color?: any,
+      @param.query.string('size') size?: any,
+      @param.query.string('minprice') minprice?: any,
+      @param.query.string('maxprice') maxprice?: any,
+      @param.query.string('sortbyprice') sortbyprice?: any,
+      @param.query.string('sortbyname') sortbyname?: any,
       @param.query.string('productsPerPage') count?: any,
       @param.query.string('page') page?: any,
       ): Promise<any>{
 
       try{
 
-        const getVtexProducts = await this.vtexService.getVtexProductByCategory(categoryId, count, page);
+        const getVtexProducts = await this.vtexService.getVtexProductByCategory(categoryId,color,size,minprice,maxprice,sortbyprice,sortbyname,count,page);
 
         return getVtexProducts;
 
@@ -258,11 +264,17 @@ export class VtexController {
     })
     async getVtexProductBySubCategory(
       @param.path.string('subCategoryId') subCategoryId: any,
+      @param.query.string('color') color?: any,
+      @param.query.string('size') size?: any,
+      @param.query.string('minprice') minprice?: any,
+      @param.query.string('maxprice') maxprice?: any,
+      @param.query.string('sortbyprice') sortbyprice?: any,
+      @param.query.string('sortbyname') sortbyname?: any,
       @param.query.string('productsPerPage') count?: any,
       @param.query.string('page') page?: any,
       ): Promise<any>{
       try{
-        const getVtexProducts = await this.vtexService.getVtexProductBySubCategory(subCategoryId,count,page);
+        const getVtexProducts = await this.vtexService.getVtexProductBySubCategory(subCategoryId,color,size,minprice,maxprice,sortbyprice,sortbyname,count,page);
         return getVtexProducts;
       }
       catch(error){
@@ -276,11 +288,17 @@ export class VtexController {
     })
     async getVtexProductByQuery(
       @param.path.string('query') query: any,
+      @param.query.string('color') color?: any,
+      @param.query.string('size') size?: any,
+      @param.query.string('minprice') minprice?: any,
+      @param.query.string('maxprice') maxprice?: any,
+      @param.query.string('sortbyprice') sortbyprice?: any,
+      @param.query.string('sortbyname') sortbyname?: any,
       @param.query.string('productsPerPage') count?: any,
       @param.query.string('page') page?: any
       ): Promise<any>{
       try{
-        const getVtexProducts = await this.vtexService.getVtexProductByQuery(query,count,page);
+        const getVtexProducts = await this.vtexService.getVtexProductByQuery(query,color,size,minprice,maxprice,sortbyprice,sortbyname,count,page);
         return getVtexProducts;
       }
       catch(error){
@@ -303,13 +321,13 @@ export class VtexController {
       }
     }
 
-    @get('vtex-get-or-create-cart')
+    @post('vtex-get-or-create-cart')
     @response(200, {
       description: "Get the current cart or create a new one if it doesn't exist yet.",
     })
-    async getOrCreateCartId():Promise<any>{
+    async getOrCreateCartId(@param.header.string('token') token: string):Promise<any>{
       try{
-        const data = await this.vtexService.getOrCreateCartId()
+        const data = await this.vtexService.getOrCreateCartId(token)
         const response = await data;
         return response;
       }
