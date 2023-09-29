@@ -82,9 +82,9 @@ export class CommercecloudService {
   
     return products;
   }
-  async getSalesforceProductByCategory(refine: any): Promise<any> {
+  async getSalesforceProductByCategory(categoryId: any): Promise<any> {
     const product_arr: any[] = [];
-    const endpoint = `/s/Ref-VinodCSQT/dw/shop/v23_2/product_search?refine=cgid=${refine}&expand=images,prices&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const endpoint = `/s/Ref-VinodCSQT/dw/shop/v23_2/product_search?refine=cgid=${categoryId}&expand=images,prices&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
     console.log("endpoint123",endpoint)
     const response = await this.fetchFromEndpoint(endpoint);
     const value = response.refinements;
