@@ -32,9 +32,7 @@ export class CommercecloudController {
       throw error;
     }
   }
-
-
-  @get("/sfcc/products-by-category/{categoryId}")
+  @get("/sfcc/demo-products-by-category/{categoryId}")
   @response(200, {
     description: "Get Salesforce Product List by search category",
   })
@@ -52,25 +50,7 @@ export class CommercecloudController {
     }
   }
 
-  @get("/sfcc/products-by-subcategory/{subcategoryId}")
-  @response(200, {
-    description: "Get Salesforce Product List by search category",
-  })
-  async getSalesforceProductBysubCategory(
-    @param.path.string("subcategoryId") subcategoryId: any
-  ): Promise<any> {
-    try {
-      console.log("aaff");
-      const getSalesForceProducts =
-        await this.sprykerService.getSalesforceProductBysubCategory(subcategoryId);
-      console.log("aashh");
-      return getSalesForceProducts;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  @get("/sfcc/search-by-facets/{category}")
+  @get("/sfcc/products-by-category/{category}")
   @response(200, {
     description: "Search for products using facets",
   })
@@ -98,7 +78,37 @@ export class CommercecloudController {
       throw error;
     }
   }
-  @get("/sfcc/products-by-id/{productId}")
+
+  @get("/sfcc/products-by-sub-category/{category}")
+  @response(200, {
+    description: "Search for products using facets",
+  })
+  async SalesforceByCategory(
+    @param.path.string('category') category: string,
+
+    @param.query.string('color') color?: any,
+
+    @param.query.string('size') size?: any,
+    
+    @param.query.string('minprice') minprice?: any,
+
+    @param.query.string('maxprice') maxprice?: any,
+
+    @param.query.string('sortbyprice') sortbyprice?: any,
+
+    @param.query.string('sortbyname') sortbyname?: any,
+
+  ): Promise<any> {
+    try {
+      const data = await this.sprykerService.searchByFacets(category,color,size,minprice,maxprice,sortbyprice,sortbyname);
+      const response = await data;
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+  
+  @get("/sfcc/product-by-id/{productId}")
   @response(200, {
     description: "Get Salesforce product details from the external API",
   })
@@ -204,6 +214,25 @@ export class CommercecloudController {
       console.log('getSalesForceProductsbbbb',getSalesForceProducts);
       return getSalesForceProducts;
     } 
+    catch(error){
+      throw error;
+    }
+  }
+
+  //Deleting Cart Items:
+  @post('/sfcc/removeItem/{cart_Id}')
+  @response(200,{
+    message: "API to remove product from cart"
+  })
+  async removeItem(
+    @requestBody() requestBody:{itemId:[]},
+    @param.header.string('bearer') bearer: any,
+    @param.path.string('cart_Id') cart_Id : any
+  ): Promise<any>{
+    try{
+      const data = await this.sprykerService.removeItem(cart_Id,requestBody,bearer);
+      return data;
+    }
     catch(error){
       throw error;
     }
