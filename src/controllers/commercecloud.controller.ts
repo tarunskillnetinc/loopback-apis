@@ -32,7 +32,7 @@ export class CommercecloudController {
       throw error;
     }
   }
-  @get("/sfcc/products-by-category/{categoryId}")
+  @get("/sfcc/demo-products-by-category/{categoryId}")
   @response(200, {
     description: "Get Salesforce Product List by search category",
   })
@@ -50,7 +50,7 @@ export class CommercecloudController {
     }
   }
 
-  @get("/sfcc/search-by-facets/{category}")
+  @get("/sfcc/products-by-category/{categoryId}")
   @response(200, {
     description: "Search for products using facets",
   })
