@@ -749,8 +749,24 @@ export class VtexService {
 
   }
 
-  async getVtexProductByQuery(query: any, count:any, page: any): Promise<any>{
-    const endpoint = `/api/io/_v/api/intelligent-search/product_search/?query=${query}&${count!==undefined ? `count=${count}`: 'count='}&${page!==undefined ? `page=${page}`: 'page='}`;
+  async getVtexProductByQuery(query: any, color:any, size:any, minprice:any, maxprice:any, sortbyprice:any, sortbyname:any, count:any, page: any): Promise<any>{
+    let facets_colors;
+    let facets_size;
+    let prices;
+
+    if (color) {
+      facets_colors = color.replace(/,/g, "/color/");
+    }
+
+    if (size) {
+      facets_size = size.replace(/,/g, "/size/");
+    }
+
+    if(minprice && maxprice){
+      prices = true;
+    }
+
+    const endpoint = `/api/io/_v/api/intelligent-search/product_search/${facets_colors != undefined ? `/color/${facets_colors}`:""}/${facets_size ? `size/${facets_size}` : ""}/${prices ? `price/${minprice}:${maxprice}`:""}?query=${query}&${sortbyprice ? `sort=price:${sortbyprice}`:""}&${sortbyname ? `sort=name:${sortbyname}`:""}&${count!==undefined ? `count=${count}`: 'count='}&${page!==undefined ? `page=${page}`: 'page='}`;
     const response = this.fetchFromEndpoint(endpoint);
     const data = await response;
 
