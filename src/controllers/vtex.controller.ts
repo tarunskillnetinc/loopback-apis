@@ -288,11 +288,17 @@ export class VtexController {
     })
     async getVtexProductByQuery(
       @param.path.string('query') query: any,
+      @param.query.string('color') color?: any,
+      @param.query.string('size') size?: any,
+      @param.query.string('minprice') minprice?: any,
+      @param.query.string('maxprice') maxprice?: any,
+      @param.query.string('sortbyprice') sortbyprice?: any,
+      @param.query.string('sortbyname') sortbyname?: any,
       @param.query.string('productsPerPage') count?: any,
       @param.query.string('page') page?: any
       ): Promise<any>{
       try{
-        const getVtexProducts = await this.vtexService.getVtexProductByQuery(query,count,page);
+        const getVtexProducts = await this.vtexService.getVtexProductByQuery(query,color,size,minprice,maxprice,sortbyprice,sortbyname,count,page);
         return getVtexProducts;
       }
       catch(error){

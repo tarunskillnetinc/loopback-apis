@@ -24,9 +24,9 @@ export declare class VtexService {
     getBestSellingProductsrating(): Promise<any>;
     getTopSellingProductsrating(): Promise<any>;
     getNewSellingProducts(): Promise<any>;
-    getVtexProductByCategory(categoryId: any, count: any, page: any): Promise<any>;
-    getVtexProductBySubCategory(subCategoryId: any, count: any, page: any): Promise<any>;
-    getVtexProductByQuery(query: any, count: any, page: any): Promise<any>;
+    getVtexProductByCategory(categoryId: any, color: any, size: any, minprice: any, maxprice: any, sortbyprice: any, sortbyname: any, count: any, page: any): Promise<any>;
+    getVtexProductBySubCategory(subCategoryId: any, color: any, size: any, minprice: any, maxprice: any, sortbyprice: any, sortbyname: any, count: any, page: any): Promise<any>;
+    getVtexProductByQuery(query: any, color: any, size: any, minprice: any, maxprice: any, sortbyprice: any, sortbyname: any, count: any, page: any): Promise<any>;
     getAProductById(pid: string): Promise<any>;
     getOrCreateCartId(token: any): Promise<any>;
     private transformProductDetails;

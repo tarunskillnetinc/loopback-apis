@@ -385,8 +385,20 @@ let VtexService = exports.VtexService = class VtexService {
         }));
         return emptyarray;
     }
-    async getVtexProductByCategory(categoryId, count, page) {
-        const endpoint = `/api/io/_v/api/intelligent-search/product_search/category-1/${categoryId}?${count !== undefined ? `count=${count}` : 'count='}&${page !== undefined ? `page=${page}` : 'page='}`;
+    async getVtexProductByCategory(categoryId, color, size, minprice, maxprice, sortbyprice, sortbyname, count, page) {
+        let facets_colors;
+        let facets_size;
+        let prices;
+        if (color) {
+            facets_colors = color.replace(/,/g, "/color/");
+        }
+        if (size) {
+            facets_size = size.replace(/,/g, "/size/");
+        }
+        if (minprice && maxprice) {
+            prices = true;
+        }
+        const endpoint = `/api/io/_v/api/intelligent-search/product_search/category-1/${categoryId}/${facets_colors != undefined ? `/color/${facets_colors}` : ""}/${facets_size ? `size/${facets_size}` : ""}/${prices ? `price/${minprice}:${maxprice}` : ""}?${sortbyprice ? `sort=price:${sortbyprice}` : ""}&${sortbyname ? `sort=name:${sortbyname}` : ""}&${count !== undefined ? `count=${count}` : 'count='}&${page !== undefined ? `page=${page}` : 'page='}`;
         const response = this.fetchFromEndpoint(endpoint);
         const data = await response;
         const available_facets = [];
@@ -471,8 +483,20 @@ let VtexService = exports.VtexService = class VtexService {
         return finalData;
         // return product_arr;
     }
-    async getVtexProductBySubCategory(subCategoryId, count, page) {
-        const endpoint = `/api/io/_v/api/intelligent-search/product_search/category-2/${subCategoryId}?${count !== undefined ? `count=${count}` : 'count='}&${page !== undefined ? `page=${page}` : 'page='}`;
+    async getVtexProductBySubCategory(subCategoryId, color, size, minprice, maxprice, sortbyprice, sortbyname, count, page) {
+        let facets_colors;
+        let facets_size;
+        let prices;
+        if (color) {
+            facets_colors = color.replace(/,/g, "/color/");
+        }
+        if (size) {
+            facets_size = size.replace(/,/g, "/size/");
+        }
+        if (minprice && maxprice) {
+            prices = true;
+        }
+        const endpoint = `/api/io/_v/api/intelligent-search/product_search/category-2/${subCategoryId}/${facets_colors != undefined ? `/color/${facets_colors}` : ""}/${facets_size ? `size/${facets_size}` : ""}/${prices ? `price/${minprice}:${maxprice}` : ""}?${sortbyprice ? `sort=price:${sortbyprice}` : ""}&${sortbyname ? `sort=name:${sortbyname}` : ""}&${count !== undefined ? `count=${count}` : 'count='}&${page !== undefined ? `page=${page}` : 'page='}`;
         const response = this.fetchFromEndpoint(endpoint);
         const data = await response;
         const product_arr = [];
@@ -559,8 +583,20 @@ let VtexService = exports.VtexService = class VtexService {
         };
         return finalData;
     }
-    async getVtexProductByQuery(query, count, page) {
-        const endpoint = `/api/io/_v/api/intelligent-search/product_search/?query=${query}&${count !== undefined ? `count=${count}` : 'count='}&${page !== undefined ? `page=${page}` : 'page='}`;
+    async getVtexProductByQuery(query, color, size, minprice, maxprice, sortbyprice, sortbyname, count, page) {
+        let facets_colors;
+        let facets_size;
+        let prices;
+        if (color) {
+            facets_colors = color.replace(/,/g, "/color/");
+        }
+        if (size) {
+            facets_size = size.replace(/,/g, "/size/");
+        }
+        if (minprice && maxprice) {
+            prices = true;
+        }
+        const endpoint = `/api/io/_v/api/intelligent-search/product_search/${facets_colors != undefined ? `/color/${facets_colors}` : ""}/${facets_size ? `size/${facets_size}` : ""}/${prices ? `price/${minprice}:${maxprice}` : ""}?query=${query}&${sortbyprice ? `sort=price:${sortbyprice}` : ""}&${sortbyname ? `sort=name:${sortbyname}` : ""}&${count !== undefined ? `count=${count}` : 'count='}&${page !== undefined ? `page=${page}` : 'page='}`;
         const response = this.fetchFromEndpoint(endpoint);
         const data = await response;
         //For available facets:
