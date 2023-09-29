@@ -20,17 +20,29 @@ export class CommercecloudController {
     @inject(RestBindings.Http.REQUEST) private request: Request
   ) {}
 
-  @get("/demo-salesforce-plp-by-category/{refine}")
+  @get('/sfcc/new-arrivals')
+  @response(200, {
+    description: 'Get VTEX best selling products from the external API',
+  })
+  async getSfBestSellingProducts(): Promise<any> {
+    try {
+      const bestSellingProducts = await this.sprykerService.sfBestSelling();
+      return bestSellingProducts;
+    } catch (error) {
+      throw error;
+    }
+  }
+  @get("/sfcc/products-by-category/{categoryId}")
   @response(200, {
     description: "Get Salesforce Product List by search category",
   })
   async getSalesforceProductByCategory(
-    @param.path.string("refine") refine: any
+    @param.path.string("categoryId") categoryId: any
   ): Promise<any> {
     try {
       console.log("aaff");
       const getSalesForceProducts =
-        await this.sprykerService.getSalesforceProductByCategory(refine);
+        await this.sprykerService.getSalesforceProductByCategory(categoryId);
       console.log("aashh");
       return getSalesForceProducts;
     } catch (error) {
@@ -38,7 +50,7 @@ export class CommercecloudController {
     }
   }
 
-  @get("/demo-salesforce-search-by-facets/{category}")
+  @get("/sfcc/search-by-facets/{category}")
   @response(200, {
     description: "Search for products using facets",
   })
@@ -66,7 +78,7 @@ export class CommercecloudController {
       throw error;
     }
   }
-  @get("/salesforce-pdp/{productId}")
+  @get("/sfcc/products-by-id/{productId}")
   @response(200, {
     description: "Get Salesforce product details from the external API",
   })
@@ -83,7 +95,7 @@ export class CommercecloudController {
     }
   }
 
-  @post("/salesforce-login")
+  @post("/sfcc/login")
   @response(200, {
     description: "Get Salesforce product details from the external API",
   })
@@ -100,7 +112,7 @@ export class CommercecloudController {
       throw error;
     }
   }
-  @get('/salesforce-category-tree')
+  @get('/sfcc/category-tree')
   @response(200, {
     description: 'Get Salesforce product details from the external API',
   })
@@ -114,7 +126,7 @@ export class CommercecloudController {
     }
   }
 
-  @post('/cloudcommerce-add-items/{cartId}')
+  @post('/sfcc/add-items/{cartId}')
   @response(200,{
     description: 'Add Products in Cart',
   })

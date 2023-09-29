@@ -45,10 +45,46 @@ export class CommercecloudService {
       return error;
     }
   }
-
-  async getSalesforceProductByCategory(refine: any): Promise<any> {
+   
+  async sfBestSelling(): Promise<any> {
+    const endpoint = `/s/Ref-VinodCSQT/dw/shop/v23_2/product_search?refine=cgid%3Dnewarrivals&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b&expand=images%2Cprices%2Cavailability%2Cvariations`;
+    const response = await this.fetchFromEndpoint(endpoint);
+    // console.log('response', response.hits)
+  
+    const data = await response;
+    console.log('res', data);
+  
+    const products: any[] = [];
+  
+    for (const hit of data.hits) {
+      const ProductId = hit.product_id;
+      const ProductName = hit.product_name;
+      const SkuImageUrl = hit.image.link; // Extract image URL
+      const listPrice = hit.price; // Extract the price and name it as listPrice
+      const basePrice = hit.price;
+  
+      console.log('Product ID:', ProductId);
+      console.log('Product Name:', ProductName);
+      console.log('Product Image:', SkuImageUrl);
+      console.log('List Price:', listPrice);
+  
+      products.push({
+        ProductId,
+        skuId: ProductId,
+        ProductName,
+        SkuImageUrl,
+        listPrice,
+        basePrice
+      });
+    }
+  
+    console.log('Products:', products);
+  
+    return products;
+  }
+  async getSalesforceProductByCategory(categoryId: any): Promise<any> {
     const product_arr: any[] = [];
-    const endpoint = `/s/Ref-VinodCSQT/dw/shop/v23_2/product_search?refine=cgid=${refine}&expand=images,prices&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const endpoint = `/s/Ref-VinodCSQT/dw/shop/v23_2/product_search?refine=cgid=${categoryId}&expand=images,prices&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
     console.log("endpoint123",endpoint)
     const response = await this.fetchFromEndpoint(endpoint);
     const value = response.refinements;
