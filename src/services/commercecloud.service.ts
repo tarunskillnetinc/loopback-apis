@@ -110,6 +110,34 @@ export class CommercecloudService {
     return { ProductData: product_arr, valueFacets: valueFacets };
   }
 
+  async getSalesforceProductBysubCategory(subcategoryId: any): Promise<any> {
+    const product_arr: any[] = [];
+    const endpoint = `/s/Ref-VinodCSQT/dw/shop/v23_2/product_search?refine=cgid=${subcategoryId}&expand=images,prices&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    console.log("endpoint123",endpoint)
+    const response = await this.fetchFromEndpoint(endpoint);
+    const value = response.refinements;
+    console.log(value);
+    const valueFacets = this.getRefinementValue(value);
+    const data = response;
+    response?.hits?.map((items: any) => {
+      product_arr.push({
+        product_id: items?.product_id,
+        sku_id: items?.product_id,
+        product_name: items?.product_name,
+        product_image: items?.image.dis_base_link,
+        product_price: {
+          listPrice: items?.price,
+          sellingPrice: null,
+          discount: null,
+        },
+      });
+    });
+    console.log("data", product_arr);
+
+    // return product_arr;
+    return { ProductData: product_arr, valueFacets: valueFacets };
+  }
+
   private getRefinementValue(response: any): any {
     const value_arr: any[] = [];
     console.log("aafreeee", response);

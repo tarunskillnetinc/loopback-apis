@@ -32,6 +32,8 @@ export class CommercecloudController {
       throw error;
     }
   }
+
+
   @get("/sfcc/products-by-category/{categoryId}")
   @response(200, {
     description: "Get Salesforce Product List by search category",
@@ -43,6 +45,24 @@ export class CommercecloudController {
       console.log("aaff");
       const getSalesForceProducts =
         await this.sprykerService.getSalesforceProductByCategory(categoryId);
+      console.log("aashh");
+      return getSalesForceProducts;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @get("/sfcc/products-by-subcategory/{subcategoryId}")
+  @response(200, {
+    description: "Get Salesforce Product List by search category",
+  })
+  async getSalesforceProductBysubCategory(
+    @param.path.string("subcategoryId") subcategoryId: any
+  ): Promise<any> {
+    try {
+      console.log("aaff");
+      const getSalesForceProducts =
+        await this.sprykerService.getSalesforceProductBysubCategory(subcategoryId);
       console.log("aashh");
       return getSalesForceProducts;
     } catch (error) {
