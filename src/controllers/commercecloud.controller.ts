@@ -20,6 +20,18 @@ export class CommercecloudController {
     @inject(RestBindings.Http.REQUEST) private request: Request
   ) {}
 
+  @get('/salesforce-best-selling')
+  @response(200, {
+    description: 'Get VTEX best selling products from the external API',
+  })
+  async getSfBestSellingProducts(): Promise<any> {
+    try {
+      const bestSellingProducts = await this.sprykerService.sfBestSelling();
+      return bestSellingProducts;
+    } catch (error) {
+      throw error;
+    }
+  }
   @get("/demo-salesforce-plp-by-category/{refine}")
   @response(200, {
     description: "Get Salesforce Product List by search category",
@@ -114,7 +126,7 @@ export class CommercecloudController {
     }
   }
 
-  @post('/cloudcommerce-add-items/{cartId}')
+  @post('/salesforce-add-items/{cartId}')
   @response(200,{
     description: 'Add Products in Cart',
   })
