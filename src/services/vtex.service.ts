@@ -518,9 +518,25 @@ export class VtexService {
     return emptyarray;
   }
 
-  async getVtexProductByCategory(categoryId: any, count:any, page: any): Promise<any>{
+  async getVtexProductByCategory(categoryId: any, color:any, size:any, minprice:any, maxprice:any, sortbyprice:any, sortbyname:any, count:any, page: any): Promise<any>{
 
-    const endpoint = `/api/io/_v/api/intelligent-search/product_search/category-1/${categoryId}?${count!==undefined ? `count=${count}`: 'count='}&${page!==undefined ? `page=${page}`: 'page='}`;
+    let facets_colors;
+    let facets_size;
+    let prices;
+
+    if (color) {
+      facets_colors = color.replace(/,/g, "/color/");
+    }
+
+    if (size) {
+      facets_size = size.replace(/,/g, "/size/");
+    }
+
+    if(minprice && maxprice){
+      prices = true;
+    }
+
+    const endpoint = `/api/io/_v/api/intelligent-search/product_search/category-1/${categoryId}/${facets_colors != undefined ? `/color/${facets_colors}` : ""}/${facets_size ? `size/${facets_size}` : ""}/${prices ? `price/${minprice}:${maxprice}`:""}?${sortbyprice ? `sort=price:${sortbyprice}`:""}&${sortbyname ? `sort=name:${sortbyname}`:""}&${count!==undefined ? `count=${count}`: 'count='}&${page!==undefined ? `page=${page}`: 'page='}`;
 
     const response = this.fetchFromEndpoint(endpoint);
 
@@ -624,8 +640,24 @@ export class VtexService {
 
   }
 
-  async getVtexProductBySubCategory(subCategoryId: any, count:any, page: any): Promise<any>{
-    const endpoint = `/api/io/_v/api/intelligent-search/product_search/category-2/${subCategoryId}?${count!==undefined ? `count=${count}`: 'count='}&${page!==undefined ? `page=${page}`: 'page='}`;
+  async getVtexProductBySubCategory(subCategoryId: any, color:any, size:any, minprice:any, maxprice:any, sortbyprice:any, sortbyname:any, count:any, page: any): Promise<any>{
+    let facets_colors;
+    let facets_size;
+    let prices;
+
+    if (color) {
+      facets_colors = color.replace(/,/g, "/color/");
+    }
+
+    if (size) {
+      facets_size = size.replace(/,/g, "/size/");
+    }
+
+    if(minprice && maxprice){
+      prices = true;
+    }
+
+    const endpoint = `/api/io/_v/api/intelligent-search/product_search/category-2/${subCategoryId}/${facets_colors != undefined ? `/color/${facets_colors}` : ""}/${facets_size ? `size/${facets_size}` : ""}/${prices ? `price/${minprice}:${maxprice}`:""}?${sortbyprice ? `sort=price:${sortbyprice}`:""}&${sortbyname ? `sort=name:${sortbyname}`:""}&${count!==undefined ? `count=${count}`: 'count='}&${page!==undefined ? `page=${page}`: 'page='}`;
     const response = this.fetchFromEndpoint(endpoint);
     const data = await response;
     const product_arr:any[] = [];
