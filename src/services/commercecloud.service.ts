@@ -385,4 +385,30 @@ export class CommercecloudService {
       throw error;
     }
   }
+
+  //Function to create cart:
+  async createCart(bearer: any):Promise<any>{
+    const endpoint = 's/Ref-VinodCSQT/dw/shop/v23_2/baskets?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b';
+    const header = {
+       'Content-Type': 'application/json',
+        'Authorization':`Bearer ${bearer}`
+    }
+    const response = this.createUserCart(endpoint,header);
+    const data = await response
+    console.log("thisis response",data);
+    return response;
+  }
+  async createUserCart(endpoint:any,header:any){
+    var body={}
+    try{
+      console.log('headers are',header);
+      const response = await axios.post(`${this.dataSource.settings.baseURL}/${endpoint}`,body,{
+        headers: header
+      })
+      return response.data;
+    }
+    catch(error){
+      console.log(error.response.data);
+    }
+  }
 }

@@ -237,4 +237,21 @@ export class CommercecloudController {
       throw error;
     }
   }
+
+  //Create Cart:
+  @post('/sfcc/createCart')
+  @response(200,{
+    message: "API for creating Cart"
+  })
+  async createCart(
+    @param.header.string('bearer') bearer: any,
+  ): Promise<any>{
+    try{
+      const data = await this.sprykerService.createCart(bearer);
+      return data;
+    }
+    catch(error){
+      throw error;
+    }
+  }
 }
