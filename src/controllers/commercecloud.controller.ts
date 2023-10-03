@@ -254,4 +254,25 @@ export class CommercecloudController {
       throw error;
     }
   }
+
+
+  @post('/sfcc/confirmOrder')
+  @response(200,{
+    message: "API for creating Cart"
+  })
+  async confirmOrder(
+    @param.query.string('clientId') clientId: any,
+    @param.query.string('basketId') basketId: any,
+    @param.header.string('bearer') bearer: any,
+    @requestBody() requestBody:any,
+  ): Promise<any>{
+    try{
+      const headers = this.request.headers.bearer;
+      const data = await this.sprykerService.confirmOrder(clientId,basketId,headers,requestBody);
+      return data;
+    }
+    catch(error){
+      throw error;
+    }
+  }
 }
