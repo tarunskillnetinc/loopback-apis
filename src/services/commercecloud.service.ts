@@ -467,4 +467,21 @@ export class CommercecloudService {
     return { userProfile };
   }
 
+  //Function Order Details:
+  async getOrderDetails(customers_id:any, header:any): Promise<any>{
+    const endpoint =`s/Ref-VinodCSQT/dw/shop/v23_2/customers/${customers_id}/orders`
+    const response = await this.cartFetchFromEndpoint(endpoint,header)
+    console.log(response,"response")
+    const data = response.data;
+    return data;
+  }
+
+  //Function to get payment details:
+  async getSaleforcePaymentMethodDetails(baskets_id:any,header:any): Promise<any>{
+    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_2/baskets/${baskets_id}/payment_methods?&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const response = await this.cartFetchFromEndpoint(endpoint,header);
+    const data = response;
+    return data
+  }
+
 }
