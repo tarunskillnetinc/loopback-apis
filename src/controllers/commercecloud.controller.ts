@@ -254,4 +254,42 @@ export class CommercecloudController {
       throw error;
     }
   }
+
+  //Get Basket Details based on Customer ID:
+  @get('/sfcc/getCustomerCart/{customerId}')
+  @response(200,{
+    message: "API for getting customer cart on belhaf of customer id"
+  })
+  async customerCart(
+    @param.path.string('customerId') customerId: any,
+    @param.header.string('bearer') bearer: any,
+  ): Promise<any>{
+    try{
+      const data = await this.sprykerService.customerCart(customerId,bearer);
+      return data;
+    }
+    catch(error){
+      throw error;
+    }
+  }
+
+  //Get Customer User Details:
+  @get('/sfcc/user-Details/{customers_id}')
+  @response(200,{
+    description: 'Get Salesforce user-details addresses using customers api',
+  })
+  async getUserDetails(
+    @param.path.string('customers_id') customers_id: any,
+    @param.header.string('bearer') bearer: string,
+    ): Promise<any>{
+    try{
+      const header = this.request.headers.bearer;
+      const getSalesForceProducts = await this.sprykerService.getUserDetails(customers_id,header);
+      return getSalesForceProducts;
+    }
+    catch(error){
+      throw error;
+    }
+  }
+
 }
