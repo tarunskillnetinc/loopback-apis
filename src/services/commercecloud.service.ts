@@ -270,6 +270,7 @@ export class CommercecloudService {
       const products: any[] = [];
       const productDataPromise = data.map(async (items:any)=>{
         const product_data:any = {
+          "itemId": items.item_id,
           "productName": items.product_name,
           "price":items.base_price,
           "sellingPrice":items.price,
