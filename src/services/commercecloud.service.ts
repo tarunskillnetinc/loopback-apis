@@ -218,7 +218,8 @@ export class CommercecloudService {
     const data = await response; // Parse JSON response
     console.log("responseservice123", data);
     if (data.status == 200) {
-      return { ...data.data, bearerToken: data.headers.authorization };
+      const tokenParts = data.headers.authorization.split(" ")
+      return { ...data.data, bearerToken: tokenParts[1] }
     } else {
       return data?.data;
     };
@@ -412,4 +413,58 @@ export class CommercecloudService {
       console.log(error.response.data);
     }
   }
+
+  //Function to get customer cart on behalf of customer id:
+  async customerCart(customerId:any, bearer:any){
+    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_2/customers/${customerId}/baskets?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const header = {
+      'Content-Type': 'application/json',
+       'Authorization':`Bearer ${bearer}`
+   }
+    const response = this.getCustomerCart(endpoint, header);
+    const data = await response;
+    return data;
+  }
+  async getCustomerCart(endpoint:any, header:any){
+    try{
+      const response = await axios.get(`${this.dataSource.settings.baseURL}/${endpoint}`,{
+        headers: header
+      });
+      console.log("custome123",response);
+      return response.data;
+    }
+    catch(error){
+      console.log("error is", error);
+    }
+  }
+
+  //Function get user details:
+  async getUserDetails(customers_id:any,header:any): Promise<any>{
+    const endpoint =`s/Ref-VinodCSQT/dw/shop/v23_2/customers/${customers_id}/addresses`
+    const response = await this.cartFetchFromEndpoint(endpoint,header)
+    const data = response.data;
+    const userProfile: any[] = [];
+    const endpoint_two = `s/Ref-VinodCSQT/dw/shop/v23_2/customers/${customers_id}`
+    const response_two =  await this.cartFetchFromEndpoint(endpoint_two,header)
+
+    for (const items of data) {
+    const userData: any = {
+      email:response_two.email || '',
+      firstName: items.first_name,
+      lastName: items.last_name,
+      receiverName: items.full_name,
+      addressId: items.address1 + items.address2,
+      postalCode: items.postal_code,
+      city: items.city,
+      state: items.state_code,
+      country: items.country_code,
+      street: items.street_code || '',
+      addressNumber: items.address_id,
+      phone: items.phone
+    };
+    userProfile.push(userData);
+    };
+    return { userProfile };
+  }
+
 }
