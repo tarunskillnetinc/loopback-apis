@@ -156,18 +156,18 @@ export class CommercecloudController {
     }
   }
 
-  @post('/sfcc/add-items/{cartId}')
+  @post('/sfcc/add-items/{baskets_id}')
   @response(200,{
     description: 'Add Products in Cart',
   })
   async addItems(
-    @param.path.string('cartId') cartId: any,
+    @param.path.string('baskets_id') baskets_id: any,
     @param.header.string('bearer') bearer: string,
     @requestBody() requestBody:{orderItems:[]},
   ): Promise<any>{
     try{
       const header = this.request.headers.bearer;
-      const items = await this.sprykerService.addItems(cartId, requestBody, header);
+      const items = await this.sprykerService.addItems(baskets_id, requestBody, header);
       return items;
     }
     catch(error){
