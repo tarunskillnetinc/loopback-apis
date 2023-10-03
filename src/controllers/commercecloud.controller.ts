@@ -292,4 +292,42 @@ export class CommercecloudController {
     }
   }
 
+  //Controller to get Order Details:
+  @get('/sfcc/order-Details/{customers_id}/orders')
+  @response(200,{
+    description: 'Get user order details',
+  })
+  async getOrderDetails(
+    @param.path.string('customers_id') customers_id: any,
+    @param.header.string('bearer') bearer: string,
+    ): Promise<any>{
+    try{
+      const header = this.request.headers.bearer;
+      const getSalesForceProducts = await this.sprykerService.getOrderDetails(customers_id,header);
+      return getSalesForceProducts;
+    }
+    catch(error){
+      throw error;
+    }
+  }
+
+  //To get Payment Methods:
+  @get('/sfcc/getPaymentMethodDetails/{baskets_id}')
+  @response(200,{
+    description: 'Get Salesforce Payment Methods',
+  })
+  async getSaleforcePaymentMethodDetails(
+    @param.path.string('baskets_id') baskets_id: any,
+    @param.header.string('bearer') bearer: string,
+    ): Promise<any>{
+    try{
+      const header = this.request.headers.bearer;
+      const getSalesForceProducts = await this.sprykerService.getSaleforcePaymentMethodDetails(baskets_id,header);
+      return getSalesForceProducts;
+    }
+    catch(error){
+      throw error;
+    }
+  }
+
 }
