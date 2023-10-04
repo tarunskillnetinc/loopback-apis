@@ -256,7 +256,7 @@ export class CommercecloudController {
   }
 
 
-  @post('/sfcc/confirmOrder')
+  @post('/sfcc/confirmPayment')
   @response(200,{
     message: "API for creating Cart"
   })
@@ -268,7 +268,7 @@ export class CommercecloudController {
   ): Promise<any>{
     try{
       const headers = this.request.headers.bearer;
-      const data = await this.sprykerService.confirmOrder(clientId,basketId,headers,requestBody);
+      const data = await this.sprykerService.confirmPayment(clientId,basketId,headers,requestBody);
       return data;
     }
     catch(error){

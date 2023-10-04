@@ -513,7 +513,7 @@ export class CommercecloudService {
   }
 
 
-  async confirmOrder(clientId: any,basketId: any,bearer: any,requestBody: any):Promise<any>{
+  async confirmPayment(clientId: any,basketId: any,bearer: any,requestBody: any):Promise<any>{
     const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_2/baskets/29ee6e82ed2ece54d9ae7e0e3d/payment_instruments?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
     const header = {
        'Content-Type': 'application/json',
