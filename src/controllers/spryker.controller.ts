@@ -165,7 +165,7 @@ export class SprykerController {
       description: 'Get VTEX cart details from the external API',
     })
 
-    async getVtexCartData(
+    async getSprykerCartData(
       @param.path.string('cartId') cartId: any,
       @param.header.string('bearer') bearer: string,
       ): Promise<any> {
