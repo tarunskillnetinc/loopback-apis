@@ -16,7 +16,7 @@ import {
 export class CommercecloudController {
   constructor(
     @inject("services.CommercecloudService")
-    private sprykerService: CommercecloudService,
+    private sfccService: CommercecloudService,
     @inject(RestBindings.Http.REQUEST) private request: Request
   ) {}
 
@@ -26,7 +26,7 @@ export class CommercecloudController {
   })
   async getSfBestSellingProducts(): Promise<any> {
     try {
-      const bestSellingProducts = await this.sprykerService.sfBestSelling();
+      const bestSellingProducts = await this.sfccService.sfBestSelling();
       return bestSellingProducts;
     } catch (error) {
       throw error;
@@ -42,7 +42,7 @@ export class CommercecloudController {
     try {
       console.log("aaff");
       const getSalesForceProducts =
-        await this.sprykerService.getSalesforceProductByCategory(categoryId);
+        await this.sfccService.getSalesforceProductByCategory(categoryId);
       console.log("aashh");
       return getSalesForceProducts;
     } catch (error) {
@@ -71,7 +71,7 @@ export class CommercecloudController {
 
   ): Promise<any> {
     try {
-      const data = await this.sprykerService.searchByFacets(category,color,size,minprice,maxprice,sortbyprice,sortbyname);
+      const data = await this.sfccService.searchByFacets(category,color,size,minprice,maxprice,sortbyprice,sortbyname);
       const response = await data;
       return response;
     } catch (error) {
@@ -100,7 +100,7 @@ export class CommercecloudController {
 
   ): Promise<any> {
     try {
-      const data = await this.sprykerService.searchByFacets(category,color,size,minprice,maxprice,sortbyprice,sortbyname);
+      const data = await this.sfccService.searchByFacets(category,color,size,minprice,maxprice,sortbyprice,sortbyname);
       const response = await data;
       return response;
     } catch (error) {
@@ -117,7 +117,7 @@ export class CommercecloudController {
   ): Promise<any> {
     try {
       const salesforceProductDetails =
-        await this.sprykerService.getsalesForceProductById(productId);
+        await this.sfccService.getsalesForceProductById(productId);
       console.log("salesforceProductDetails", salesforceProductDetails);
       return salesforceProductDetails;
     } catch (error) {
@@ -134,7 +134,7 @@ export class CommercecloudController {
   ): Promise<any> {
     try {
       const salesforceloginDetails =
-        await this.sprykerService.postsalesForceLogin(requestBody);
+        await this.sfccService.postsalesForceLogin(requestBody);
       console.log("salesforceloginDetails", salesforceloginDetails);
       return salesforceloginDetails;
     } catch (error) {
@@ -148,7 +148,7 @@ export class CommercecloudController {
   })
   async salesForceCategory(): Promise<any> {
     try {
-      const salesforceProductDetails = await this.sprykerService.getSalesForceCategory();
+      const salesforceProductDetails = await this.sfccService.getSalesForceCategory();
       console.log('salesforceProductDetails', salesforceProductDetails);
       return salesforceProductDetails;
     } catch (error) {
@@ -167,7 +167,7 @@ export class CommercecloudController {
   ): Promise<any>{
     try{
       const header = this.request.headers.bearer;
-      const items = await this.sprykerService.addItems(baskets_id, requestBody, header);
+      const items = await this.sfccService.addItems(baskets_id, requestBody, header);
       return items;
     }
     catch(error){
@@ -186,7 +186,7 @@ export class CommercecloudController {
     try{
       console.log('aamir');
       const header = this.request.headers.bearer;
-      const getSalesForceProducts = await this.sprykerService.getSalesforceProductItems(baskets_id,header);
+      const getSalesForceProducts = await this.sfccService.getSalesforceProductItems(baskets_id,header);
       return getSalesForceProducts;
     }
     catch(error){
@@ -210,7 +210,7 @@ export class CommercecloudController {
     try{
       console.log('aaaaa');
       const header = this.request.headers.bearer;
-      const getSalesForceProducts = await this.sprykerService.updateSalesforceProductItems(baskets_id,items_id,requestBody,header);
+      const getSalesForceProducts = await this.sfccService.updateSalesforceProductItems(baskets_id,items_id,requestBody,header);
       console.log('getSalesForceProductsbbbb',getSalesForceProducts);
       return getSalesForceProducts;
     } 
@@ -230,7 +230,7 @@ export class CommercecloudController {
     @param.path.string('cart_Id') cart_Id : any
   ): Promise<any>{
     try{
-      const data = await this.sprykerService.removeItem(cart_Id,requestBody,bearer);
+      const data = await this.sfccService.removeItem(cart_Id,requestBody,bearer);
       return data;
     }
     catch(error){
@@ -247,7 +247,7 @@ export class CommercecloudController {
     @param.header.string('bearer') bearer: any,
   ): Promise<any>{
     try{
-      const data = await this.sprykerService.createCart(bearer);
+      const data = await this.sfccService.createCart(bearer);
       return data;
     }
     catch(error){
@@ -256,19 +256,19 @@ export class CommercecloudController {
   }
 
 
-  @post('/sfcc/confirmPayment')
+  @post('/sfcc/confirmPayment/{clientId}/{basketId}')
   @response(200,{
     message: "API for confirm Payment"
   })
   async confirmPayment(
-    @param.query.string('clientId') clientId: any,
-    @param.query.string('basketId') basketId: any,
+    @param.path.string('clientId') clientId: any,
+    @param.path.string('basketId') basketId: any,
     @param.header.string('bearer') bearer: any,
     @requestBody() requestBody:any,
   ): Promise<any>{
     try{
       const headers = this.request.headers.bearer;
-      const data = await this.sprykerService.confirmPayment(clientId,basketId,headers,requestBody);
+      const data = await this.sfccService.confirmPayment(clientId,basketId,headers,requestBody);
       return data;
     }
     catch(error){
@@ -276,24 +276,7 @@ export class CommercecloudController {
     }
   }
 
-  @post('/sfcc/placeOrder')
-  @response(200,{
-    message: "API for placing Order "
-  })
-  async placeOrder(
-    @param.query.string('clientId') clientId: any,
-    @param.header.string('bearer') bearer: any,
-    @requestBody() requestBody:any,
-  ): Promise<any>{
-    try{
-      const headers = this.request.headers.bearer;
-      const data = await this.sprykerService.placeOrder(clientId,headers,requestBody);
-      return data;
-    }
-    catch(error){
-      throw error;
-    }
-  }
+
 
   //Get Basket Details based on Customer ID:
   @get('/sfcc/getCustomerCart/{customerId}')
@@ -305,7 +288,7 @@ export class CommercecloudController {
     @param.header.string('bearer') bearer: any,
   ): Promise<any>{
     try{
-      const data = await this.sprykerService.customerCart(customerId,bearer);
+      const data = await this.sfccService.customerCart(customerId,bearer);
       return data;
     }
     catch(error){
@@ -324,7 +307,7 @@ export class CommercecloudController {
     ): Promise<any>{
     try{
       const header = this.request.headers.bearer;
-      const getSalesForceProducts = await this.sprykerService.getUserDetails(customers_id,header);
+      const getSalesForceProducts = await this.sfccService.getUserDetails(customers_id,header);
       return getSalesForceProducts;
     }
     catch(error){
@@ -343,7 +326,7 @@ export class CommercecloudController {
     ): Promise<any>{
     try{
       const header = this.request.headers.bearer;
-      const getSalesForceProducts = await this.sprykerService.getOrderDetails(customers_id,header);
+      const getSalesForceProducts = await this.sfccService.getOrderDetails(customers_id,header);
       return getSalesForceProducts;
     }
     catch(error){
@@ -362,7 +345,7 @@ export class CommercecloudController {
     ): Promise<any>{
     try{
       const header = this.request.headers.bearer;
-      const getSalesForceProducts = await this.sprykerService.getSaleforcePaymentMethodDetails(baskets_id,header);
+      const getSalesForceProducts = await this.sfccService.getSaleforcePaymentMethodDetails(baskets_id,header);
       return getSalesForceProducts;
     }
     catch(error){
