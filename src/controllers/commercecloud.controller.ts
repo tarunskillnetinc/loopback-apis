@@ -258,7 +258,7 @@ export class CommercecloudController {
 
   @post('/sfcc/confirmPayment')
   @response(200,{
-    message: "API for creating Cart"
+    message: "API for confirm Payment"
   })
   async confirmPayment(
     @param.query.string('clientId') clientId: any,
@@ -269,6 +269,25 @@ export class CommercecloudController {
     try{
       const headers = this.request.headers.bearer;
       const data = await this.sprykerService.confirmPayment(clientId,basketId,headers,requestBody);
+      return data;
+    }
+    catch(error){
+      throw error;
+    }
+  }
+
+  @post('/sfcc/placeOrder')
+  @response(200,{
+    message: "API for placing Order "
+  })
+  async placeOrder(
+    @param.query.string('clientId') clientId: any,
+    @param.header.string('bearer') bearer: any,
+    @requestBody() requestBody:any,
+  ): Promise<any>{
+    try{
+      const headers = this.request.headers.bearer;
+      const data = await this.sprykerService.placeOrder(clientId,headers,requestBody);
       return data;
     }
     catch(error){
