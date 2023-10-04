@@ -260,7 +260,7 @@ export class CommercecloudController {
   @response(200,{
     message: "API for creating Cart"
   })
-  async confirmOrder(
+  async confirmPayment(
     @param.query.string('clientId') clientId: any,
     @param.query.string('basketId') basketId: any,
     @param.header.string('bearer') bearer: any,
