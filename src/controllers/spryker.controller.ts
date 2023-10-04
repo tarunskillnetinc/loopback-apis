@@ -70,11 +70,11 @@ export class SprykerController {
   }
 
 
-  @get('/demo-spryker-pdp/{abstractId}')
+  @get('/spryker/product-by-id/{productId}')
   @response(200, {
     description: 'Get Plp details from the external API',
   })
-  async getProductDetail(@param.path.string('abstractId') productId: string): Promise<any> {
+  async getProductDetail(@param.path.string('productId') productId: string): Promise<any> {
     try {
       const productDetails = await this.sprykerService.getSprykerProductDetails(productId);
       return productDetails;
@@ -94,6 +94,28 @@ export class SprykerController {
   async getSprykerProductByQuery(@param.path.string('query') query: any): Promise<any>{
     try{
       const getSprkerProducts = await this.sprykerService.getSprykerProductByQuery(query);
+      return getSprkerProducts;
+    }
+    catch(error){
+      throw error;
+    }
+  }
+
+  @get('/spryker/all-products')
+  @response(200,{
+    description: 'Get Spryker Product List by search query',
+  })
+
+  async getAllSprykerProducts(
+    @param.query.string('color') color?: any,
+    @param.query.string('minprice') minprice?: any,
+    @param.query.string('maxprice') maxprice?: any,
+    @param.query.string('sort') sort?: any,
+    @param.query.string('page') page?: any,
+    @param.query.string('productsPerPage') count?: any,
+  ): Promise<any>{
+    try{
+      const getSprkerProducts = await this.sprykerService.getAllSprykerProducts(color,minprice,maxprice,sort,count,page);
       return getSprkerProducts;
     }
     catch(error){
