@@ -375,7 +375,7 @@ export class CommercecloudService {
             : [];
   
           return {
-            Id: category.id,
+            parent_Id: category.id,
             name: category.name,
             hasChildren: children.length > 0,
             children,

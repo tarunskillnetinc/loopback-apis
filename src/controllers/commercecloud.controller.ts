@@ -162,11 +162,11 @@ export class CommercecloudController {
   })
   async addItems(
     @param.path.string('baskets_id') baskets_id: any,
-    @param.header.string('bearer') bearer: string,
+    @param.header.string('token') token: string,
     @requestBody() requestBody:{orderItems:[]},
   ): Promise<any>{
     try{
-      const header = this.request.headers.bearer;
+      const header = this.request.headers.token;
       const items = await this.sfccService.addItems(baskets_id, requestBody, header);
       return items;
     }
@@ -181,11 +181,10 @@ export class CommercecloudController {
   })
   async getSalesforceProductItems(
     @param.path.string('baskets_id') baskets_id: any,
-    @param.header.string('bearer') bearer: string,
+    @param.header.string('token') token: string,
     ): Promise<any>{
     try{
-      console.log('aamir');
-      const header = this.request.headers.bearer;
+      const header = this.request.headers.token;
       const getSalesForceProducts = await this.sfccService.getSalesforceProductItems(baskets_id,header);
       return getSalesForceProducts;
     }
@@ -204,12 +203,12 @@ export class CommercecloudController {
   async updateSalesforceProductItems(
     @param.path.string('baskets_id') baskets_id: any,
     @param.path.string('items_id') items_id:any,
-    @param.header.string('bearer') bearer: string,
+    @param.header.string('token') token: string,
     @requestBody() requestBody:{quantity:any}
     ): Promise<any>{
     try{
       console.log('aaaaa');
-      const header = this.request.headers.bearer;
+      const header = this.request.headers.token;
       const getSalesForceProducts = await this.sfccService.updateSalesforceProductItems(baskets_id,items_id,requestBody,header);
       console.log('getSalesForceProductsbbbb',getSalesForceProducts);
       return getSalesForceProducts;
@@ -226,11 +225,11 @@ export class CommercecloudController {
   })
   async removeItem(
     @requestBody() requestBody:{itemId:[]},
-    @param.header.string('bearer') bearer: any,
+    @param.header.string('token') token: any,
     @param.path.string('cart_Id') cart_Id : any
   ): Promise<any>{
     try{
-      const data = await this.sfccService.removeItem(cart_Id,requestBody,bearer);
+      const data = await this.sfccService.removeItem(cart_Id,requestBody,token);
       return data;
     }
     catch(error){
@@ -244,10 +243,10 @@ export class CommercecloudController {
     message: "API for creating Cart"
   })
   async createCart(
-    @param.header.string('bearer') bearer: any,
+    @param.header.string('token') token: any,
   ): Promise<any>{
     try{
-      const data = await this.sfccService.createCart(bearer);
+      const data = await this.sfccService.createCart(token);
       return data;
     }
     catch(error){
@@ -263,11 +262,11 @@ export class CommercecloudController {
   async confirmPayment(
     @param.path.string('clientId') clientId: any,
     @param.path.string('basketId') basketId: any,
-    @param.header.string('bearer') bearer: any,
+    @param.header.string('token') token: any,
     @requestBody() requestBody:any,
   ): Promise<any>{
     try{
-      const headers = this.request.headers.bearer;
+      const headers = this.request.headers.token;
       const data = await this.sfccService.confirmPayment(clientId,basketId,headers,requestBody);
       return data;
     }
@@ -285,10 +284,10 @@ export class CommercecloudController {
   })
   async customerCart(
     @param.path.string('customerId') customerId: any,
-    @param.header.string('bearer') bearer: any,
+    @param.header.string('token') token: any,
   ): Promise<any>{
     try{
-      const data = await this.sfccService.customerCart(customerId,bearer);
+      const data = await this.sfccService.customerCart(customerId,token);
       return data;
     }
     catch(error){
@@ -303,10 +302,10 @@ export class CommercecloudController {
   })
   async getUserDetails(
     @param.path.string('customers_id') customers_id: any,
-    @param.header.string('bearer') bearer: string,
+    @param.header.string('token') token: string,
     ): Promise<any>{
     try{
-      const header = this.request.headers.bearer;
+      const header = this.request.headers.token;
       const getSalesForceProducts = await this.sfccService.getUserDetails(customers_id,header);
       return getSalesForceProducts;
     }
@@ -322,10 +321,10 @@ export class CommercecloudController {
   })
   async getOrderDetails(
     @param.path.string('customers_id') customers_id: any,
-    @param.header.string('bearer') bearer: string,
+    @param.header.string('token') token: string,
     ): Promise<any>{
     try{
-      const header = this.request.headers.bearer;
+      const header = this.request.headers.token;
       const getSalesForceProducts = await this.sfccService.getOrderDetails(customers_id,header);
       return getSalesForceProducts;
     }
@@ -341,10 +340,10 @@ export class CommercecloudController {
   })
   async getSaleforcePaymentMethodDetails(
     @param.path.string('baskets_id') baskets_id: any,
-    @param.header.string('bearer') bearer: string,
+    @param.header.string('token') token: string,
     ): Promise<any>{
     try{
-      const header = this.request.headers.bearer;
+      const header = this.request.headers.token;
       const getSalesForceProducts = await this.sfccService.getSaleforcePaymentMethodDetails(baskets_id,header);
       return getSalesForceProducts;
     }
