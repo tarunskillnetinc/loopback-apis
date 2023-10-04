@@ -295,15 +295,17 @@ export class CommercecloudService {
       const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_2/baskets/${baskets_id}?&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
       console.log(endpoint,"endpoitn");
       const response = await this.cartFetchFromEndpoint(endpoint,header);
-      const data = response.product_items;
+      try{
+      const data = response?.product_items;
       const products: any[] = [];
-      const productDataPromise = data.map(async (items:any)=>{
+
+      const productDataPromise = data?.map(async (items:any)=>{
         const product_data:any = {
-          "itemId": items.item_id,
-          "productName": items.product_name,
-          "price":items.base_price,
-          "sellingPrice":items.price,
-          "quantity":items.quantity
+          "itemId": items?.item_id,
+          "productName": items?.product_name,
+          "price":items?.base_price,
+          "sellingPrice":items?.price,
+          "quantity":items?.quantity
         }
         const endpoint_two = `s/Ref-VinodCSQT/dw/shop/v23_2/products/${items.product_id}/images`;
         const product_images_response = this.cartFetchFromEndpoint(endpoint_two,header);
@@ -325,6 +327,11 @@ export class CommercecloudService {
         "totalizers":cartTotals
       }
       return finalData;
+      }
+      catch(error){
+        console.log("error is");
+        return response;
+      }
     }
     // Transformation function
     async transformResponse(inputData:any) {
