@@ -275,6 +275,25 @@ export class CommercecloudController {
     }
   }
 
+  @post('/sfcc/placeOrder/{clientId}/')
+  @response(200,{
+    message: "API for placing Order "
+  })
+  async placeOrder(
+    @param.path.string('clientId') clientId: any,
+    @param.header.string('bearer') bearer: any,
+    @requestBody() requestBody:any,
+  ): Promise<any>{
+    try{
+      const headers = this.request.headers.bearer;
+      const data = await this.sfccService.placeOrder(clientId,headers,requestBody);
+      return data;
+    }
+    catch(error){
+      throw error;
+    }
+  }
+
 
 
   //Get Basket Details based on Customer ID:

@@ -546,4 +546,16 @@ export class CommercecloudService {
       console.log(error.response);
     }
   }
+
+  async placeOrder(clientId: any,bearer: any,requestBody: any):Promise<any>{
+    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_2/orders?client_id=${clientId}`;
+    const header = {
+       'Content-Type': 'application/json',
+        'Authorization':`Bearer ${bearer}`
+    }
+    const response = await this.confirm(endpoint,header,requestBody);
+    console.log("my response",response)
+
+    return response;
+  }
 }
