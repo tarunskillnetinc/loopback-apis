@@ -367,40 +367,42 @@ export class CommercecloudService {
       console.log('datas',data)
       return response;
     }
-  async getSalesForceCategory(): Promise<any> {
-    const product_arr: any[] = [];
-    const endpoint = `/s/Ref-VinodCSQT/dw/shop/v23_2/categories/root?levels=6&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
-  
-    try {
-      const response = await this.fetchFromEndpoint(endpoint);
-      const categories = response.categories;
-  
-      if (Array.isArray(categories) && categories.length > 0) {
-        const mapCategory = (category: any): any => {
-          const children = Array.isArray(category.categories)
-            ? category.categories.map((childCategory: any) => mapCategory(childCategory))
-            : [];
-  
-          return {
-            parent_Id: category.id,
-            name: category.name,
-            hasChildren: children.length > 0,
-            children,
+    async getSalesForceCategory(): Promise<any> {
+      const product_arr: any[] = [];
+      const endpoint = `/s/Ref-VinodCSQT/dw/shop/v23_2/categories/root?levels=6&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    
+      try {
+        const response = await this.fetchFromEndpoint(endpoint);
+        const categories = response.categories;
+    
+        if (Array.isArray(categories) && categories.length > 0) {
+          const mapCategory = (category: any, isChild: boolean = false): any => {
+            const children = Array.isArray(category.categories)
+              ? category.categories.map((childCategory: any) => mapCategory(childCategory, true))
+              : [];
+    
+            const idField = isChild ? "Id" : "parent_Id"; 
+    
+            return {
+              [idField]: category.id,
+              name: category.name,
+              hasChildren: children.length > 0,
+              children,
+            };
           };
-        };
-
-        categories.forEach((category: any) => {
-          product_arr.push(mapCategory(category));
-        });
+    
+          categories.forEach((category: any) => {
+            product_arr.push(mapCategory(category));
+          });
+        }
+    
+        console.log('data', product_arr);
+        return product_arr;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        throw error;
       }
-  
-      console.log('data', product_arr);
-      return product_arr;
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      throw error;
     }
-  }
 
   async removeItem(cart_Id:any, requestBody:any, bearer:any):Promise<any>{
     const endpoint = `/s/Ref-VinodCSQT/dw/shop/v23_2/baskets/${cart_Id}/items/${requestBody.item_id}?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;

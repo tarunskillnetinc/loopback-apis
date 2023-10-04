@@ -24,35 +24,32 @@ export class SprykerService  {
     }
   }
 
-  async getSprykerCategoryTree(): Promise<any> {
+  async getSprykerCategoryTree(): Promise<any[]> {
     const response = await this.fetchFromEndpoint('category-trees');
-    const categoryTree = response.data[0];
-    const data = response.data;
-    const categoryNode = categoryTree.attributes.categoryNodesStorage;
-    const myArray = [];
-    const categoryTreemap: any = [];
-    for (const categoryNode of categoryTree.attributes.categoryNodesStorage) {
-      if (categoryNode.children.length > 0) {
-        for (const childNode of categoryNode.children) {
-          myArray.push(childNode);
-        }
-      }
-    }
-            await Promise.all( categoryTree.attributes.categoryNodesStorage?.map(async(item: any) => {
-              console.log(item.nodeId);
-      const endpoint = `catalog-search?category=${item.nodeId}&include=Concrete-products`;
-      const responseData = await this.fetchFromEndpoint(endpoint);
-      // console.log("response", responseData);
-      await categoryTreemap.push({
-        id: item.nodeId,
-        title: item.name,
-        data: await this.functionSprykerCategoryTreeLoopbackForData(responseData),
-      });
-    }));
+    const categoryTree = response.data[0].attributes.categoryNodesStorage;
   
-    // console.log('transformCategoryTree', categoryTreemap);
-    return categoryTreemap;
+    const mapCategory = (categories: any[], parentId: string | null = null): any[] => {
+      const result: any[] = [];
+  
+      categories.forEach((category: any) => {
+        const categoryData: any = {
+          parent_Id: category.nodeId.toString(),
+          name: category.name,
+          hasChildren: category.children.length > 0,
+          children: mapCategory(category.children, category.nodeId.toString()),
+        };
+  
+        result.push(categoryData);
+      });
+  
+      return result;
+    };
+  
+    const topLevelCategories = mapCategory(categoryTree);
+    return topLevelCategories;
   }
+  
+  
 
   async functionSprykerCategoryTreeLoopbackForData(responseData:any){
     var data = responseData.data;

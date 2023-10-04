@@ -24,7 +24,21 @@ export class SprykerController {
 
 
 
-  @get('/get-spryker-category-trees')
+  // @get('/get-spryker-category-trees')
+  // @response(200, {
+  //   description: 'Get category trees from the external API',
+  // })
+  // async getSprykerCategoryTree(): Promise<any> {
+  //   try {
+  //     const categoryTrees = await this.sprykerService.getSprykerCategoryTree();
+  //     return categoryTrees;
+  //   } catch (error) {
+  //     // Handle errors
+  //     throw error;
+  //   }
+  // }
+
+  @get('/spryker/category-tree')
   @response(200, {
     description: 'Get category trees from the external API',
   })
