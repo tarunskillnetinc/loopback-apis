@@ -19,6 +19,7 @@ export class CommercecloudService {
       return response.data;
     } catch (error) {
       console.log("error123",error)
+      return error?.response?.data
       throw error;
     }
   }
@@ -42,7 +43,7 @@ export class CommercecloudService {
       );
       return response;
     } catch (error) {
-      return error;
+      return error?.response?.data;
     }
   }
    
@@ -288,6 +289,7 @@ export class CommercecloudService {
         return response.data;
       } catch (error) {
         console.log(error)
+        return error?.response?.data
         throw error;
       }
     }
@@ -357,6 +359,7 @@ export class CommercecloudService {
         return response.data;
       }catch(error){
         console.log(error)
+        return error?.response?.data
         throw error;
       }
     }
@@ -422,6 +425,7 @@ export class CommercecloudService {
       return response.data;
     }
     catch(error){
+      return error?.response?.data
       throw error;
     }
   }
@@ -449,6 +453,8 @@ export class CommercecloudService {
     }
     catch(error){
       console.log(error.response.data);
+      return error?.response?.data
+
     }
   }
 
@@ -473,6 +479,8 @@ export class CommercecloudService {
     }
     catch(error){
       console.log("error is", error);
+      return error?.response?.data
+
     }
   }
 
@@ -539,6 +547,7 @@ export class CommercecloudService {
       return response.data;
     }catch(error){
       console.log(error)
+      return error?.response?.data
       throw error;
     }
   }
@@ -580,6 +589,7 @@ export class CommercecloudService {
       return response.data;
     }catch(error){
       console.log(error)
+      return error?.response?.data
       throw error;
     }
   }
@@ -621,6 +631,7 @@ export class CommercecloudService {
       return response.data;
     }catch(error){
       console.log(error)
+      return error?.response?.data
       throw error;
     }
   }
@@ -659,6 +670,7 @@ export class CommercecloudService {
     }
     catch(error){
       console.log(error.response);
+      return error?.response?.data
     }
   }
 
