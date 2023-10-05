@@ -329,6 +329,9 @@ export class CommercecloudService {
         products.push(product_data);
       })
       await Promise.all(productDataPromise);
+      // Sort the products array by quantity in ascending order
+      products.sort((a, b) => a.price - b.price);
+      
       const cartTotals = {
         CartTotal: response.order_total,
         Items: response.product_total,
