@@ -280,7 +280,7 @@ export class SprykerService  {
   }
   
   async getAllSprykerProducts(color:any, minprice:any, maxprice:any, sort:any, count:any, page: any): Promise<any> {
-    const endpoint = `catalog-search?color=${color}&price%5Bmin%5D=${minprice}&price%5Bmax%5D=${maxprice}&ipp=${count}&page=${page}&sort=${sort}`;
+    const endpoint = `catalog-search?color=${color || ''}&price%5Bmin%5D=${minprice || ''}&price%5Bmax%5D=${maxprice || ''}&ipp=${count || ''}&page=${page || ''}&sort=${sort || ''}`;
     const response = await this.fetchFromEndpoint(endpoint);
     const data = response.data;
     console.log('data',data[0]?.attributes?.pagination);
