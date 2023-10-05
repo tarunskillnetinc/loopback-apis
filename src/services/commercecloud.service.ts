@@ -19,7 +19,10 @@ export class CommercecloudService {
       return response.data;
     } catch (error) {
       console.log("error123",error)
-      return error?.response?.data
+      return {
+        "status":error?.response.status,
+        "statusText":error?.response?.statusText,
+        "message":error?.response?.data}
       throw error;
     }
   }
@@ -43,7 +46,10 @@ export class CommercecloudService {
       );
       return response;
     } catch (error) {
-      return error?.response?.data;
+      return {
+        "status":error?.response.status,
+        "statusText":error?.response?.statusText,
+        "message":error?.response?.data}
     }
   }
    
@@ -270,7 +276,10 @@ export class CommercecloudService {
     }
     catch(error){
       console.log("error is",error);
-      return error?.response?.data
+      return {
+        "status":error?.response.status,
+        "statusText":error?.response?.statusText,
+        "message":error?.response?.data}
     }
   }
 
@@ -289,8 +298,10 @@ export class CommercecloudService {
         return response.data;
       } catch (error) {
         console.log(error)
-        return error?.response?.data
-        throw error;
+        return {
+          "status":error?.response.status,
+          "statusText":error?.response?.statusText,
+          "message":error?.response?.data}
       }
     }
 
@@ -359,8 +370,10 @@ export class CommercecloudService {
         return response.data;
       }catch(error){
         console.log(error)
-        return error?.response?.data
-        throw error;
+        return {
+          "status":error?.response.status,
+          "statusText":error?.response?.statusText,
+          "message":error?.response?.data}
       }
     }
     async updateSalesforceProductItems(baskets_id:any,items_id:any,requestBody:any,header:any):Promise<any>{
@@ -425,8 +438,10 @@ export class CommercecloudService {
       return response.data;
     }
     catch(error){
-      return error?.response?.data
-      throw error;
+      return {
+        "status":error?.response.status,
+        "statusText":error?.response?.statusText,
+        "message":error?.response?.data}
     }
   }
 
@@ -453,7 +468,10 @@ export class CommercecloudService {
     }
     catch(error){
       console.log(error.response.data);
-      return error?.response?.data
+      return {
+        "status":error?.response.status,
+        "statusText":error?.response?.statusText,
+        "message":error?.response?.data}
 
     }
   }
@@ -547,8 +565,10 @@ export class CommercecloudService {
       return response.data;
     }catch(error){
       console.log(error)
-      return error?.response?.data
-      throw error;
+      return {
+        "status":error?.response.status,
+        "statusText":error?.response?.statusText,
+        "message":error?.response?.data}
     }
   }
   async updateSalesForceshippment(baskets_id:any,header:any):Promise<any>{
@@ -589,8 +609,10 @@ export class CommercecloudService {
       return response.data;
     }catch(error){
       console.log(error)
-      return error?.response?.data
-      throw error;
+      return {
+        "status":error?.response.status,
+        "statusText":error?.response?.statusText,
+        "message":error?.response?.data}
     }
   }
   async updateSalesForceaddress(baskets_id:any,header:any):Promise<any>{
@@ -631,8 +653,10 @@ export class CommercecloudService {
       return response.data;
     }catch(error){
       console.log(error)
-      return error?.response?.data
-      throw error;
+      return {
+        "status":error?.response.status,
+        "statusText":error?.response?.statusText,
+        "message":error?.response?.data}
     }
   }
   async updateSalesForcebillingaddress(baskets_id:any,header:any):Promise<any>{
