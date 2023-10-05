@@ -11,6 +11,7 @@ import {
   requestBody,
   ResponseObject,
   patch,
+  put,
 } from "@loopback/rest";
 
 export class CommercecloudController {
@@ -254,6 +255,70 @@ export class CommercecloudController {
     }
   }
 
+  // shipment method put 
+  @put('/sfcc/shippment_method/{baskets_id}')
+  @response(200,{
+    description: 'patch shipping method api',
+  })
+  async updateSalesforceshippingmehtod(
+    @param.path.string('baskets_id') baskets_id: any,
+    @param.header.string('token') token: string,
+    ): Promise<any>{
+    try{
+      const header = this.request.headers.token;
+      const updateSalesForceshippment = await this.sfccService.updateSalesForceshippment(baskets_id,header);
+      console.log('getSalesForceProductsbbbb',updateSalesForceshippment);
+      return updateSalesForceshippment;
+    } 
+    catch(error){
+      throw error;
+    }
+  }
+  // shippment method end
+
+  
+  // shipping address method put 
+  @put('/sfcc/shipping_address/{baskets_id}')
+  @response(200,{
+    description: 'patch shipping method api',
+  })
+  async updateSalesForceaddress(
+    @param.path.string('baskets_id') baskets_id: any,
+    @param.header.string('token') token: string,
+    ): Promise<any>{
+    try{
+      const header = this.request.headers.token;
+      const updateSalesForceshippment = await this.sfccService.updateSalesForceaddress(baskets_id,header);
+      console.log('getSalesForceProductsbbbb',updateSalesForceshippment);
+      return updateSalesForceshippment;
+    } 
+    catch(error){
+      throw error;
+    }
+  }
+  // shipping address method end
+
+  
+  // billing address method put 
+  @put('/sfcc/billing_address/{baskets_id}')
+  @response(200,{
+    description: 'patch shipping method api',
+  })
+  async updateSalesForcebillingaddress(
+    @param.path.string('baskets_id') baskets_id: any,
+    @param.header.string('token') token: string,
+    ): Promise<any>{
+    try{
+      const header = this.request.headers.token;
+      const updateSalesForcebillingaddress = await this.sfccService.updateSalesForcebillingaddress(baskets_id,header);
+      console.log('getSalesForceProductsbbbb',updateSalesForcebillingaddress);
+      return updateSalesForcebillingaddress;
+    } 
+    catch(error){
+      throw error;
+    }
+  }
+  // billing address method end
 
   @post('/sfcc/confirmPayment/{basketId}')
   @response(200,{

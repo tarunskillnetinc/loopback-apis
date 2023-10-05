@@ -269,6 +269,7 @@ export class CommercecloudService {
     }
     catch(error){
       console.log("error is",error);
+      return error?.response?.data
     }
   }
 
@@ -520,6 +521,118 @@ export class CommercecloudService {
     const data = response;
     return data
   }
+
+  // function shippment update detail
+  async shippmentUpdateFromEndpoint(endpoint:string,header:string):Promise<any>{
+    var body={
+      id:"EUR001"
+    }
+    try{
+      const response = await axios.put(`${this.dataSource.settings.baseURL}/${endpoint}`,
+      body,  
+      {
+        headers:{
+          'Authorization':`Bearer ${header}`,
+        },
+      },
+      );
+      return response.data;
+    }catch(error){
+      console.log(error)
+      throw error;
+    }
+  }
+  async updateSalesForceshippment(baskets_id:any,header:any):Promise<any>{
+    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_1/baskets/${baskets_id}/shipments/me/shipping_method`;
+    console.log(endpoint,"updateSalesforceProductItems");
+    const response = await this.shippmentUpdateFromEndpoint(endpoint,header);
+    const data = response;
+    console.log('datas',data)
+    return response;
+  } 
+  // shippment update end
+
+  // function shipping address update detail
+  async addressUpdateFromEndpoint(endpoint:string,header:string):Promise<any>{
+    var body={
+      "address1": "Ocapi",
+      "address2": "Demo",
+      "city": "Indore",
+      "country_code": "CN",
+      "first_name": "Ocapi",
+      "full_name": "Ocapi Demo",
+      "id": "OcapiD",
+      "last_name": "Demo",
+      "phone": "123456789",
+      "postal_code": "45200",
+      "state_code": "45200",
+      "title": "OcapiDemo"
+    }
+    try{
+      const response = await axios.put(`${this.dataSource.settings.baseURL}/${endpoint}`,
+      body,  
+      {
+        headers:{
+          'Authorization':`Bearer ${header}`,
+        },
+      },
+      );
+      return response.data;
+    }catch(error){
+      console.log(error)
+      throw error;
+    }
+  }
+  async updateSalesForceaddress(baskets_id:any,header:any):Promise<any>{
+    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_1/baskets/${baskets_id}/shipments/me/shipping_address?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    console.log(endpoint,"updateSalesforceProductItems");
+    const response = await this.addressUpdateFromEndpoint(endpoint,header);
+    const data = response;
+    console.log('datas',data)
+    return response;
+  } 
+  // function shipping adddress end
+
+  // function shipping address update detail
+  async billingaddressUpdateFromEndpoint(endpoint:string,header:string):Promise<any>{
+    var body={
+      "address1": "Ocapi",
+      "address2": "Demo",
+      "city": "Indore",
+      "country_code": "CN",
+      "first_name": "Ocapi",
+      "full_name": "Ocapi Demo",
+      "id": "OcapiD",
+      "last_name": "Demo",
+      "phone": "123456789",
+      "postal_code": "45200",
+      "state_code": "45200",
+      "title": "OcapiDemo"
+    }
+    try{
+      const response = await axios.put(`${this.dataSource.settings.baseURL}/${endpoint}`,
+      body,  
+      {
+        headers:{
+          'Authorization':`Bearer ${header}`,
+        },
+      },
+      );
+      return response.data;
+    }catch(error){
+      console.log(error)
+      throw error;
+    }
+  }
+  async updateSalesForcebillingaddress(baskets_id:any,header:any):Promise<any>{
+    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_1/baskets/${baskets_id}/billing_address?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    console.log(endpoint,"updateSalesforceProductItems");
+    const response = await this.billingaddressUpdateFromEndpoint(endpoint,header);
+    const data = response;
+    console.log('datas',data)
+    return response;
+  } 
+  // function shipping adddress end
 
 
   async confirmPayment(basketId: any,bearer: any,requestBody: any):Promise<any>{
