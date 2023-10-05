@@ -24,35 +24,32 @@ export class SprykerService  {
     }
   }
 
-  async getSprykerCategoryTree(): Promise<any> {
+  async getSprykerCategoryTree(): Promise<any[]> {
     const response = await this.fetchFromEndpoint('category-trees');
-    const categoryTree = response.data[0];
-    const data = response.data;
-    const categoryNode = categoryTree.attributes.categoryNodesStorage;
-    const myArray = [];
-    const categoryTreemap: any = [];
-    for (const categoryNode of categoryTree.attributes.categoryNodesStorage) {
-      if (categoryNode.children.length > 0) {
-        for (const childNode of categoryNode.children) {
-          myArray.push(childNode);
-        }
-      }
-    }
-            await Promise.all( categoryTree.attributes.categoryNodesStorage?.map(async(item: any) => {
-              console.log(item.nodeId);
-      const endpoint = `catalog-search?category=${item.nodeId}&include=Concrete-products`;
-      const responseData = await this.fetchFromEndpoint(endpoint);
-      // console.log("response", responseData);
-      await categoryTreemap.push({
-        id: item.nodeId,
-        title: item.name,
-        data: await this.functionSprykerCategoryTreeLoopbackForData(responseData),
-      });
-    }));
+    const categoryTree = response.data[0].attributes.categoryNodesStorage;
   
-    // console.log('transformCategoryTree', categoryTreemap);
-    return categoryTreemap;
+    const mapCategory = (categories: any[], parentId: string | null = null): any[] => {
+      const result: any[] = [];
+  
+      categories.forEach((category: any) => {
+        const categoryData: any = {
+          parent_Id: category.nodeId.toString(),
+          name: category.name,
+          hasChildren: category.children.length > 0,
+          children: mapCategory(category.children, category.nodeId.toString()),
+        };
+  
+        result.push(categoryData);
+      });
+  
+      return result;
+    };
+  
+    const topLevelCategories = mapCategory(categoryTree);
+    return topLevelCategories;
   }
+  
+  
 
   async functionSprykerCategoryTreeLoopbackForData(responseData:any){
     var data = responseData.data;
@@ -141,7 +138,7 @@ export class SprykerService  {
     const endpoint = `abstract-products/${abstractId}?include=abstract-product-image-sets%2Cabstract-product-prices%2Cconcrete-product-availabilities%2Cproduct-labels%2Cproduct-options%2Cproduct-reviews%2Cproduct-measurement-units%2Csales-units%2Cbundled-products%2Cproduct-offers`;
     // return this.fetchFromEndpoint(endpoint);
     const response = await this.fetchFromEndpoint(endpoint);
-    console.log("abstract",response)
+    // console.log("abstract",response)
     await Promise.all(
       response.data.attributes.attributeMap.product_concrete_ids?.map(
         async (item: any) => {
@@ -200,20 +197,28 @@ export class SprykerService  {
       }
     });
 
-    console.log("dataresponse12345567", dataresponse);
+    // console.log("dataresponse12345567", dataresponse);
     dataresponse.map(async (item: any) => {
+      // console.log("item", item?.attributes?.sku ,"result", item?.price?.attributes?.prices[1]?.netAmount);
+      const listPrice = item?.price?.attributes?.prices[1]?.netAmount;
+      const discountPrice = item?.price?.attributes?.price;
+      const discountPercent = Math.round(
+        ((listPrice - discountPrice) / listPrice) * 100
+      );
       skuresponse.push({
+         
         sku: item?.attributes?.sku,
         skuname: item?.attributes?.name,
         dimensions: " ",
         available: item?.availability?.attributes?.availability,
         availablequantity: item?.availability?.attributes?.quantity,
-        listPriceFormated: "$0.00",
-        listPrice: item.price.length,
-        bestPriceFormated: item?.price?.attributes?.prices[0].currency.symbol+ item?.price?.attributes?.price,
-        disocountPercent: 23,
+        listPriceFormated: item?.price?.attributes?.prices[0].currency.symbol+ (listPrice?listPrice/100:discountPrice/100),
+        listPrice: listPrice?listPrice:discountPrice,
+        bestPriceFormated: item?.price?.attributes?.prices[0].currency.symbol+ discountPrice/100,
+        disocountPercent: discountPercent?discountPercent:0,
         bestPrice: item?.price?.attributes?.price,
-        spotPrice: 2684,
+        spotPrice: item?.price?.attributes?.prices[1]?.netAmount,
+        specifications: item?.attributes?.attributes,
         images: {
           image1:
             // "https://skillnet.vteximg.com.br/arquivos/ids/156198-292-292/x8u1i946.png?v=638294985271830000",
@@ -272,6 +277,55 @@ export class SprykerService  {
     }) || [];
   
     return modifyData;
+  }
+  
+  async getAllSprykerProducts(color:any, minprice:any, maxprice:any, sort:any, count:any, page: any): Promise<any> {
+    const endpoint = `catalog-search?color=${color || ''}&price%5Bmin%5D=${minprice || ''}&price%5Bmax%5D=${maxprice || ''}&ipp=${count || ''}&page=${page || ''}&sort=${sort || ''}`;
+    const response = await this.fetchFromEndpoint(endpoint);
+    const data = response.data;
+    console.log('data',data[0]?.attributes?.pagination);
+    const paginations = data[0]?.attributes?.pagination
+    const pages ={
+        count: paginations.numFound,
+        totalPages: paginations.maxPage,
+        perPage: paginations.currentItemsPerPage,
+        next: paginations.nextPage
+      };
+    const valueFacets = data[0]?.attributes?.valueFacets?.map((facet: any) => {
+      return {
+        name: facet.name,
+        value: facet.values.map((value: any) => {
+          return {
+            id: value.value,
+            quantity: value.doc_count,
+            value: value.value,
+          };
+        }),
+      };
+    }) || [];
+    const productData = data[0]?.attributes?.abstractProducts?.map((item: any) => {
+      const listPrice = item?.prices[1]?.netAmount;
+      const discountPrice = item?.price;
+      const discountPercent = Math.round(
+        ((listPrice - discountPrice) / listPrice) * 100
+      );
+      return {
+        product_id: item.abstractSku,
+        sku_id: item.abstractSku,
+        product_name: item.abstractName,
+        product_image: item.images[0]?.externalUrlLarge || null,
+        product_rating: "", // You can populate this if it's available in your data
+        product_price: {
+          sellingPrice: discountPrice,
+          listPrice: listPrice || discountPrice,
+          discount: listPrice - discountPrice || 0,
+          discountPercentage: discountPercent || 0,
+        },
+      };
+    }) || [];
+  
+    return { productData , valueFacets, pagination: pages};
+  
   }
 
   async login(username: string, password: string, type: string): Promise<any>{ 
