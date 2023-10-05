@@ -219,17 +219,17 @@ export class CommercecloudController {
   }
 
   //Deleting Cart Items:
-  @post('/sfcc/removeItem/{cart_Id}')
+  @del('/sfcc/removeItem/{basket_Id}')
   @response(200,{
     message: "API to remove product from cart"
   })
   async removeItem(
     @requestBody() requestBody:{itemId:[]},
     @param.header.string('token') token: any,
-    @param.path.string('cart_Id') cart_Id : any
+    @param.path.string('basket_Id') basket_Id : any
   ): Promise<any>{
     try{
-      const data = await this.sfccService.removeItem(cart_Id,requestBody,token);
+      const data = await this.sfccService.removeItem(basket_Id,requestBody,token);
       return data;
     }
     catch(error){
@@ -255,19 +255,18 @@ export class CommercecloudController {
   }
 
 
-  @post('/sfcc/confirmPayment/{clientId}/{basketId}')
+  @post('/sfcc/confirmPayment/{basketId}')
   @response(200,{
     message: "API for confirm Payment"
   })
   async confirmPayment(
-    @param.path.string('clientId') clientId: any,
     @param.path.string('basketId') basketId: any,
     @param.header.string('token') token: any,
     @requestBody() requestBody:any,
   ): Promise<any>{
     try{
       const headers = this.request.headers.token;
-      const data = await this.sfccService.confirmPayment(clientId,basketId,headers,requestBody);
+      const data = await this.sfccService.confirmPayment(basketId,headers,requestBody);
       return data;
     }
     catch(error){
@@ -275,18 +274,17 @@ export class CommercecloudController {
     }
   }
 
-  @post('/sfcc/placeOrder/{clientId}/')
+  @post('/sfcc/placeOrder')
   @response(200,{
     message: "API for placing Order "
   })
   async placeOrder(
-    @param.path.string('clientId') clientId: any,
     @param.header.string('bearer') bearer: any,
     @requestBody() requestBody:any,
   ): Promise<any>{
     try{
       const headers = this.request.headers.bearer;
-      const data = await this.sfccService.placeOrder(clientId,headers,requestBody);
+      const data = await this.sfccService.placeOrder(headers,requestBody);
       return data;
     }
     catch(error){

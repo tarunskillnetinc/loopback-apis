@@ -395,8 +395,8 @@ export class CommercecloudService {
     }
   }
 
-  async removeItem(cart_Id:any, requestBody:any, bearer:any):Promise<any>{
-    const endpoint = `/s/Ref-VinodCSQT/dw/shop/v23_2/baskets/${cart_Id}/items/${requestBody.item_id}?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+  async removeItem(basket_Id:any, requestBody:any, bearer:any):Promise<any>{
+    const endpoint = `/s/Ref-VinodCSQT/dw/shop/v23_2/baskets/${basket_Id}/items/${requestBody.item_id}?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
     const header = {
       'Authorization':`Bearer ${bearer}`
     }
@@ -513,8 +513,8 @@ export class CommercecloudService {
   }
 
 
-  async confirmPayment(clientId: any,basketId: any,bearer: any,requestBody: any):Promise<any>{
-    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_2/baskets/${basketId}/payment_instruments?client_id=${clientId}`;
+  async confirmPayment(basketId: any,bearer: any,requestBody: any):Promise<any>{
+    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_2/baskets/${basketId}/payment_instruments?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
     const header = {
        'Content-Type': 'application/json',
         'Authorization':`Bearer ${bearer}`
@@ -540,15 +540,16 @@ export class CommercecloudService {
     }
   }
 
-  async placeOrder(clientId: any,bearer: any,requestBody: any):Promise<any>{
-    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_2/orders?client_id=${clientId}`;
+  async placeOrder(bearer: any,requestBody: any):Promise<any>{
+    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_2/orders?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
     const header = {
        'Content-Type': 'application/json',
         'Authorization':`Bearer ${bearer}`
     }
     const response = await this.confirm(endpoint,header,requestBody);
-    console.log("my response",response)
+    const result = JSON.stringify(response?.data)
+    console.log("my response",result);
 
-    return response;
+    return result;
   }
 }
