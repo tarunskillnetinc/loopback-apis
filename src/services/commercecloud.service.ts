@@ -540,7 +540,7 @@ export class CommercecloudService {
     const endpoint =`s/Ref-VinodCSQT/dw/shop/v23_2/customers/${customers_id}/orders`
     const response = await this.cartFetchFromEndpoint(endpoint,header)
     console.log(response,"response")
-    const data = response.data;
+    const data =response?.data==undefined?response:response.data;
     return data;
   }
 
@@ -759,4 +759,22 @@ export class CommercecloudService {
     console.log("Response from placeOrder:", response);
     return response;
   }
+
+  async getShiipingmethod(baskets_id:any,shipment_id:any,header:any):Promise<any>{
+    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_1/baskets/${baskets_id}/shipments/${shipment_id}/shipping_methods?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    try{
+      const response = await axios.get(`${this.dataSource.settings.baseURL}/${endpoint}`,
+      {
+        headers:{
+          'Authorization':`Bearer ${header}`,
+        },
+      })
+      console.log("ashuu",response)
+      return response?.data;
+    }
+    catch(error){
+      console.log(error.response);
+      return error?.response?.data
+    }
+  } 
 }

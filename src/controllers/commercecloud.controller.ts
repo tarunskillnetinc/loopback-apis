@@ -44,7 +44,6 @@ export class CommercecloudController {
       console.log("aaff");
       const getSalesForceProducts =
         await this.sfccService.getSalesforceProductByCategory(categoryId);
-      console.log("aashh");
       return getSalesForceProducts;
     } catch (error) {
       throw error;
@@ -82,7 +81,7 @@ export class CommercecloudController {
 
   @get("/sfcc/products-by-sub-category/{category}")
   @response(200, {
-    description: "Search for products using facets",
+    description: "Search for products using sub category",
   })
   async SalesforceByCategory(
     @param.path.string('category') category: string,
@@ -128,7 +127,7 @@ export class CommercecloudController {
 
   @post("/sfcc/login")
   @response(200, {
-    description: "Get Salesforce product details from the external API",
+    description: "Login user from the external API",
   })
   async salesForceLogin(
     @requestBody() requestBody: { email: string; password: string }
@@ -143,9 +142,10 @@ export class CommercecloudController {
       throw error;
     }
   }
+
   @get('/sfcc/category-tree')
   @response(200, {
-    description: 'Get Salesforce product details from the external API',
+    description: 'Get Salesforce category tree from the external API',
   })
   async salesForceCategory(): Promise<any> {
     try {
@@ -178,7 +178,7 @@ export class CommercecloudController {
 
   @get('/sfcc/getCartDetails/{baskets_id}')
   @response(200,{
-    description: 'Get Salesforce Product Items using customers api',
+    description: 'Get Cart Details using basket id',
   })
   async getSalesforceProductItems(
     @param.path.string('baskets_id') baskets_id: any,
@@ -198,7 +198,7 @@ export class CommercecloudController {
 
   @response(200,{
 
-    description: 'patch Salesforce Product Items using baskets api',
+    description: 'patch update cart using baskets api',
 
   })
   async updateSalesforceProductItems(
@@ -258,7 +258,7 @@ export class CommercecloudController {
   // shipment method put 
   @put('/sfcc/shippment_method/{baskets_id}')
   @response(200,{
-    description: 'patch shipping method api',
+    description: 'put shipping method api',
   })
   async updateSalesforceshippingmehtod(
     @param.path.string('baskets_id') baskets_id: any,
@@ -344,11 +344,11 @@ export class CommercecloudController {
     message: "API for placing Order "
   })
   async placeOrder(
-    @param.header.string('bearer') bearer: any,
+    @param.header.string('token') token: any,
     @requestBody() requestBody:any,
   ): Promise<any>{
     try{
-      const headers = this.request.headers.bearer;
+      const headers = this.request.headers.token;
       const data = await this.sfccService.placeOrder(headers,requestBody);
       return data;
     }
@@ -434,4 +434,24 @@ export class CommercecloudController {
     }
   }
 
+
+  @get('/sfcc/shipping_method/{baskets_id}/{shipment_id}')
+  @response(200,{
+    description: 'patch shipping method api',
+  })
+  async getShiipingmethod(
+    @param.path.string('baskets_id') baskets_id: any,
+    @param.path.string('shipment_id') shipment_id: any,
+    @param.header.string('token') token: string,
+    ): Promise<any>{
+    try{
+      const header = this.request.headers.token;
+      const shipping_method = await this.sfccService.getShiipingmethod(baskets_id,shipment_id,header);
+      console.log('getshippingmethod',shipping_method);
+      return shipping_method;
+    } 
+    catch(error){
+      throw error;
+    }
+  }
 }
