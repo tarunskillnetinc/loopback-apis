@@ -540,7 +540,7 @@ export class CommercecloudService {
     const endpoint =`s/Ref-VinodCSQT/dw/shop/v23_2/customers/${customers_id}/orders`
     const response = await this.cartFetchFromEndpoint(endpoint,header)
     console.log(response,"response")
-    const data = response.data;
+    const data =response?.data==undefined?response:response.data;
     return data;
   }
 
