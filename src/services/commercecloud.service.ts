@@ -331,7 +331,7 @@ export class CommercecloudService {
       await Promise.all(productDataPromise);
       // Sort the products array by quantity in ascending order
       products.sort((a, b) => a.price - b.price);
-      
+       console.log("shubham",response) 
       const cartTotals = {
         CartTotal: response.order_total,
         Items: response.product_total,
@@ -509,7 +509,8 @@ export class CommercecloudService {
   async getUserDetails(customers_id:any,header:any): Promise<any>{
     const endpoint =`s/Ref-VinodCSQT/dw/shop/v23_2/customers/${customers_id}/addresses`
     const response = await this.cartFetchFromEndpoint(endpoint,header)
-    const data = response.data;
+    console.log("responseamber",response)
+    const data = response?.data;
     const userProfile: any[] = [];
     const endpoint_two = `s/Ref-VinodCSQT/dw/shop/v23_2/customers/${customers_id}`
     const response_two =  await this.cartFetchFromEndpoint(endpoint_two,header)
@@ -683,35 +684,80 @@ export class CommercecloudService {
     console.log("AAfreeeen")
     console.log("my response",response?.data)
 
-    return response?.data;
+    return response;
   }
 
-  async confirm(endpoint:any,header:any,requestBody: any){
-    try{
-      // console.log('headers are',header);
-      const response = await axios.post(`${this.dataSource.settings.baseURL}/${endpoint}`,requestBody,
-      {
-        headers:header
-      })
-      return response;
-    }
-    catch(error){
-      console.log(error.response);
-      return error?.response?.data
+  // async confirm(endpoint:any,header:any,requestBody: any){
+  //   try{
+  //     // console.log('headers are',header);
+  //     const response = await axios.post(`${this.dataSource.settings.baseURL}/${endpoint}`,requestBody,
+  //     {
+  //       headers:header
+  //     })
+  //     return response.data;
+  //   }
+  //   catch(error){
+  //     console.log(error.response);
+  //     return {status:error?.response?.status,statusText:error?.response?.data,message:error?.response}
+  //   }
+  // }
+
+  // async placeOrder(bearer: any,requestBody: any):Promise<any>{
+  //   const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_2/orders?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+  //   const header = {
+  //      'Content-Type': 'application/json',
+  //       'Authorization':`Bearer ${bearer}`
+  //   }
+  //   const response = await this.confirm(endpoint,header,requestBody);
+  //   console.log("responseorderconfirm",response)
+  //   const result = JSON.stringify(response?.data)
+  //   console.log("my response",result);
+
+  //   return result;
+  // }
+
+
+  async confirm(endpoint: any, header: any, requestBody: any) {
+    try {
+      const response = await axios.post(
+        `${this.dataSource.settings.baseURL}/${endpoint}`,
+        requestBody,
+        {
+          headers: header,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        console.error("Error response data:", error.response.data);
+        console.error("Error response status:", error.response.status);
+        console.error("Error response headers:", error.response.headers);
+        return {
+          status: error.response.status,
+          statusText: error.response.statusText,
+          data: error.response.data,
+        };
+      } else if (error.request) {
+        console.error("No response received:", error.request);
+      } else {
+        console.error("Request error:", error.message);
+      }
+      return { error: "An error occurred while making the request." };
     }
   }
-
-  async placeOrder(bearer: any,requestBody: any):Promise<any>{
+  async placeOrder(bearer: any, requestBody: any): Promise<any> {
     const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_2/orders?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
     const header = {
-       'Content-Type': 'application/json',
-        'Authorization':`Bearer ${bearer}`
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${bearer}`,
+    };
+    const response = await this.confirm(endpoint, header, requestBody);
+    if (response.error) {
+      console.error("Error occurred during placeOrder:", response.error);
+      return response; // You can decide how to handle errors
     }
-    const response = await this.confirm(endpoint,header,requestBody);
-    const result = JSON.stringify(response?.data)
-    console.log("my response",result);
-
-    return result;
+    console.log("Response from placeOrder:", response);
+    return response;
   }
 
   async getShiipingmethod(baskets_id:any,shipment_id:any,header:any):Promise<any>{
