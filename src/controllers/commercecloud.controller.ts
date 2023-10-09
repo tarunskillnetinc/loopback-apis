@@ -71,7 +71,7 @@ export class CommercecloudController {
 
   ): Promise<any> {
     try {
-      const data = await this.sfccService.searchByFacets(category,color,size,minprice,maxprice,sortbyprice,sortbyname);
+      const data = await this.sfccService.searchByFacets(category,color,size,minprice,maxprice,sortbyname);
       const response = await data;
       return response;
     } catch (error) {
@@ -100,7 +100,7 @@ export class CommercecloudController {
 
   ): Promise<any> {
     try {
-      const data = await this.sfccService.searchByFacets(category,color,size,minprice,maxprice,sortbyprice,sortbyname);
+      const data = await this.sfccService.searchByFacets(category,color,size,minprice,maxprice,sortbyname);
       const response = await data;
       return response;
     } catch (error) {
