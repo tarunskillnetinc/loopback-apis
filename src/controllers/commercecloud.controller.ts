@@ -454,4 +454,27 @@ export class CommercecloudController {
       throw error;
     }
   }
+
+   // by query controller:
+   @get("/sfcc/products-by-query/{query}")
+   @response(200, {
+     description: "Search for products using facets",
+   })
+   async SalesforceByQuery(
+     @param.path.string('query') query: string,
+     @param.query.string('color') color?: any,
+     @param.query.string('size') size?: any,
+     @param.query.string('minprice') minprice?: any,
+     @param.query.string('maxprice') maxprice?: any,
+     @param.query.string('sortbyprice') sortbyprice?: any,
+     @param.query.string('sortbyname') sortbyname?: any,
+   ): Promise<any> {
+     try {
+       const data = await this.sfccService.searchByQuery(query,color,size,minprice,maxprice,sortbyname);
+       const response = await data;
+       return response;
+     } catch (error) {
+       throw error;
+     }
+   }
 }

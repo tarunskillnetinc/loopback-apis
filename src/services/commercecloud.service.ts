@@ -789,5 +789,39 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
       console.log(error.response);
       return error?.response?.data
     }
-  } 
+  }
+
+  async searchByQuery(
+    query: string,
+    color: any,
+    size: any,
+    minprice: any,
+    maxprice: any,
+    sortbyname: any
+  ): Promise<any> {
+    console.log('SFCC service: searchByFacets');
+    const product_arr: any[] = [];
+    const endpoint = `/${shopName}/dw/shop/v23_2/product_search?q=${query}&refine_1=c_refinementColor=${color == undefined ? '' : color}&refine_2=price=${minprice == undefined && maxprice == undefined ? '' : '(' + minprice + '..' + maxprice + ')'}&refine_3=c_size=${size == undefined ? '' : size}&sort=${sortbyname == undefined ? '' : sortbyname}&expand=images,prices&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    try {
+      const response = await this.fetchFromEndpoint(endpoint);
+      const value = response.refinements;
+      const valueFacets = this.getRefinementValue(value);
+      response?.hits?.map((items: any) => {
+        product_arr.push({
+          product_id: items?.product_id,
+          sku_id: items?.product_id,
+          product_name: items?.product_name,
+          product_image: items?.image?.dis_base_link,
+          product_price: {
+            listPrice: items?.price,
+            sellingPrice: ' ',
+            discount: ' ',
+          },
+        });
+      });
+      return { ProductData: product_arr, valueFacets: valueFacets };
+    } catch (error) {
+      return this.handleErrorResponse(error);
+    }
+  }
 }
