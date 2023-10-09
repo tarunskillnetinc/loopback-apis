@@ -1387,7 +1387,7 @@ export class VtexService {
 
       facets_colors != undefined ? `/color/${facets_colors}` : ""
 
-    }/${facets_size ? `size/${facets_size}` : ""}?${sortbyprice ? `sort=price:${sortbyprice}`:""}${sortbyname ? `sort=name:${sortbyname}`:""}${count ? `count=${count}`:""}${page ? `page=${page}`:""}`;
+    }/${facets_size ? `size/${facets_size}` : ""}?${sortbyprice ? `sort=price:${sortbyprice}`:""}&${sortbyname ? `sort=name:${sortbyname}`:""}&${count ? `count=${count}`:""}&${page ? `page=${page}`:""}`;
 
     const response = this.fetchFromEndpoint(endpoint);
 
