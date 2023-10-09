@@ -656,4 +656,41 @@ export class VtexController {
     }
   }
 
+  //For Placing Order From An Existing Cart:
+  @post('vtex-placeOrder/{basketId}')
+  @response(200,{
+    description: "Place Order API",
+  })
+  async placeOrder(
+    @param.path.string('basketId') basketId: string,
+    @requestBody() requestBody: { body:any },
+  ): Promise<any>{
+    try{
+      const data = await this.vtexService.placeOrder(basketId,requestBody);
+      console.log("danishresponseis",data);
+      return data;
+    }
+    catch(error){
+      return error;
+    }
+  }
+
+  //For Approving The Payment:
+  @post('vtex-payment-approve/{transactionId}')
+  @response(200,{
+    description: 'Approve payment after placeorder api'
+  })
+  async approvePayment(
+    @param.path.string('transactionId') transactionId : string,
+    @requestBody() requestBody: { body:[] }
+  ): Promise <any>{
+    try{
+      const data = await this.vtexService.approvePayment(transactionId,requestBody);
+      return data;
+    }
+    catch(error){
+      return error;
+    }
+  }
+
 }
