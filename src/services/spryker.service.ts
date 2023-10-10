@@ -595,5 +595,50 @@ async getSprykerUsersData(customerId: any, authorization: any): Promise<any> {
   return formattedData;
 }
 
+async postCheckoutData(reqBody: any, authorization: any): Promise<any> {
+  console.log('afren', reqBody);
+  const endpoint = `checkout-data?include=shipments%2Cshipment-methods%2Caddresses%2Cpayment-methods%2Citems`;
+
+  const response = this.postCartFetchFromEndpoint(
+    endpoint,
+    reqBody,
+    authorization,
+  );
+  const data = await response;
+  var shipment: any[] = [];
+  var paymentMethod: any[] = [];   
+  var address: any[] = [];
+  data?.included?.map(async (item: any) => {
+    if (item?.typ === 'shipments' || item?.type == 'shipment-methods') {
+      shipment.push(item);
+    } else if (item?.type == 'payment-methods') {
+      paymentMethod.push(item);
+    } else if (item?.type == 'addresses') {
+      address.push(item);
+    }
+  });
+  const dataresp = await {
+    data: data.data,
+    shipmet: shipment,
+    paymentMethod: paymentMethod,
+    address: address,
+  };
+  return data;
+}
+
+async postCheckoutorder(reqBody: any, authorization: any): Promise<any> {
+  console.log('afren', reqBody);
+  const endpoint =`checkout`;
+
+  const response = this.postCartFetchFromEndpoint(
+    endpoint,
+    reqBody,
+    authorization,
+  );
+  const data = await response;
+  return data;
+}
+
+
 
 }

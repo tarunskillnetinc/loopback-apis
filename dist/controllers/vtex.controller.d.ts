@@ -45,4 +45,10 @@ export declare class VtexController {
     searchByFacets(category: string, color?: any, size?: any, minprice?: any, maxprice?: any, sortbyprice?: any, sortbyname?: any, count?: any, page?: any): Promise<any>;
     getUserProfileDetails(email: string): Promise<any>;
     facetsResults(parentCategory: string, color?: any, size?: any, minprice?: any, maxprice?: any, sortbyprice?: any, sortbyname?: any, count?: any, page?: any): Promise<any>;
+    placeOrder(basketId: string, requestBody: {
+        body: any;
+    }): Promise<any>;
+    approvePayment(transactionId: string, requestBody: {
+        body: [];
+    }): Promise<any>;
 }

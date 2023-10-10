@@ -165,6 +165,7 @@ export class SprykerController {
        const headers = this.request.headers.bearer;
       console.log('Authorization Header:', headers);
         const data = await this.sprykerService.getCartId(headers);
+
         const response = data;
         return response;
       }
@@ -327,5 +328,50 @@ export class SprykerController {
        }
      }
 
+
+     
+@post('/demo-post-checkout-data')
+@response(200, {
+  description: "For checkout data.",
+})
+async postCheckoutData( 
+  @requestBody() requestBody:{data:any},
+  @param.header.string('bearer') bearer: string,
+
+  ):Promise<any>{
+    try{
+    const header = this.request.headers.bearer;
+    const data = await this.sprykerService.postCheckoutData(requestBody,header);
+    const response = data;
+    return response;
+  }
+  catch(error){
+    console.log("error1234",error);
+    return error.response.data
+    throw error;
+  }
+} 
+
+@post('/demo-post-checkout-order')
+@response(200, {
+  description: "For checkout order.",
+})
+async postCheckoutOrder( 
+  @requestBody() requestBody:{data:any},
+  @param.header.string('bearer') bearer: string,
+
+  ):Promise<any>{
+    try{
+    const header = this.request.headers.bearer;
+    const data = await this.sprykerService.postCheckoutorder(requestBody,header);
+    const response = data;
+    return response;
+  }
+  catch(error){
+    console.log("error1234",error);
+    return error.response.data
+    throw error;
+  }
+}
     
 }

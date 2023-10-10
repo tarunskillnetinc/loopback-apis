@@ -26,6 +26,15 @@ let VtexService = exports.VtexService = class VtexService {
             throw error;
         }
     }
+    //For handling Errors:
+    handleErrorResponse(error) {
+        var _a, _b;
+        return {
+            "status": error === null || error === void 0 ? void 0 : error.response.status,
+            "statusText": (_a = error === null || error === void 0 ? void 0 : error.response) === null || _a === void 0 ? void 0 : _a.statusText,
+            "message": (_b = error === null || error === void 0 ? void 0 : error.response) === null || _b === void 0 ? void 0 : _b.data
+        };
+    }
     //for cartapi
     async cartFetchFromEndpoint(endpoint) {
         try {
@@ -1105,7 +1114,7 @@ let VtexService = exports.VtexService = class VtexService {
         console.log('prices', prices);
         console.log("colors are", facets_colors);
         console.log("sizes are", facets_size);
-        const endpoint = `api/io/_v/api/intelligent-search/product_search/category-2/${category}/${prices ? `price/${minprice}:${maxprice}` : ""}${facets_colors != undefined ? `/color/${facets_colors}` : ""}/${facets_size ? `size/${facets_size}` : ""}?${sortbyprice ? `sort=price:${sortbyprice}` : ""}${sortbyname ? `sort=name:${sortbyname}` : ""}${count ? `count=${count}` : ""}${page ? `page=${page}` : ""}`;
+        const endpoint = `api/io/_v/api/intelligent-search/product_search/category-2/${category}/${prices ? `price/${minprice}:${maxprice}` : ""}${facets_colors != undefined ? `/color/${facets_colors}` : ""}/${facets_size ? `size/${facets_size}` : ""}?${sortbyprice ? `sort=price:${sortbyprice}` : ""}&${sortbyname ? `sort=name:${sortbyname}` : ""}&${count ? `count=${count}` : ""}&${page ? `page=${page}` : ""}`;
         const response = this.fetchFromEndpoint(endpoint);
         const data = await response;
         console.log("response is", data);
@@ -1199,6 +1208,65 @@ let VtexService = exports.VtexService = class VtexService {
         // const data = await response;
         return filteredData;
         // return response;
+    }
+    //Function for Placing an Order from existing cart:
+    async placeOrder(basketId, requestBody) {
+        console.log("mybody", requestBody);
+        const endpoint = `api/checkout/pub/orderForm/${basketId}/transaction`;
+        try {
+            const response = await this.placeOrderEndpoint(endpoint, requestBody);
+            console.log("kskkk", response);
+            return response;
+        }
+        catch (error) {
+            return this.handleErrorResponse(error);
+        }
+    }
+    async placeOrderEndpoint(endpoint, requestBody) {
+        try {
+            const headers = {
+                Accept: 'application/json',
+                'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
+                'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+            };
+            const response = await axios_1.default.post(`${this.dataSource.settings.baseURL}/${endpoint}`, requestBody, { headers });
+            console.log("responseis", response.data);
+            return response.data;
+        }
+        catch (error) {
+            return this.handleErrorResponse(error);
+        }
+    }
+    //Function For Approving the Payment:
+    async approvePayment(transactionId, requestBody) {
+        const endpoint = `api/pub/transactions/${transactionId}/payments`;
+        try {
+            const response = await this.approvePaymentEndpoint(endpoint, requestBody);
+            // console.log("payment approved",response);
+            console.log("number1", response);
+            return { message: "Payment Approved" };
+            // return response;
+        }
+        catch (error) {
+            return this.handleErrorResponse(error);
+        }
+    }
+    async approvePaymentEndpoint(endpoint, requestBody) {
+        console.log("mybody", requestBody);
+        try {
+            const headers = {
+                'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
+                'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+            };
+            console.log("number2");
+            console.log("myurlis", `https://skillnet.vtexpayments.com.br/${endpoint}`);
+            const response = await axios_1.default.post(`https://skillnet.vtexpayments.com.br/${endpoint}`, [requestBody], { headers });
+            console.log("mynewData", response);
+            return response.data;
+        }
+        catch (error) {
+            return this.handleErrorResponse(error);
+        }
     }
 };
 exports.VtexService = VtexService = tslib_1.__decorate([
