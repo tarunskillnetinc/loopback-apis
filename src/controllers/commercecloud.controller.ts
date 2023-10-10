@@ -274,6 +274,28 @@ export class CommercecloudController {
       throw error;
     }
   }
+
+  @put('/sfcc/new_shippment_method/{baskets_id}')
+  @response(200,{
+    description: 'put dynamic shipping method api',
+  })
+  async newupdateSalesforceshippingmehtod(
+    @param.path.string('baskets_id') baskets_id: any,
+    @param.query.string('shipment_id') shipment_id: any,
+    @param.header.string('token') token: string,
+    @requestBody() requestBody:{},
+
+    ): Promise<any>{
+    try{
+      const header = this.request.headers.token;
+      const updateSalesForceshippment = await this.sfccService.newupdateSalesForceshippment(baskets_id,shipment_id,requestBody,header);
+      console.log('getSalesForceProductsbbbb',updateSalesForceshippment);
+      return updateSalesForceshippment;
+    } 
+    catch(error){
+      throw error;
+    }
+  }
   // shippment method end
 
   
@@ -296,6 +318,27 @@ export class CommercecloudController {
       throw error;
     }
   }
+
+  @put('/sfcc/new_shipping_address/{baskets_id}')
+  @response(200,{
+    description: 'patch shipping method api',
+  })
+  async newupdateSalesForceaddress(
+    @param.path.string('baskets_id') baskets_id: any,
+    @param.query.string('shipment_id')shipment_id:string,
+    @param.header.string('token') token: string,
+    @requestBody() requestBody:{},
+    ): Promise<any>{
+    try{
+      const header = this.request.headers.token;
+      const updateSalesForceshippment = await this.sfccService.newupdateSalesForceaddress(baskets_id,shipment_id,requestBody,header);
+      console.log('getSalesForceProductsbbbb',updateSalesForceshippment);
+      return updateSalesForceshippment;
+    } 
+    catch(error){
+      throw error;
+    }
+  }
   // shipping address method end
 
   
@@ -311,6 +354,27 @@ export class CommercecloudController {
     try{
       const header = this.request.headers.token;
       const updateSalesForcebillingaddress = await this.sfccService.updateSalesForcebillingaddress(baskets_id,header);
+      console.log('getSalesForceProductsbbbb',updateSalesForcebillingaddress);
+      return updateSalesForcebillingaddress;
+    } 
+    catch(error){
+      throw error;
+    }
+  }
+
+  @put('/sfcc/new_billing_address/{baskets_id}')
+  @response(200,{
+    description: 'patch shipping method api',
+  })
+  async newupdateSalesForcebillingaddress(
+    @param.path.string('baskets_id') baskets_id: any,
+    @param.header.string('token') token: string,
+    @requestBody() requestBody:any,
+
+    ): Promise<any>{
+    try{
+      const header = this.request.headers.token;
+      const updateSalesForcebillingaddress = await this.sfccService.newupdateSalesForcebillingaddress(baskets_id,requestBody,header);
       console.log('getSalesForceProductsbbbb',updateSalesForcebillingaddress);
       return updateSalesForcebillingaddress;
     } 

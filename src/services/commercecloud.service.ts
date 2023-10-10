@@ -596,6 +596,33 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     console.log('datas',data)
     return response;
   } 
+
+  async newshippmentUpdateFromEndpoint(endpoint:string,requestBody:any,header:string):Promise<any>{
+    var body=requestBody
+    try{
+      const response = await axios.put(`${this.dataSource.settings.baseURL}/${endpoint}`,
+      body,  
+      {
+        headers:{
+          'Authorization':`Bearer ${header}`,
+        },
+      },
+      );
+      return response.data;
+    }catch(error){
+      console.log(error)
+      return this.handleErrorResponse(error);
+
+    }
+  }
+  async newupdateSalesForceshippment(baskets_id:any,shipment_id:any,requestBody:any,header:any):Promise<any>{
+    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_1/baskets/${baskets_id}/shipments/${shipment_id}/shipping_method`;
+    console.log(endpoint,"updateSalesforceProductItems");
+    const response = await this.newshippmentUpdateFromEndpoint(endpoint,requestBody,header);
+    const data = response;
+    console.log('datas',data)
+    return response;
+  } 
   // shippment update end
 
   // function shipping address update detail
@@ -640,6 +667,47 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     console.log('datas',data)
     return response;
   } 
+
+  async newaddressUpdateFromEndpoint(endpoint:string,requestBody:any,header:string):Promise<any>{
+    var body1={
+      "address1": "Ocapi",
+      "address2": "Demo",
+      "city": "Indore",
+      "country_code": "CN",
+      "first_name": "Ocapi",
+      "full_name": "Ocapi Demo",
+      "id": "OcapiD",
+      "last_name": "Demo",
+      "phone": "123456789",
+      "postal_code": "45200",
+      "state_code": "45200",
+      "title": "OcapiDemo"
+    }
+    var body=requestBody
+    try{
+      const response = await axios.put(`${this.dataSource.settings.baseURL}/${endpoint}`,
+      body,  
+      {
+        headers:{
+          'Authorization':`Bearer ${header}`,
+        },
+      },
+      );
+      return response.data;
+    }catch(error){
+      console.log(error)
+      return this.handleErrorResponse(error);
+
+    }
+  }
+  async newupdateSalesForceaddress(baskets_id:any,shipment_id:string,requestBody:any,header:any):Promise<any>{
+    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_1/baskets/${baskets_id}/shipments/${shipment_id}/shipping_address?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    console.log(endpoint,"updateSalesforceProductItems");
+    const response = await this.newaddressUpdateFromEndpoint(endpoint,requestBody,header);
+    const data = response;
+    console.log('datas',data)
+    return response;
+  } 
   // function shipping adddress end
 
   // function shipping address update detail
@@ -680,6 +748,47 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     const endpoint = `${shopName}/dw/shop/v23_1/baskets/${baskets_id}/billing_address?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
     console.log(endpoint,"updateSalesforceProductItems");
     const response = await this.billingaddressUpdateFromEndpoint(endpoint,header);
+    const data = response;
+    console.log('datas',data)
+    return response;
+  } 
+
+  async newbillingaddressUpdateFromEndpoint(endpoint:string,requestBody:any,header:string):Promise<any>{
+    var body1={
+      "address1": "Ocapi",
+      "address2": "Demo",
+      "city": "Indore",
+      "country_code": "CN",
+      "first_name": "Ocapi",
+      "full_name": "Ocapi Demo",
+      "id": "OcapiD",
+      "last_name": "Demo",
+      "phone": "123456789",
+      "postal_code": "45200",
+      "state_code": "45200",
+      "title": "OcapiDemo"
+    }
+    var body=requestBody
+    try{
+      const response = await axios.put(`${this.dataSource.settings.baseURL}/${endpoint}`,
+      body,  
+      {
+        headers:{
+          'Authorization':`Bearer ${header}`,
+        },
+      },
+      );
+      return response.data;
+    }catch(error){
+      console.log(error)
+      return this.handleErrorResponse(error);
+
+    }
+  }
+  async newupdateSalesForcebillingaddress(baskets_id:any,requestBody:any,header:any):Promise<any>{
+    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_1/baskets/${baskets_id}/billing_address?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    console.log(endpoint,"updateSalesforceProductItems");
+    const response = await this.newbillingaddressUpdateFromEndpoint(endpoint,requestBody,header);
     const data = response;
     console.log('datas',data)
     return response;
