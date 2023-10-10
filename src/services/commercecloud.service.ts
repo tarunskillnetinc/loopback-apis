@@ -4,12 +4,22 @@ import axios from "axios";
 import { CommercecloudDataSource } from "../datasources";
 import currencySymbol from "currency-symbol-map";
 
+
+const shopName = "s/Ref-VinodCSQT";
 export class CommercecloudService {
   constructor(
     // commercecloud must match the name property in the datasource json file
     @inject("datasources.commercecloud")
     protected dataSource: CommercecloudDataSource
   ) {}
+
+  handleErrorResponse(error: any): any {
+    return {
+      "status": error?.response.status,
+      "statusText": error?.response?.statusText,
+      "message": error?.response?.data
+    };
+  }
 
   async fetchFromEndpoint(endpoint: string): Promise<any> {
     try {
@@ -18,12 +28,7 @@ export class CommercecloudService {
       );
       return response.data;
     } catch (error) {
-      console.log("error123",error)
-      return {
-        "status":error?.response.status,
-        "statusText":error?.response?.statusText,
-        "message":error?.response?.data}
-      throw error;
+      return this.handleErrorResponse(error);
     }
   }
 
@@ -46,56 +51,69 @@ export class CommercecloudService {
       );
       return response;
     } catch (error) {
-      return {
-        "status":error?.response.status,
-        "statusText":error?.response?.statusText,
-        "message":error?.response?.data}
+      return this.handleErrorResponse(error);
     }
   }
    
   async sfBestSelling(): Promise<any> {
-    const endpoint = `/s/Ref-VinodCSQT/dw/shop/v23_2/product_search?refine=cgid%3Dnewarrivals&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b&expand=images%2Cprices%2Cavailability%2Cvariations`;
-    const response = await this.fetchFromEndpoint(endpoint);
-    // console.log('response', response.hits)
-  
-    const data = await response;
-    console.log('res', data);
-  
-    const products: any[] = [];
-  
-    for (const hit of data.hits) {
-      const ProductId = hit.product_id;
-      const ProductName = hit.product_name;
-      const SkuImageUrl = hit.image.link; // Extract image URL
-      const listPrice = hit.price; // Extract the price and name it as listPrice
-      const basePrice = hit.price;
-  
-      console.log('Product ID:', ProductId);
-      console.log('Product Name:', ProductName);
-      console.log('Product Image:', SkuImageUrl);
-      console.log('List Price:', listPrice);
-  
-      products.push({
-        ProductId,
-        skuId: ProductId,
-        ProductName,
-        SkuImageUrl,
-        listPrice,
-        basePrice
-      });
+    try {
+        console.log("SFCC service: sfBestSelling");
+        const endpoint = `/${shopName}/dw/shop/v23_2/product_search?refine=cgid%3Dnewarrivals&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b&expand=images%2Cprices%2Cavailability%2Cvariations`;
+        const response = await this.fetchFromEndpoint(endpoint);
+
+        const data = await response;
+
+        return data.hits.map((hit: any) => ({
+            ProductId: hit.product_id,
+            skuId: hit.product_id,
+            ProductName: hit.product_name,
+            images: { image1: hit.image.link },
+            listPrice: hit.price,
+            basePrice: hit.price,
+        }));
+    } catch (error) {
+      return this.handleErrorResponse(error);
     }
-  
-    console.log('Products:', products);
-  
-    return products;
-  }
-  async getSalesforceProductByCategory(categoryId: any): Promise<any> {
+} // Tarun: deconstructed the code to simpolify the extraction and to make it more consise.
+
+// async getSalesforceProductByCategory(categoryId: any): Promise<any> {
+//   try {
+//       const product_arr: any[] = [];
+//       const endpoint = `/${shopName}/dw/shop/v23_2/product_search?refine=cgid=${categoryId}&expand=images,prices&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+//       console.log("endpoint123", endpoint);
+//       const response = await this.fetchFromEndpoint(endpoint);
+//       const value = response.refinements;
+//       console.log(value);
+//       const valueFacets = this.getRefinementValue(value);
+//       const data = response;
+//       response?.hits?.map((items: any) => {
+//           product_arr.push({
+//               product_id: items?.product_id,
+//               sku_id: items?.product_id,
+//               product_name: items?.product_name,
+//               product_image: items?.image.dis_base_link,
+//               product_price: {
+//                   listPrice: items?.price,
+//                   sellingPrice: null,
+//                   discount: null,
+//               },
+//           });
+//       });
+//       console.log("data", product_arr);
+
+//       // return product_arr;
+//       return { ProductData: product_arr, valueFacets: valueFacets };
+//   } catch (error) {
+//     return this.handleErrorResponse(error);
+//   }
+// }
+
+async getSalesforceProductByCategory(categoryId: any): Promise<any> {
+  try {
     const product_arr: any[] = [];
-    const endpoint = `/s/Ref-VinodCSQT/dw/shop/v23_2/product_search?refine=cgid=${categoryId}&expand=images,prices&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
-    console.log("endpoint123",endpoint)
+    const endpoint = `/${shopName}/dw/shop/v23_2/product_search?refine=cgid=${categoryId}&expand=images,prices&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
     const response = await this.fetchFromEndpoint(endpoint);
     const value = response.refinements;
-    console.log(value);
     const valueFacets = this.getRefinementValue(value);
     const data = response;
     response?.hits?.map((items: any) => {
@@ -111,76 +129,38 @@ export class CommercecloudService {
         },
       });
     });
-    console.log("data", product_arr);
-
-    // return product_arr;
     return { ProductData: product_arr, valueFacets: valueFacets };
+  } catch (error) {
+    return this.handleErrorResponse(error);
   }
+}
 
-  async getSalesforceProductBysubCategory(subcategoryId: any): Promise<any> {
-    const product_arr: any[] = [];
-    const endpoint = `/s/Ref-VinodCSQT/dw/shop/v23_2/product_search?refine=cgid=${subcategoryId}&expand=images,prices&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
-    console.log("endpoint123",endpoint)
+private getRefinementValue(response: any): any {
+  const value_arr: any[] = [];
+  response?.map((item: any) => {
+    value_arr.push({
+      name: item.label,
+      value: item?.values?.map((valueObj: any) => valueObj.label),
+    });
+  });
+  return value_arr;
+}
+
+async searchByFacets(
+  category: string,
+  color: any,
+  size: any,
+  minprice: any,
+  maxprice: any,
+  sortbyname: any
+): Promise<any> {
+  console.log('SFCC service: searchByFacets');
+  const product_arr: any[] = [];
+  const endpoint = `/${shopName}/dw/shop/v23_2/product_search?refine=cgid=${category}&refine_1=c_refinementColor=${color == undefined ? '' : color}&refine_2=price=${minprice == undefined && maxprice == undefined ? '' : '(' + minprice + '..' + maxprice + ')'}&refine_3=c_size=${size == undefined ? '' : size}&sort=${sortbyname == undefined ? '' : sortbyname}&expand=images,prices&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+  try {
     const response = await this.fetchFromEndpoint(endpoint);
     const value = response.refinements;
-    console.log(value);
     const valueFacets = this.getRefinementValue(value);
-    const data = response;
-    response?.hits?.map((items: any) => {
-      product_arr.push({
-        product_id: items?.product_id,
-        sku_id: items?.product_id,
-        product_name: items?.product_name,
-        product_image: items?.image.dis_base_link,
-        product_price: {
-          listPrice: items?.price,
-          sellingPrice: null,
-          discount: null,
-        },
-      });
-    });
-    console.log("data", product_arr);
-
-    // return product_arr;
-    return { ProductData: product_arr, valueFacets: valueFacets };
-  }
-
-  private getRefinementValue(response: any): any {
-    const value_arr: any[] = [];
-    console.log("aafreeee", response);
-    response?.map((item: any) => {
-      value_arr.push({
-        name: item.label,
-        value: item?.values?.map((valueObj: any) => {
-          // Create a new object without the "doc_count" property
-          // const { doc_count, ...newValueObj } = valueObj;
-          const newValueObj = valueObj.label;
-          return newValueObj;
-        }),
-      });
-    });
-    return value_arr;
-  }
-
-  async searchByFacets(
-    category: string,
-    color: any,
-    size: any,
-    minprice: any,
-    maxprice: any,
-    sortbyprice: any,
-    sortbyname: any
-  ): Promise<any> {
-    const product_arr: any[] = [];
-    const endpoint = `/s/Ref-VinodCSQT/dw/shop/v23_2/product_search?refine=cgid=${category}&refine_1=c_refinementColor=${color==undefined?"":color}&refine_2=price=${minprice==undefined && maxprice==undefined?"":("("+minprice+".."+maxprice+")")}&refine_3=c_size=${size==undefined?"":size}&sort=${sortbyname==undefined?"":sortbyname}&expand=images,prices&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
-    console.log("endpoint1234",endpoint)
-    const response = await this.fetchFromEndpoint(endpoint);
-    const value = response.refinements;
-    console.log(value);
-    const valueFacets = this.getRefinementValue(value);
-    // const data = response;
-    console.log("responsehits123",response)
-
     response?.hits?.map((items: any) => {
       product_arr.push({
         product_id: items?.product_id,
@@ -189,21 +169,49 @@ export class CommercecloudService {
         product_image: items?.image?.dis_base_link,
         product_price: {
           listPrice: items?.price,
-          sellingPrice: " ",
-          discount: " ",
+          sellingPrice: ' ',
+          discount: ' ',
         },
       });
     });
-    console.log("data", product_arr);
-
-    // return product_arr;
     return { ProductData: product_arr, valueFacets: valueFacets };
+  } catch (error) {
+    return this.handleErrorResponse(error);
   }
+}
 
-  async getsalesForceProductById(pid: any): Promise<any> {
-    const endpoint = `/s/Ref-VinodCSQT/dw/shop/v23_2/products/${pid}?null=null&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b&expand=images%2Cprices%2Cavailability%2Cvariations%2Cpromotions%2Cset_products`;
+async getSalesforceProductBysubCategory(subcategoryId: any): Promise<any> {
+  try {
+    const product_arr: any[] = [];
+    const endpoint = `/${shopName}/dw/shop/v23_2/product_search?refine=cgid=${subcategoryId}&expand=images,prices&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
     const response = await this.fetchFromEndpoint(endpoint);
-    const data = await response; // Parse JSON response
+    const value = response.refinements;
+    const valueFacets = this.getRefinementValue(value);
+    const data = response;
+    response?.hits?.map((items: any) => {
+      product_arr.push({
+        product_id: items?.product_id,
+        sku_id: items?.product_id,
+        product_name: items?.product_name,
+        product_image: items?.image.dis_base_link,
+        product_price: {
+          listPrice: items?.price,
+          sellingPrice: null,
+          discount: null,
+        },
+      });
+    });
+    return { ProductData: product_arr, valueFacets: valueFacets };
+  } catch (error) {
+    return this.handleErrorResponse(error);
+  }
+}
+
+async getsalesForceProductById(pid: any): Promise<any> {
+  try {
+    const endpoint = `/${shopName}/dw/shop/v23_2/products/${pid}?null=null&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b&expand=images%2Cprices%2Cavailability%2Cvariations%2Cpromotions%2Cset_products`;
+    const response = await this.fetchFromEndpoint(endpoint);
+    const data = response; // Parse JSON response
     const variantProductsData = await this.getVariationData(data?.variants);
     return {
       productId: data?.id,
@@ -212,53 +220,58 @@ export class CommercecloudService {
       description: data?.long_description,
       skus: variantProductsData,
     };
-
-    // return data;
+  } catch (error) {
+    return this.handleErrorResponse(error);
   }
-  private async getVariationData(response: any): Promise<any[]> {
-    const skuData: any = [];
+}
 
-    await Promise.all(
-      response?.map(async (variantProducts: any) => {
-        const endpoint = `/s/Ref-VinodCSQT/dw/shop/v23_2/products/${variantProducts?.product_id}?null=null&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b&expand=images%2Cprices%2Cavailability%2Cvariations%2Cpromotions%2Cset_products`;
-        const response = await this.fetchFromEndpoint(endpoint);
-        skuData.push({
-          sku: response?.id,
-          skuname: response?.name,
-          dimensions: " ",
-          available: response?.inventory?.orderable,
-          availablequantity: response?.inventory?.ats,
-          listPriceFormated:
-            currencySymbol(response?.currency) + response?.price,
-          listPrice: response?.price,
-          bestPriceFormated:
-            currencySymbol(response?.currency) + response?.price_per_unit,
-          discountPercent: "",
-          bestPrice: response?.price_per_unit,
-          spotPrice: "",
-          images: {
-            image1: response?.image_groups[0]?.images[0]?.link,
-          },
-        });
-      })
-    );
-    return skuData;
-  }
-  async postsalesForceLogin(reqBody: any): Promise<any> {
-    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_2/customers/auth?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
-    var reqBody = reqBody;
-    var basicAuth = btoa(`${reqBody.email}:${reqBody.password}`);
-    console.log("reqBody", basicAuth);
+private async getVariationData(response: any): Promise<any[]> {
+  const skuData: any = [];
+
+  await Promise.all(
+    response?.map(async (variantProducts: any) => {
+      const endpoint = `/${shopName}/dw/shop/v23_2/products/${variantProducts?.product_id}?null=null&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b&expand=images%2Cprices%2Cavailability%2Cvariations%2Cpromotions%2Cset_products`;
+      const response = await this.fetchFromEndpoint(endpoint);
+      skuData.push({
+        sku: response?.id,
+        skuname: response?.name,
+        dimensions: ' ',
+        available: response?.inventory?.orderable,
+        availablequantity: response?.inventory?.ats,
+        listPriceFormated: currencySymbol(response?.currency) + response?.price,
+        listPrice: response?.price,
+        bestPriceFormated:
+          currencySymbol(response?.currency) + response?.price_per_unit,
+        discountPercent: '',
+        bestPrice: response?.price_per_unit,
+        spotPrice: '',
+        images: {
+          image1: response?.image_groups[0]?.images[0]?.link,
+        },
+      });
+    })
+  );
+  return skuData;
+}
+
+async postsalesForceLogin(reqBody: any): Promise<any> {
+  const endpoint = `${shopName}/dw/shop/v23_2/customers/auth?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+  var reqBody = reqBody;
+  var basicAuth = btoa(`${reqBody.email}:${reqBody.password}`);
+  console.log('reqBody', basicAuth);
+  try {
     const response = await this.fetchPostFromEndpoint(endpoint, basicAuth);
-    const data = await response; // Parse JSON response
-    console.log("responseservice123", data);
+    const data = response; // Parse JSON response
+    console.log('responseservice123', data);
     if (data.status == 200) {
-      const tokenParts = data.headers.authorization.split(" ")
-      return { ...data.data, bearerToken: tokenParts[1] }
+      const tokenParts = data.headers.authorization.split(' ');
+      return { ...data.data, bearerToken: tokenParts[1] };
     } else {
       return data?.data;
-    };
-  // return skuData;
+    }
+  } catch (error) {
+    return this.handleErrorResponse(error);
+  }
 }
 
   async addItems(baskets_id: any, requestBody: any, header: any): Promise<any>{
@@ -267,7 +280,7 @@ export class CommercecloudService {
         "Authorization":`Bearer ${header}`
       }
 
-      const endpoint = `https://zzkd-003.dx.commercecloud.salesforce.com/s/Ref-VinodCSQT/dw/shop/v23_2/baskets/${baskets_id}/items?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+      const endpoint = `https://zzkd-003.dx.commercecloud.salesforce.com/${shopName}/dw/shop/v23_2/baskets/${baskets_id}/items?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
 
       const response = await axios.post(endpoint,[requestBody],{headers});
       const data = await response;
@@ -306,7 +319,7 @@ export class CommercecloudService {
     }
 
     async getSalesforceProductItems(baskets_id:any,header:any): Promise<any>{
-      const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_2/baskets/${baskets_id}?&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+      const endpoint = `${shopName}/dw/shop/v23_2/baskets/${baskets_id}?&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
       console.log(endpoint,"endpoitn");
       const response = await this.cartFetchFromEndpoint(endpoint,header);
       try{
@@ -321,7 +334,7 @@ export class CommercecloudService {
           "sellingPrice":items?.price,
           "quantity":items?.quantity
         }
-        const endpoint_two = `s/Ref-VinodCSQT/dw/shop/v23_2/products/${items.product_id}/images`;
+        const endpoint_two = `${shopName}/dw/shop/v23_2/products/${items.product_id}/images`;
         const product_images_response = this.cartFetchFromEndpoint(endpoint_two,header);
         const product_data_images = this.transformResponse(product_images_response);
         const images_datas = await product_data_images
@@ -380,7 +393,7 @@ export class CommercecloudService {
       }
     }
     async updateSalesforceProductItems(baskets_id:any,items_id:any,requestBody:any,header:any):Promise<any>{
-      const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_2/baskets/${baskets_id}/items/${items_id}`;
+      const endpoint = `${shopName}/dw/shop/v23_2/baskets/${baskets_id}/items/${items_id}`;
       console.log(endpoint,"updateSalesforceProductItems");
       const response = await this.cartUpdateFromEndpoint(endpoint,requestBody,header);
       const data = response;
@@ -389,7 +402,7 @@ export class CommercecloudService {
     }
     async getSalesForceCategory(): Promise<any> {
       const product_arr: any[] = [];
-      const endpoint = `/s/Ref-VinodCSQT/dw/shop/v23_2/categories/root?levels=6&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+      const endpoint = `/${shopName}/dw/shop/v23_2/categories/root?levels=6&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
     
       try {
         const response = await this.fetchFromEndpoint(endpoint);
@@ -425,7 +438,7 @@ export class CommercecloudService {
     }
 
   async removeItem(basket_Id:any, requestBody:any, bearer:any):Promise<any>{
-    const endpoint = `/s/Ref-VinodCSQT/dw/shop/v23_2/baskets/${basket_Id}/items/${requestBody.item_id}?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const endpoint = `/${shopName}/dw/shop/v23_2/baskets/${basket_Id}/items/${requestBody.item_id}?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
     const header = {
       'Authorization':`Bearer ${bearer}`
     }
@@ -450,7 +463,7 @@ export class CommercecloudService {
 
   //Function to create cart:
   async createCart(bearer: any):Promise<any>{
-    const endpoint = 's/Ref-VinodCSQT/dw/shop/v23_2/baskets?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b';
+    const endpoint = '${shopName}/dw/shop/v23_2/baskets?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b';
     const header = {
        'Content-Type': 'application/json',
         'Authorization':`Bearer ${bearer}`
@@ -481,7 +494,7 @@ export class CommercecloudService {
 
   //Function to get customer cart on behalf of customer id:
   async customerCart(customerId:any, bearer:any){
-    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_2/customers/${customerId}/baskets?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const endpoint = `${shopName}/dw/shop/v23_2/customers/${customerId}/baskets?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
     const header = {
       'Content-Type': 'application/json',
        'Authorization':`Bearer ${bearer}`
@@ -507,12 +520,12 @@ export class CommercecloudService {
 
   //Function get user details:
   async getUserDetails(customers_id:any,header:any): Promise<any>{
-    const endpoint =`s/Ref-VinodCSQT/dw/shop/v23_2/customers/${customers_id}/addresses`
+    const endpoint =`${shopName}/dw/shop/v23_2/customers/${customers_id}/addresses`
     const response = await this.cartFetchFromEndpoint(endpoint,header)
     console.log("responseamber",response)
     const data = response?.data;
     const userProfile: any[] = [];
-    const endpoint_two = `s/Ref-VinodCSQT/dw/shop/v23_2/customers/${customers_id}`
+    const endpoint_two = `${shopName}/dw/shop/v23_2/customers/${customers_id}`
     const response_two =  await this.cartFetchFromEndpoint(endpoint_two,header)
 
     for (const items of data) {
@@ -537,7 +550,7 @@ export class CommercecloudService {
 
   //Function Order Details:
   async getOrderDetails(customers_id:any, header:any): Promise<any>{
-    const endpoint =`s/Ref-VinodCSQT/dw/shop/v23_2/customers/${customers_id}/orders`
+    const endpoint =`${shopName}/dw/shop/v23_2/customers/${customers_id}/orders`
     const response = await this.cartFetchFromEndpoint(endpoint,header)
     console.log(response,"response")
     const data =response?.data==undefined?response:response.data;
@@ -546,7 +559,7 @@ export class CommercecloudService {
 
   //Function to get payment details:
   async getSaleforcePaymentMethodDetails(baskets_id:any,header:any): Promise<any>{
-    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_2/baskets/${baskets_id}/payment_methods?&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const endpoint = `${shopName}/dw/shop/v23_2/baskets/${baskets_id}/payment_methods?&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
     const response = await this.cartFetchFromEndpoint(endpoint,header);
     const data = response;
     return data
@@ -576,9 +589,36 @@ export class CommercecloudService {
     }
   }
   async updateSalesForceshippment(baskets_id:any,header:any):Promise<any>{
-    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_1/baskets/${baskets_id}/shipments/me/shipping_method`;
+    const endpoint = `${shopName}/dw/shop/v23_1/baskets/${baskets_id}/shipments/me/shipping_method`;
     console.log(endpoint,"updateSalesforceProductItems");
     const response = await this.shippmentUpdateFromEndpoint(endpoint,header);
+    const data = response;
+    console.log('datas',data)
+    return response;
+  } 
+
+  async newshippmentUpdateFromEndpoint(endpoint:string,requestBody:any,header:string):Promise<any>{
+    var body=requestBody
+    try{
+      const response = await axios.put(`${this.dataSource.settings.baseURL}/${endpoint}`,
+      body,  
+      {
+        headers:{
+          'Authorization':`Bearer ${header}`,
+        },
+      },
+      );
+      return response.data;
+    }catch(error){
+      console.log(error)
+      return this.handleErrorResponse(error);
+
+    }
+  }
+  async newupdateSalesForceshippment(baskets_id:any,shipment_id:any,requestBody:any,header:any):Promise<any>{
+    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_1/baskets/${baskets_id}/shipments/${shipment_id}/shipping_method`;
+    console.log(endpoint,"updateSalesforceProductItems");
+    const response = await this.newshippmentUpdateFromEndpoint(endpoint,requestBody,header);
     const data = response;
     console.log('datas',data)
     return response;
@@ -620,9 +660,50 @@ export class CommercecloudService {
     }
   }
   async updateSalesForceaddress(baskets_id:any,header:any):Promise<any>{
-    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_1/baskets/${baskets_id}/shipments/me/shipping_address?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const endpoint = `${shopName}/dw/shop/v23_1/baskets/${baskets_id}/shipments/me/shipping_address?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
     console.log(endpoint,"updateSalesforceProductItems");
     const response = await this.addressUpdateFromEndpoint(endpoint,header);
+    const data = response;
+    console.log('datas',data)
+    return response;
+  } 
+
+  async newaddressUpdateFromEndpoint(endpoint:string,requestBody:any,header:string):Promise<any>{
+    var body1={
+      "address1": "Ocapi",
+      "address2": "Demo",
+      "city": "Indore",
+      "country_code": "CN",
+      "first_name": "Ocapi",
+      "full_name": "Ocapi Demo",
+      "id": "OcapiD",
+      "last_name": "Demo",
+      "phone": "123456789",
+      "postal_code": "45200",
+      "state_code": "45200",
+      "title": "OcapiDemo"
+    }
+    var body=requestBody
+    try{
+      const response = await axios.put(`${this.dataSource.settings.baseURL}/${endpoint}`,
+      body,  
+      {
+        headers:{
+          'Authorization':`Bearer ${header}`,
+        },
+      },
+      );
+      return response.data;
+    }catch(error){
+      console.log(error)
+      return this.handleErrorResponse(error);
+
+    }
+  }
+  async newupdateSalesForceaddress(baskets_id:any,shipment_id:string,requestBody:any,header:any):Promise<any>{
+    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_1/baskets/${baskets_id}/shipments/${shipment_id}/shipping_address?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    console.log(endpoint,"updateSalesforceProductItems");
+    const response = await this.newaddressUpdateFromEndpoint(endpoint,requestBody,header);
     const data = response;
     console.log('datas',data)
     return response;
@@ -664,9 +745,50 @@ export class CommercecloudService {
     }
   }
   async updateSalesForcebillingaddress(baskets_id:any,header:any):Promise<any>{
-    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_1/baskets/${baskets_id}/billing_address?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const endpoint = `${shopName}/dw/shop/v23_1/baskets/${baskets_id}/billing_address?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
     console.log(endpoint,"updateSalesforceProductItems");
     const response = await this.billingaddressUpdateFromEndpoint(endpoint,header);
+    const data = response;
+    console.log('datas',data)
+    return response;
+  } 
+
+  async newbillingaddressUpdateFromEndpoint(endpoint:string,requestBody:any,header:string):Promise<any>{
+    var body1={
+      "address1": "Ocapi",
+      "address2": "Demo",
+      "city": "Indore",
+      "country_code": "CN",
+      "first_name": "Ocapi",
+      "full_name": "Ocapi Demo",
+      "id": "OcapiD",
+      "last_name": "Demo",
+      "phone": "123456789",
+      "postal_code": "45200",
+      "state_code": "45200",
+      "title": "OcapiDemo"
+    }
+    var body=requestBody
+    try{
+      const response = await axios.put(`${this.dataSource.settings.baseURL}/${endpoint}`,
+      body,  
+      {
+        headers:{
+          'Authorization':`Bearer ${header}`,
+        },
+      },
+      );
+      return response.data;
+    }catch(error){
+      console.log(error)
+      return this.handleErrorResponse(error);
+
+    }
+  }
+  async newupdateSalesForcebillingaddress(baskets_id:any,requestBody:any,header:any):Promise<any>{
+    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_1/baskets/${baskets_id}/billing_address?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    console.log(endpoint,"updateSalesforceProductItems");
+    const response = await this.newbillingaddressUpdateFromEndpoint(endpoint,requestBody,header);
     const data = response;
     console.log('datas',data)
     return response;
@@ -675,7 +797,7 @@ export class CommercecloudService {
 
 
   async confirmPayment(basketId: any,bearer: any,requestBody: any):Promise<any>{
-    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_2/baskets/${basketId}/payment_instruments?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const endpoint = `${shopName}/dw/shop/v23_2/baskets/${basketId}/payment_instruments?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
     const header = {
        'Content-Type': 'application/json',
         'Authorization':`Bearer ${bearer}`
@@ -703,7 +825,7 @@ export class CommercecloudService {
   // }
 
   // async placeOrder(bearer: any,requestBody: any):Promise<any>{
-  //   const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_2/orders?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+  //   const endpoint = `${shopName}/dw/shop/v23_2/orders?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
   //   const header = {
   //      'Content-Type': 'application/json',
   //       'Authorization':`Bearer ${bearer}`
@@ -746,7 +868,7 @@ export class CommercecloudService {
     }
   }
   async placeOrder(bearer: any, requestBody: any): Promise<any> {
-    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_2/orders?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const endpoint = `${shopName}/dw/shop/v23_2/orders?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
     const header = {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${bearer}`,
@@ -761,7 +883,7 @@ export class CommercecloudService {
   }
 
   async getShiipingmethod(baskets_id:any,shipment_id:any,header:any):Promise<any>{
-    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_1/baskets/${baskets_id}/shipments/${shipment_id}/shipping_methods?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const endpoint = `${shopName}/dw/shop/v23_1/baskets/${baskets_id}/shipments/${shipment_id}/shipping_methods?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
     try{
       const response = await axios.get(`${this.dataSource.settings.baseURL}/${endpoint}`,
       {
@@ -776,5 +898,39 @@ export class CommercecloudService {
       console.log(error.response);
       return error?.response?.data
     }
-  } 
+  }
+
+  async searchByQuery(
+    query: string,
+    color: any,
+    size: any,
+    minprice: any,
+    maxprice: any,
+    sortbyname: any
+  ): Promise<any> {
+    console.log('SFCC service: searchByFacets');
+    const product_arr: any[] = [];
+    const endpoint = `/${shopName}/dw/shop/v23_2/product_search?q=${query}&refine_1=c_refinementColor=${color == undefined ? '' : color}&refine_2=price=${minprice == undefined && maxprice == undefined ? '' : '(' + minprice + '..' + maxprice + ')'}&refine_3=c_size=${size == undefined ? '' : size}&sort=${sortbyname == undefined ? '' : sortbyname}&expand=images,prices&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    try {
+      const response = await this.fetchFromEndpoint(endpoint);
+      const value = response.refinements;
+      const valueFacets = this.getRefinementValue(value);
+      response?.hits?.map((items: any) => {
+        product_arr.push({
+          product_id: items?.product_id,
+          sku_id: items?.product_id,
+          product_name: items?.product_name,
+          product_image: items?.image?.dis_base_link,
+          product_price: {
+            listPrice: items?.price,
+            sellingPrice: ' ',
+            discount: ' ',
+          },
+        });
+      });
+      return { ProductData: product_arr, valueFacets: valueFacets };
+    } catch (error) {
+      return this.handleErrorResponse(error);
+    }
+  }
 }
