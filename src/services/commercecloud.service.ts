@@ -548,12 +548,21 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     return { userProfile };
   }
 
-  //Function Order Details:
-  async getOrderDetails(customers_id:any, header:any): Promise<any>{
-    const endpoint =`${shopName}/dw/shop/v23_2/customers/${customers_id}/orders`
-    const response = await this.cartFetchFromEndpoint(endpoint,header)
-    console.log(response,"response")
-    const data =response?.data==undefined?response:response.data;
+  //Function to get order details:
+  async getOrderDetails(
+    customers_id: any,
+    header: any,
+  ): Promise<any> {
+    const endpoint = `${shopName}/dw/shop/v23_2/customers/${customers_id}/orders`;
+    const response = await this.cartFetchFromEndpoint(endpoint, header);
+    const data = response?.data == undefined ? response : response.data;
+    const promises = data[0].product_items.map(async (items:any)=>{
+      const endpoint_two = `${shopName}/dw/shop/v23_2/products/${items.product_id}/images`;
+      const data = await this.cartFetchFromEndpoint(endpoint_two,header);
+      console.log("newdata",data.image_groups[0].images[0]);
+      items["imageUrl"] = data.image_groups[0].images[0].dis_base_link;
+    })
+    await Promise.all(promises);
     return data;
   }
 
