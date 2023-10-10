@@ -113,7 +113,7 @@ export class SprykerService  {
     await Promise.all(
       data?.attributes?.abstractProducts?.map((items:any)=>{
         product_arr.push({
-        product_id:items?.abstractSku,
+        productId:items?.abstractSku,
         sku_id:items?.abstractSku,
         product_name:items?.abstractName,
         product_image:items?.images[0].externalUrlLarge,
@@ -310,7 +310,7 @@ export class SprykerService  {
         ((listPrice - discountPrice) / listPrice) * 100
       );
       return {
-        product_id: item.abstractSku,
+        productId: item.abstractSku,
         sku_id: item.abstractSku,
         product_name: item.abstractName,
         product_image: item.images[0]?.externalUrlLarge || null,
