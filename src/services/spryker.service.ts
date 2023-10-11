@@ -57,13 +57,13 @@ export class SprykerService  {
     var dataArr:any = [];
 
    await data[0]?.attributes?.abstractProducts?.map(async(responseitem:any,index:any)=>{
-    console.log('ashu' , responseitem);
+    console.log('aafreen' , responseitem);
     const FinalData = await {
       attributes:{
         "sku": responseitem?.abstractSku,
         "Name": responseitem?.abstractName,
         "Price": responseitem?.price,
-        "product_image":responseitem?.images[0].externalUrlLarge,
+        "productImage":responseitem?.images[0].externalUrlLarge,
         
       //   "discontinuedNote": null,
       //   "averageRating": null,
@@ -71,7 +71,7 @@ export class SprykerService  {
       //   "productAbstractSku": "232",
       //   "name": responseitem?.productName,
       //   "description": responseitem?.description,
-        "product_price": {
+        "productPrice": {
           "grossAmount": responseitem?.prices[0].grossAmount,
           "DEFAULT": responseitem?.prices[0].DEFAULT,
         },
@@ -114,14 +114,14 @@ export class SprykerService  {
       data?.attributes?.abstractProducts?.map((items:any)=>{
         product_arr.push({
         productId:items?.abstractSku,
-        sku_id:items?.abstractSku,
-        product_name:items?.abstractName,
-        product_image:items?.images[0].externalUrlLarge,
-        product_price: {
+        skuId:items?.abstractSku,
+        productName:items?.abstractName,
+        productImage:items?.images[0].externalUrlLarge,
+        productPrice: {
           "grossAmount": items?.prices[0].grossAmount,
           "DEFAULT": items?.prices[0].DEFAULT,
         },
-        product_category:categoryId,
+        productCategory:categoryId,
         })
       })
     )
@@ -156,7 +156,7 @@ export class SprykerService  {
     // return finalresponse
     return {
     "productId":response.data.id,
-    "name":response.data.attributes.name,
+    "productName":response.data.attributes.name,
     "available":" ",
     "description":response.data.attributes.description,
     "skus": transformedResponse
@@ -241,14 +241,14 @@ export class SprykerService  {
     await Promise.all(
       data?.attributes?.abstractProducts?.map((items:any)=>{
         product_arr.push({
-          sku_id:items?.abstractSku,
-         product_name:items?.abstractName,
-        product_image:items?.images[0].externalUrlLarge,
-        product_price: {
+          skuId:items?.abstractSku,
+         productName:items?.abstractName,
+        productImage:items?.images[0].externalUrlLarge,
+        productPrice: {
           "grossAmount": items?.prices[0].grossAmount,
           "DEFAULT": items?.prices[0].DEFAULT,
         },
-        product_category:subCategoryId,
+        productCategory:subCategoryId,
 
         })
 
@@ -270,9 +270,9 @@ export class SprykerService  {
         
         sku_id: item.abstractSku,
         ProductName: item.abstractName,
-        product_price: item.price,
+        productPrice: item.price,
         url: item.url,
-        product_image: item.images[0]?.externalUrlLarge || null,
+        productImage: item.images[0]?.externalUrlLarge || null,
       };
     }) || [];
   
@@ -312,10 +312,10 @@ export class SprykerService  {
       return {
         productId: item.abstractSku,
         sku_id: item.abstractSku,
-        product_name: item.abstractName,
-        product_image: item.images[0]?.externalUrlLarge || null,
-        product_rating: "", // You can populate this if it's available in your data
-        product_price: {
+        productName: item.abstractName,
+        productImage: item.images[0]?.externalUrlLarge || null,
+        productRating: "", // You can populate this if it's available in your data
+        productPrice: {
           sellingPrice: discountPrice,
           listPrice: listPrice || discountPrice,
           discount: listPrice - discountPrice || 0,
