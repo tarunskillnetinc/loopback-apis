@@ -113,7 +113,7 @@ export class SprykerService  {
     await Promise.all(
       data?.attributes?.abstractProducts?.map((items:any)=>{
         product_arr.push({
-        product_id:items?.abstractSku,
+        productId:items?.abstractSku,
         sku_id:items?.abstractSku,
         product_name:items?.abstractName,
         product_image:items?.images[0].externalUrlLarge,
@@ -310,7 +310,7 @@ export class SprykerService  {
         ((listPrice - discountPrice) / listPrice) * 100
       );
       return {
-        product_id: item.abstractSku,
+        productId: item.abstractSku,
         sku_id: item.abstractSku,
         product_name: item.abstractName,
         product_image: item.images[0]?.externalUrlLarge || null,
@@ -594,6 +594,51 @@ async getSprykerUsersData(customerId: any, authorization: any): Promise<any> {
   console.log("object", formattedData);
   return formattedData;
 }
+
+async postCheckoutData(reqBody: any, authorization: any): Promise<any> {
+  console.log('afren', reqBody);
+  const endpoint = `checkout-data?include=shipments%2Cshipment-methods%2Caddresses%2Cpayment-methods%2Citems`;
+
+  const response = this.postCartFetchFromEndpoint(
+    endpoint,
+    reqBody,
+    authorization,
+  );
+  const data = await response;
+  var shipment: any[] = [];
+  var paymentMethod: any[] = [];   
+  var address: any[] = [];
+  data?.included?.map(async (item: any) => {
+    if (item?.typ === 'shipments' || item?.type == 'shipment-methods') {
+      shipment.push(item);
+    } else if (item?.type == 'payment-methods') {
+      paymentMethod.push(item);
+    } else if (item?.type == 'addresses') {
+      address.push(item);
+    }
+  });
+  const dataresp = await {
+    data: data.data,
+    shipmet: shipment,
+    paymentMethod: paymentMethod,
+    address: address,
+  };
+  return data;
+}
+
+async postCheckoutorder(reqBody: any, authorization: any): Promise<any> {
+  console.log('afren', reqBody);
+  const endpoint =`checkout`;
+
+  const response = this.postCartFetchFromEndpoint(
+    endpoint,
+    reqBody,
+    authorization,
+  );
+  const data = await response;
+  return data;
+}
+
 
 
 }

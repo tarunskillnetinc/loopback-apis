@@ -416,6 +416,27 @@ let VtexController = exports.VtexController = class VtexController {
             throw error;
         }
     }
+    //For Placing Order From An Existing Cart:
+    async placeOrder(basketId, requestBody) {
+        try {
+            const data = await this.vtexService.placeOrder(basketId, requestBody);
+            console.log("danishresponseis", data);
+            return data;
+        }
+        catch (error) {
+            return error;
+        }
+    }
+    //For Approving The Payment:
+    async approvePayment(transactionId, requestBody) {
+        try {
+            const data = await this.vtexService.approvePayment(transactionId, requestBody);
+            return data;
+        }
+        catch (error) {
+            return error;
+        }
+    }
 };
 tslib_1.__decorate([
     (0, rest_1.get)('/get-vtex-category-tree'),
@@ -729,6 +750,28 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:paramtypes", [String, Object, Object, Object, Object, Object, Object, Object, Object]),
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "facetsResults", null);
+tslib_1.__decorate([
+    (0, rest_1.post)('vtex-placeOrder/{basketId}'),
+    (0, rest_1.response)(200, {
+        description: "Place Order API",
+    }),
+    tslib_1.__param(0, rest_1.param.path.string('basketId')),
+    tslib_1.__param(1, (0, rest_1.requestBody)()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String, Object]),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "placeOrder", null);
+tslib_1.__decorate([
+    (0, rest_1.post)('vtex-payment-approve/{transactionId}'),
+    (0, rest_1.response)(200, {
+        description: 'Approve payment after placeorder api'
+    }),
+    tslib_1.__param(0, rest_1.param.path.string('transactionId')),
+    tslib_1.__param(1, (0, rest_1.requestBody)()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String, Object]),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "approvePayment", null);
 exports.VtexController = VtexController = tslib_1.__decorate([
     tslib_1.__param(0, (0, core_1.inject)('services.VtexService')),
     tslib_1.__param(1, (0, core_1.inject)(rest_1.RestBindings.Http.REQUEST)),
