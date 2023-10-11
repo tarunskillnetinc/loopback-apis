@@ -442,7 +442,7 @@ export class CommercecloudController {
   }
 
   //Get Customer User Details:
-  @get('/sfcc/user-Details/{customers_id}')
+  @get('/sfcc/user-details/{customers_id}')
   @response(200,{
     description: 'Get Salesforce user-details addresses using customers api',
   })
