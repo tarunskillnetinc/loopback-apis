@@ -56,22 +56,18 @@ export class CommercecloudController {
   })
   async SalesforceByFacets(
     @param.path.string('category') category: string,
-
     @param.query.string('color') color?: any,
-
     @param.query.string('size') size?: any,
-    
     @param.query.string('minprice') minprice?: any,
-
     @param.query.string('maxprice') maxprice?: any,
-
     @param.query.string('sortbyprice') sortbyprice?: any,
-
     @param.query.string('sortbyname') sortbyname?: any,
+    @param.query.string('productsPerPage') productsPerPage?: any,
+    @param.query.string('page') page?: any,
 
   ): Promise<any> {
     try {
-      const data = await this.sfccService.searchByFacets(category,color,size,minprice,maxprice,sortbyname);
+      const data = await this.sfccService.searchByFacets(category,color,size,minprice,maxprice,sortbyprice,sortbyname,productsPerPage,page);
       const response = await data;
       return response;
     } catch (error) {
@@ -85,22 +81,17 @@ export class CommercecloudController {
   })
   async SalesforceByCategory(
     @param.path.string('category') category: string,
-
     @param.query.string('color') color?: any,
-
     @param.query.string('size') size?: any,
-    
     @param.query.string('minprice') minprice?: any,
-
     @param.query.string('maxprice') maxprice?: any,
-
     @param.query.string('sortbyprice') sortbyprice?: any,
-
     @param.query.string('sortbyname') sortbyname?: any,
-
+    @param.query.string('productsPerPage') productsPerPage?: any,
+    @param.query.string('page') page?: any,
   ): Promise<any> {
     try {
-      const data = await this.sfccService.searchByFacets(category,color,size,minprice,maxprice,sortbyname);
+      const data = await this.sfccService.searchByFacets(category,color,size,minprice,maxprice,sortbyprice,sortbyname,productsPerPage,page);
       const response = await data;
       return response;
     } catch (error) {

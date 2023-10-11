@@ -152,11 +152,15 @@ async searchByFacets(
   size: any,
   minprice: any,
   maxprice: any,
-  sortbyname: any
+  sortbyprice: any,
+  sortbyname: any,
+  productsPerPage: any,
+  page: any
 ): Promise<any> {
   console.log('SFCC service: searchByFacets');
   const product_arr: any[] = [];
-  const endpoint = `/${shopName}/dw/shop/v23_2/product_search?refine=cgid=${category}&refine_1=c_refinementColor=${color == undefined ? '' : color}&refine_2=price=${minprice == undefined && maxprice == undefined ? '' : '(' + minprice + '..' + maxprice + ')'}&refine_3=c_size=${size == undefined ? '' : size}&sort=${sortbyname == undefined ? '' : sortbyname}&expand=images,prices&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+  const startValue = (Number(page)-1)*productsPerPage;
+  const endpoint = `/${shopName}/dw/shop/v23_2/product_search?refine=cgid=${category}&refine_1=c_refinementColor=${color==undefined?"":color}&refine_2=price=${minprice==undefined && maxprice==undefined?"":("("+minprice+".."+maxprice+")")}&refine_3=c_size=${size==undefined?"":size}&sort=${sortbyname==undefined?"":sortbyname}&${productsPerPage == undefined ? "count=" : `count=${productsPerPage}`}&${page == undefined ? "start=" : `start=${startValue}`}&expand=images,prices&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
   try {
     const response = await this.fetchFromEndpoint(endpoint);
     const value = response.refinements;
@@ -174,7 +178,15 @@ async searchByFacets(
         },
       });
     });
-    return { ProductData: product_arr, valueFacets: valueFacets };
+    const totalPages = productsPerPage == undefined ? 0 : (response.total % productsPerPage === 0 ? 0 : 1) + Math.floor(response.total / productsPerPage);
+    const pagination = {
+      "totalPages": totalPages,
+      "currentIndex": page == undefined ? 1 : Number(page),
+      "perPage": productsPerPage == undefined ? response.count : Number(productsPerPage),
+      "next": page<totalPages ? Number(page)+1 : 0,
+      "previous": page>1 ? Number(page)-1 : 0
+    }
+    return { ProductData: product_arr, valueFacets: valueFacets, pagination: pagination };
   } catch (error) {
     return this.handleErrorResponse(error);
   }
