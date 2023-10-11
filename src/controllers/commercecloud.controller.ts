@@ -451,6 +451,48 @@ export class CommercecloudController {
     }
   }
 
+
+  //crud customer address start
+  @post('/sfcc/addCustomerAddress/{customerId}')
+  @response(200,{
+    message: "API for addCustomerAddress"
+  })
+  async addCustomerAddress(
+    @param.path.string('customerId') customerId: any,
+    @param.header.string('token') token: any,
+
+    @requestBody() requestBody:any,
+  ): Promise<any>{
+    try{
+      const headers = this.request.headers.token;
+      const data = await this.sfccService.addCustomerAddress(headers,customerId,requestBody);
+      return data;
+    }
+    catch(error){
+      throw error;
+    }
+  }
+
+  @del('/sfcc/removeCustomerAddress/{customerId}/address/{address_name}')
+  @response(200,{
+    message: "API for removeCustomerAddress"
+  })
+  async removeCustomerAddress(
+    @param.path.string('customerId') customerId: any,
+    @param.path.string('address_name') address_name: any,
+    @param.header.string('token') token: any,
+  ): Promise<any>{
+    try{
+      const headers = this.request.headers.token;
+      const data = await this.sfccService.removeCustomerAddress(headers,customerId,address_name);
+      return data;
+    }
+    catch(error){
+      throw error;
+    }
+  }
+  //crud customer address end
+
   //Controller to get Order Details:
   @get('/sfcc/order-Details/{customers_id}/orders')
   @response(200,{

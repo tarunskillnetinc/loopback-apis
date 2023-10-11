@@ -3,6 +3,7 @@ import { getService } from "@loopback/service-proxy";
 import axios from "axios";
 import { CommercecloudDataSource } from "../datasources";
 import currencySymbol from "currency-symbol-map";
+import { v4 as uuidv4 } from "uuid";
 
 
 const shopName = "s/Ref-VinodCSQT";
@@ -559,6 +560,56 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     };
     return { userProfile };
   }
+
+  
+  //Function crud customer address start
+  async addCustomerAddress(bearer: any,customerId:any, requestBody: any): Promise<any> {
+    const endpoint = `${shopName}/dw/shop/v23_2/customers/${customerId}/addresses?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const header = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${bearer}`,
+    };
+
+    requestBody.address_id=uuidv4()
+    console.log("addressbody",requestBody)
+    const response = await this.confirm(endpoint, header, requestBody);
+
+    if (response.error) {
+      return response; // You can decide how to handle errors
+    }
+    console.log("addressresponse",response)
+    return response;
+  }
+  
+  async removeCustomerAddressEndpoint(endpoint:any,header:any){
+    try{
+      console.log("headers",header);
+      const response = await axios.delete(`${this.dataSource.settings.baseURL}/${endpoint}`, {
+        headers: header
+      });
+      return response.data;
+    }
+    catch(error){
+      return this.handleErrorResponse(error)
+    }
+  }
+
+  async removeCustomerAddress(bearer: any,customerId:any,address_name:any): Promise<any> {
+    const endpoint = `${shopName}/dw/shop/v23_2/customers/${customerId}/addresses/${address_name}?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const header = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${bearer}`,
+    };
+    const response = await this.removeCustomerAddressEndpoint(endpoint, header);
+
+    if (response.error) {
+      return response; // You can decide how to handle errors
+    }
+    console.log("addressresponse",response)
+    return response;
+  }
+  
+  //Function crud customer address end
 
   //Function to get order details:
   async getOrderDetails(
