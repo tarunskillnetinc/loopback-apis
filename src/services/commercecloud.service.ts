@@ -609,6 +609,34 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     return response;
   }
   
+  async updateCustomerAddressEndpoint(endpoint:any,requestBody:any,header:any){
+    try{
+      console.log("headers",header);
+      const response = await axios.patch(`${this.dataSource.settings.baseURL}/${endpoint}`,
+      requestBody,
+      {
+        headers: header
+      });
+      return response.data;
+    }
+    catch(error){
+      return this.handleErrorResponse(error)
+    }
+  }
+  async updateCustomerAddress(bearer: any,requestBody:any,customerId:any,address_name:any): Promise<any> {
+    const endpoint = `${shopName}/dw/shop/v23_2/customers/${customerId}/addresses/${address_name}?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const header = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${bearer}`,
+    };
+    const response = await this.updateCustomerAddressEndpoint(endpoint,requestBody,header);
+
+    if (response.error) {
+      return response; // You can decide how to handle errors
+    }
+    console.log("addressresponse",response)
+    return response;
+  }
   //Function crud customer address end
 
   //Function to get order details:

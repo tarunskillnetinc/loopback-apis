@@ -491,6 +491,28 @@ export class CommercecloudController {
       throw error;
     }
   }
+ 
+  @patch('/sfcc/updateCustomerAddress/{customerId}/address/{address_name}')
+  @response(200,{
+    message: "API for updateCustomerAddress"
+  })
+  async updateCustomerAddress(
+    @param.path.string('customerId') customerId: any,
+    @param.path.string('address_name') address_name: any,
+    @param.header.string('token') token: any,
+    @requestBody() requestBody:any,
+
+  ): Promise<any>{
+    try{
+      const headers = this.request.headers.token;
+      const data = await this.sfccService.updateCustomerAddress(headers,requestBody,customerId,address_name);
+      return data;
+    }
+    catch(error){
+      throw error;
+    }
+  }
+
   //crud customer address end
 
   //Controller to get Order Details:
