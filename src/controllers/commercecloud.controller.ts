@@ -19,8 +19,52 @@ export class CommercecloudController {
     @inject("services.CommercecloudService")
     private sfccService: CommercecloudService,
     @inject(RestBindings.Http.REQUEST) private request: Request
+    @inject(RestBindings.Http.RESPONSE) private response: any
+    
   ) {}
-
+  
+  handlegetResponse(response:any):any{
+    console.log("response12345667",response?.status)
+    if(response?.status!=undefined)
+    {
+      return this.response.status(response?.status).json(response)
+    }
+    else{
+      console.log("else")
+      return this.response.status(200).json(response);
+    }
+  }
+  handlepostResponse(response:any):any{
+    console.log("response123",response)
+    if(response?.status!=undefined)
+    {
+      return this.response.status(response?.status).json(response)
+    }
+    else{
+      console.log("else")
+      return this.response.status(201).json(response);
+    }
+  }
+  handlepatchResponse(response:any):any{
+    if(response?.status!=undefined)
+    {
+      return this.response.status(response?.status).json(response)
+    }
+    else{
+      console.log("else")
+      return this.response.status(200).json(response);
+    }
+  }
+  handledeleteResponse(response:any):any{
+    if(response?.status!=undefined)
+    {
+      return this.response.status(response?.status).json(response)
+    }
+    else{
+      console.log("else")
+      return this.response.status(204).json(response);
+    }
+  }
   @get('/sfcc/new-arrivals')
   @response(200, {
     description: 'Get VTEX best selling products from the external API',
@@ -28,7 +72,7 @@ export class CommercecloudController {
   async getSfBestSellingProducts(): Promise<any> {
     try {
       const bestSellingProducts = await this.sfccService.sfBestSelling();
-      return bestSellingProducts;
+      return this.handlegetResponse(bestSellingProducts);
     } catch (error) {
       throw error;
     }
@@ -44,7 +88,7 @@ export class CommercecloudController {
       console.log("aaff");
       const getSalesForceProducts =
         await this.sfccService.getSalesforceProductByCategory(categoryId);
-      return getSalesForceProducts;
+        return this.handlegetResponse(getSalesForceProducts);
     } catch (error) {
       throw error;
     }
@@ -69,7 +113,7 @@ export class CommercecloudController {
     try {
       const data = await this.sfccService.searchByFacets(category,color,size,minprice,maxprice,sortbyprice,sortbyname,productsPerPage,page);
       const response = await data;
-      return response;
+      return this.handlegetResponse(response)
     } catch (error) {
       throw error;
     }
@@ -93,7 +137,7 @@ export class CommercecloudController {
     try {
       const data = await this.sfccService.searchByFacets(category,color,size,minprice,maxprice,sortbyprice,sortbyname,productsPerPage,page);
       const response = await data;
-      return response;
+      return this.handlegetResponse(response)
     } catch (error) {
       throw error;
     }
@@ -110,7 +154,7 @@ export class CommercecloudController {
       const salesforceProductDetails =
         await this.sfccService.getsalesForceProductById(productId);
       console.log("salesforceProductDetails", salesforceProductDetails);
-      return salesforceProductDetails;
+      return this.handlegetResponse(salesforceProductDetails)
     } catch (error) {
       throw error;
     }
@@ -127,7 +171,7 @@ export class CommercecloudController {
       const salesforceloginDetails =
         await this.sfccService.postsalesForceLogin(requestBody);
       console.log("salesforceloginDetails", salesforceloginDetails);
-      return salesforceloginDetails;
+      return this.handlepostResponse(salesforceloginDetails)
     } catch (error) {
       console.log("errorcontroller", error);
       throw error;
@@ -142,7 +186,7 @@ export class CommercecloudController {
     try {
       const salesforceProductDetails = await this.sfccService.getSalesForceCategory();
       console.log('salesforceProductDetails', salesforceProductDetails);
-      return salesforceProductDetails;
+      return this.handlegetResponse(salesforceProductDetails)
     } catch (error) {
       throw error;
     }
@@ -160,7 +204,7 @@ export class CommercecloudController {
     try{
       const header = this.request.headers.token;
       const items = await this.sfccService.addItems(baskets_id, requestBody, header);
-      return items;
+      return this.handlepostResponse(items)
     }
     catch(error){
       throw error;
@@ -178,7 +222,7 @@ export class CommercecloudController {
     try{
       const header = this.request.headers.token;
       const getSalesForceProducts = await this.sfccService.getSalesforceProductItems(baskets_id,header);
-      return getSalesForceProducts;
+      return this.handlegetResponse(getSalesForceProducts)
     }
     catch(error){
       throw error;
@@ -200,7 +244,7 @@ export class CommercecloudController {
       const header = this.request.headers.token;
       const getSalesForceProducts = await this.sfccService.updateSalesforceProductItems(baskets_id,items_id,requestBody,header);
       console.log('getSalesForceProductsbbbb',getSalesForceProducts);
-      return getSalesForceProducts;
+      return this.handlepatchResponse(getSalesForceProducts)
     } 
     catch(error){
       throw error;
@@ -219,7 +263,7 @@ export class CommercecloudController {
   ): Promise<any>{
     try{
       const data = await this.sfccService.removeItem(basket_Id,requestBody,token);
-      return data;
+      return this.handledeleteResponse(data)
     }
     catch(error){
       throw error;
@@ -236,7 +280,7 @@ export class CommercecloudController {
   ): Promise<any>{
     try{
       const data = await this.sfccService.createCart(token);
-      return data;
+      return this.handlepostResponse(data)
     }
     catch(error){
       throw error;
@@ -256,7 +300,7 @@ export class CommercecloudController {
       const header = this.request.headers.token;
       const updateSalesForceshippment = await this.sfccService.updateSalesForceshippment(baskets_id,header);
       console.log('getSalesForceProductsbbbb',updateSalesForceshippment);
-      return updateSalesForceshippment;
+      return this.handlepatchResponse(updateSalesForceshippment)
     } 
     catch(error){
       throw error;
@@ -278,7 +322,7 @@ export class CommercecloudController {
       const header = this.request.headers.token;
       const updateSalesForceshippment = await this.sfccService.newupdateSalesForceshippment(baskets_id,shipment_id,requestBody,header);
       console.log('getSalesForceProductsbbbb',updateSalesForceshippment);
-      return updateSalesForceshippment;
+      return this.handlepatchResponse(updateSalesForceshippment)
     } 
     catch(error){
       throw error;
@@ -300,7 +344,7 @@ export class CommercecloudController {
       const header = this.request.headers.token;
       const updateSalesForceshippment = await this.sfccService.updateSalesForceaddress(baskets_id,header);
       console.log('getSalesForceProductsbbbb',updateSalesForceshippment);
-      return updateSalesForceshippment;
+      return this.handlepatchResponse(updateSalesForceshippment)
     } 
     catch(error){
       throw error;
@@ -321,7 +365,7 @@ export class CommercecloudController {
       const header = this.request.headers.token;
       const updateSalesForceshippment = await this.sfccService.newupdateSalesForceaddress(baskets_id,shipment_id,requestBody,header);
       console.log('getSalesForceProductsbbbb',updateSalesForceshippment);
-      return updateSalesForceshippment;
+      return this.handlepatchResponse(updateSalesForceshippment)
     } 
     catch(error){
       throw error;
@@ -343,7 +387,7 @@ export class CommercecloudController {
       const header = this.request.headers.token;
       const updateSalesForcebillingaddress = await this.sfccService.updateSalesForcebillingaddress(baskets_id,header);
       console.log('getSalesForceProductsbbbb',updateSalesForcebillingaddress);
-      return updateSalesForcebillingaddress;
+      return this.handlepatchResponse(updateSalesForcebillingaddress)
     } 
     catch(error){
       throw error;
@@ -364,7 +408,7 @@ export class CommercecloudController {
       const header = this.request.headers.token;
       const updateSalesForcebillingaddress = await this.sfccService.newupdateSalesForcebillingaddress(baskets_id,requestBody,header);
       console.log('getSalesForceProductsbbbb',updateSalesForcebillingaddress);
-      return updateSalesForcebillingaddress;
+      return this.handlepatchResponse(updateSalesForcebillingaddress)
     } 
     catch(error){
       throw error;
@@ -384,7 +428,7 @@ export class CommercecloudController {
     try{
       const headers = this.request.headers.token;
       const data = await this.sfccService.confirmPayment(basketId,headers,requestBody);
-      return data;
+      return this.handlepostResponse(data)
     }
     catch(error){
       throw error;
@@ -402,7 +446,7 @@ export class CommercecloudController {
     try{
       const headers = this.request.headers.token;
       const data = await this.sfccService.placeOrder(headers,requestBody);
-      return data;
+      return this.handlepostResponse(data)
     }
     catch(error){
       throw error;
@@ -422,7 +466,7 @@ export class CommercecloudController {
   ): Promise<any>{
     try{
       const data = await this.sfccService.customerCart(customerId,token);
-      return data;
+      return this.handlegetResponse(data)
     }
     catch(error){
       throw error;
@@ -441,7 +485,7 @@ export class CommercecloudController {
     try{
       const header = this.request.headers.token;
       const getSalesForceProducts = await this.sfccService.getUserDetails(customers_id,header);
-      return getSalesForceProducts;
+      return this.handlegetResponse(getSalesForceProducts)
     }
     catch(error){
       throw error;
@@ -463,7 +507,7 @@ export class CommercecloudController {
     try{
       const headers = this.request.headers.token;
       const data = await this.sfccService.addCustomerAddress(headers,customerId,requestBody);
-      return data;
+      return this.handlepostResponse(data)
     }
     catch(error){
       throw error;
@@ -482,7 +526,7 @@ export class CommercecloudController {
     try{
       const headers = this.request.headers.token;
       const data = await this.sfccService.removeCustomerAddress(headers,customerId,address_name);
-      return data;
+      return this.handledeleteResponse(data)
     }
     catch(error){
       throw error;
@@ -503,7 +547,7 @@ export class CommercecloudController {
     try{
       const headers = this.request.headers.token;
       const data = await this.sfccService.updateCustomerAddress(headers,requestBody,customerId,address_name);
-      return data;
+      return this.handlepatchResponse(data)
     }
     catch(error){
       throw error;
@@ -524,7 +568,7 @@ export class CommercecloudController {
     try{
       const header = this.request.headers.token;
       const getSalesForceProducts = await this.sfccService.getOrderDetails(customers_id,header);
-      return getSalesForceProducts;
+      return this.handlegetResponse(getSalesForceProducts)
     }
     catch(error){
       throw error;
@@ -543,7 +587,7 @@ export class CommercecloudController {
     try{
       const header = this.request.headers.token;
       const getSalesForceProducts = await this.sfccService.getSaleforcePaymentMethodDetails(baskets_id,header);
-      return getSalesForceProducts;
+      return this.handlegetResponse(getSalesForceProducts)
     }
     catch(error){
       throw error;
@@ -564,7 +608,7 @@ export class CommercecloudController {
       const header = this.request.headers.token;
       const shipping_method = await this.sfccService.getShiipingmethod(baskets_id,shipment_id,header);
       console.log('getshippingmethod',shipping_method);
-      return shipping_method;
+      return this.handlegetResponse(shipping_method)
     } 
     catch(error){
       throw error;
@@ -588,7 +632,7 @@ export class CommercecloudController {
      try {
        const data = await this.sfccService.searchByQuery(query,color,size,minprice,maxprice,sortbyname);
        const response = await data;
-       return response;
+       return this.handlegetResponse(response)
      } catch (error) {
        throw error;
      }

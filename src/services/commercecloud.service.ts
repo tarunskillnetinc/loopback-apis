@@ -280,7 +280,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
       const tokenParts = data.headers.authorization.split(' ');
       return { ...data.data, bearerToken: tokenParts[1] };
     } else {
-      return data?.data;
+      return data;
     }
   } catch (error) {
     return this.handleErrorResponse(error);
@@ -526,8 +526,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     }
     catch(error){
       console.log("error is", error);
-      return error?.response?.data
-
+      return this.handleErrorResponse(error)
     }
   }
 
@@ -996,7 +995,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     }
     catch(error){
       console.log(error.response);
-      return error?.response?.data
+      return this.handleErrorResponse(error)
     }
   }
 
