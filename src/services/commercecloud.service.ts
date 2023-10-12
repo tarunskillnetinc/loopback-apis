@@ -3,6 +3,7 @@ import { getService } from "@loopback/service-proxy";
 import axios from "axios";
 import { CommercecloudDataSource } from "../datasources";
 import currencySymbol from "currency-symbol-map";
+import { v4 as uuidv4 } from "uuid";
 
 
 const shopName = "s/Ref-VinodCSQT";
@@ -152,11 +153,15 @@ async searchByFacets(
   size: any,
   minprice: any,
   maxprice: any,
-  sortbyname: any
+  sortbyprice: any,
+  sortbyname: any,
+  productsPerPage: any,
+  page: any
 ): Promise<any> {
   console.log('SFCC service: searchByFacets');
   const product_arr: any[] = [];
-  const endpoint = `/${shopName}/dw/shop/v23_2/product_search?refine=cgid=${category}&refine_1=c_refinementColor=${color == undefined ? '' : color}&refine_2=price=${minprice == undefined && maxprice == undefined ? '' : '(' + minprice + '..' + maxprice + ')'}&refine_3=c_size=${size == undefined ? '' : size}&sort=${sortbyname == undefined ? '' : sortbyname}&expand=images,prices&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+  const startValue = (Number(page)-1)*productsPerPage;
+  const endpoint = `/${shopName}/dw/shop/v23_2/product_search?refine=cgid=${category}&refine_1=c_refinementColor=${color==undefined?"":color}&refine_2=price=${minprice==undefined && maxprice==undefined?"":("("+minprice+".."+maxprice+")")}&refine_3=c_size=${size==undefined?"":size}&sort=${sortbyname==undefined?"":sortbyname}&${productsPerPage == undefined ? "count=" : `count=${productsPerPage}`}&${page == undefined ? "start=" : `start=${startValue}`}&expand=images,prices&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
   try {
     const response = await this.fetchFromEndpoint(endpoint);
     const value = response.refinements;
@@ -174,7 +179,15 @@ async searchByFacets(
         },
       });
     });
-    return { ProductData: product_arr, valueFacets: valueFacets };
+    const totalPages = productsPerPage == undefined ? 0 : (response.total % productsPerPage === 0 ? 0 : 1) + Math.floor(response.total / productsPerPage);
+    const pagination = {
+      "totalPages": totalPages,
+      "currentIndex": page == undefined ? 1 : Number(page),
+      "perPage": productsPerPage == undefined ? response.count : Number(productsPerPage),
+      "next": page<totalPages ? Number(page)+1 : 0,
+      "previous": page>1 ? Number(page)-1 : 0
+    }
+    return { ProductData: product_arr, valueFacets: valueFacets, pagination: pagination };
   } catch (error) {
     return this.handleErrorResponse(error);
   }
@@ -547,6 +560,84 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     };
     return { userProfile };
   }
+
+  
+  //Function crud customer address start
+  async addCustomerAddress(bearer: any,customerId:any, requestBody: any): Promise<any> {
+    const endpoint = `${shopName}/dw/shop/v23_2/customers/${customerId}/addresses?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const header = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${bearer}`,
+    };
+
+    requestBody.address_id=uuidv4()
+    console.log("addressbody",requestBody)
+    const response = await this.confirm(endpoint, header, requestBody);
+
+    if (response.error) {
+      return response; // You can decide how to handle errors
+    }
+    console.log("addressresponse",response)
+    return response;
+  }
+  
+  async removeCustomerAddressEndpoint(endpoint:any,header:any){
+    try{
+      console.log("headers",header);
+      const response = await axios.delete(`${this.dataSource.settings.baseURL}/${endpoint}`, {
+        headers: header
+      });
+      return response.data;
+    }
+    catch(error){
+      return this.handleErrorResponse(error)
+    }
+  }
+
+  async removeCustomerAddress(bearer: any,customerId:any,address_name:any): Promise<any> {
+    const endpoint = `${shopName}/dw/shop/v23_2/customers/${customerId}/addresses/${address_name}?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const header = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${bearer}`,
+    };
+    const response = await this.removeCustomerAddressEndpoint(endpoint, header);
+
+    if (response.error) {
+      return response; // You can decide how to handle errors
+    }
+    console.log("addressresponse",response)
+    return response;
+  }
+  
+  async updateCustomerAddressEndpoint(endpoint:any,requestBody:any,header:any){
+    try{
+      console.log("headers",header);
+      const response = await axios.patch(`${this.dataSource.settings.baseURL}/${endpoint}`,
+      requestBody,
+      {
+        headers: header
+      });
+      return response.data;
+    }
+    catch(error){
+      return this.handleErrorResponse(error)
+    }
+  }
+  async updateCustomerAddress(bearer: any,requestBody:any,customerId:any,address_name:any): Promise<any> {
+    const endpoint = `${shopName}/dw/shop/v23_2/customers/${customerId}/addresses/${address_name}?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const header = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${bearer}`,
+    };
+    const response = await this.updateCustomerAddressEndpoint(endpoint,requestBody,header);
+
+    if (response.error) {
+      return response; // You can decide how to handle errors
+    }
+    console.log("addressresponse",response)
+    return response;
+  }
+  //Function crud customer address end
 
   //Function to get order details:
   async getOrderDetails(
