@@ -33,7 +33,7 @@ export class CommercecloudController {
       throw error;
     }
   }
-  @get("/sfcc/demo-products-by-category/{categoryId}")
+  @get("/sfcc/products-by-category/{categoryId}")
   @response(200, {
     description: "Get Salesforce Product List by search category",
   })
@@ -176,7 +176,7 @@ export class CommercecloudController {
     }
   }
 
-  @get('/sfcc/getCartDetails/{baskets_id}')
+  @get('/sfcc/cartDetail/{baskets_id}')
   @response(200,{
     description: 'Get Cart Details using basket id',
   })
@@ -195,11 +195,8 @@ export class CommercecloudController {
   }
 
   @patch('/sfcc/update-cart/{baskets_id}/items/{items_id}')
-
   @response(200,{
-
     description: 'patch update cart using baskets api',
-
   })
   async updateSalesforceProductItems(
     @param.path.string('baskets_id') baskets_id: any,
@@ -208,7 +205,7 @@ export class CommercecloudController {
     @requestBody() requestBody:{quantity:any}
     ): Promise<any>{
     try{
-      console.log('aaaaa');
+      console.log('afreen');
       const header = this.request.headers.token;
       const getSalesForceProducts = await this.sfccService.updateSalesforceProductItems(baskets_id,items_id,requestBody,header);
       console.log('getSalesForceProductsbbbb',getSalesForceProducts);
