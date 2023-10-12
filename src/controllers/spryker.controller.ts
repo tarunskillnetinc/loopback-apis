@@ -52,7 +52,7 @@ export class SprykerController {
     }
   }
 
-  @get('/demo-spryker-plp-by-category/{categoryId}')
+  @get('/spryker/products-by-category/{categoryId}')
   @response(200,{
     description: 'Get Spryker Product List by search category',
   })
@@ -68,7 +68,7 @@ export class SprykerController {
 
   }
 
-  @get('/demo-spryker-plp-by-subcategory/{subCategoryId}')
+  @get('/spryker/products-by-sub-category/{subCategoryId}')
   @response(200,{
     description: 'Get VTEX Product List by intelegent search',
   })
@@ -84,7 +84,7 @@ export class SprykerController {
   }
 
 
-  @get('/spryker/product-by-id/{productId}')
+  @get('/spryker/products-by-id/{productId}')
   @response(200, {
     description: 'Get Plp details from the external API',
   })
@@ -100,7 +100,7 @@ export class SprykerController {
 
 
 
-  @get('/demo-spryker-plp-by-query/{query}')
+  @get('/spryker/products-by-query/{query}')
   @response(200,{
     description: 'Get Spryker Product List by search query',
   })
@@ -137,7 +137,7 @@ export class SprykerController {
     }
   }
 
-  @post('/demo-spryker-login')
+  @post('/spryker/login')
   async login(
     @requestBody() requestBody: { username: string; password: string; type:string },
   ): Promise<any> {
@@ -152,7 +152,7 @@ export class SprykerController {
   }
 
 
-  @get('/demo-spryker-get-cart-id')
+  @get('/spryker/get-cart-id')
     @response(200, {
       description: "Get the current cart.",
     })
@@ -176,7 +176,7 @@ export class SprykerController {
       }
     }
 
-    @post('/demo-spryker-create-cart')
+    @post('/spryker/createCart')
     @response(200, {
       description: "Get the current cart.",
     })
@@ -197,7 +197,7 @@ export class SprykerController {
       }
     }
 
-    @get('/demo-spryker-cartDetail/{cartId}')
+    @get('/spryker/cartDetail/{cartId}')
     @response(200, {
       description: 'Get VTEX cart details from the external API',
     })
@@ -215,7 +215,7 @@ export class SprykerController {
       }
     }
 
-    @del('spryker-delete-cart-/{cartId}')
+    @del('spryker/delete-cart/{cartId}')
     @response(200,{
       description:"Updating Cart details based on Form Id",
     })
@@ -235,7 +235,7 @@ export class SprykerController {
       }
     }
 
-    @post('/demo-post-add-item-cart/{cartId}')
+    @post('/spryker/post-add-item-cart/{cartId}')
     @response(200, {
       description: "Add Item in the current cart.",
     })
@@ -259,7 +259,7 @@ export class SprykerController {
       }
     }
 
-@del('/demo-post-delete-item-cart/{cartId}/{itemId}')
+@del('/spryker/post-delete-item-cart/{cartId}/{itemId}')
     @response(200, {
       description: "Delete Item in the current cart.",
     })
@@ -284,7 +284,7 @@ export class SprykerController {
       }
     }
 
-    @patch('/demo-post-update-item-cart/{cartId}/{itemId}')
+    @patch('/spryker/post-update-item-cart/{cartId}/{itemId}')
     @response(200, {
       description: "Delete Item in the current cart.",
     })
@@ -309,7 +309,7 @@ export class SprykerController {
         throw error;
       }
      }
-     @get('/demo-spryker-usersDetail/customers/{customerId}/addresses')
+     @get('/spryker/usersDetail/customers/{customerId}/addresses')
      @response(200, {
        description: 'Get VTEX user details from the external API',
      })
@@ -330,7 +330,7 @@ export class SprykerController {
 
 
      
-@post('/demo-post-checkout-data')
+@post('/spryker/post-checkout-data')
 @response(200, {
   description: "For checkout data.",
 })
@@ -352,7 +352,7 @@ async postCheckoutData(
   }
 } 
 
-@post('/demo-post-checkout-order')
+@post('/spryker/post-checkout-order')
 @response(200, {
   description: "For checkout order.",
 })
