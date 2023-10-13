@@ -41,8 +41,12 @@ export class CommercecloudController {
       return this.response.status(response?.status).json(response)
     }
     else{
-      console.log("else")
+      if (response._type=="order") {
+        return this.response.status(200).json(response)
+      }
+      else{
       return this.response.status(201).json(response);
+      }
     }
   }
   handlepatchResponse(response:any):any{
@@ -446,7 +450,8 @@ export class CommercecloudController {
     try{
       const headers = this.request.headers.token;
       const data = await this.sfccService.placeOrder(headers,requestBody);
-      return this.handlepostResponse(data)
+      return data
+      return this.handlepostResponse(data) 
     }
     catch(error){
       throw error;
