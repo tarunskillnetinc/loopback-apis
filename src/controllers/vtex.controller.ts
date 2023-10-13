@@ -13,7 +13,7 @@ export class VtexController {
     @inject(RestBindings.Http.REQUEST) private req: Request,
   ) {}
 
-  @get('/get-vtex-category-tree')
+  @get('/vtex/category-tree')
   @response(200, {
     description: 'Get VTEX category tree from the external API',
   })
@@ -66,7 +66,7 @@ export class VtexController {
   //     throw error;
   //   }
   // }
-  @get('get-vtex-product-by-id/{pid}')
+  @get('vtex/product-by-id/{pid}')
   @response(200, {
     description: "Get Vtex Products by their respective Id's",
   })
@@ -157,7 +157,7 @@ export class VtexController {
     }
   }
   
-  @get('/vtex-new-arrivals')
+  @get('/vtex/new-arrivals')
   @response(200, {
     description: 'Get VTEX best selling products from the external API',
   })
@@ -222,7 +222,7 @@ export class VtexController {
     //   }
     // }
 
-    @get('/vtex-plp-by-category/{categoryId}')
+    @get('/vtex/products-by-category/{categoryId}')
 
     @response(200,{
 
@@ -258,7 +258,7 @@ export class VtexController {
 
     }
 
-    @get('/vtex-plp-by-subcategory/{subCategoryId}')
+    @get('/vtex/products-by-subcategory/{subCategoryId}')
     @response(200,{
       description: 'Get VTEX Product List by intelegent search',
     })
