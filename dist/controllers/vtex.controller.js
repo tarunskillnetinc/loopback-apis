@@ -439,7 +439,7 @@ let VtexController = exports.VtexController = class VtexController {
     }
 };
 tslib_1.__decorate([
-    (0, rest_1.get)('/get-vtex-category-tree'),
+    (0, rest_1.get)('/vtex/category-tree'),
     (0, rest_1.response)(200, {
         description: 'Get VTEX category tree from the external API',
     }),
@@ -458,7 +458,7 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getVtexProductDetails", null);
 tslib_1.__decorate([
-    (0, rest_1.get)('get-vtex-product-by-id/{pid}'),
+    (0, rest_1.get)('vtex/product-by-id/{pid}'),
     (0, rest_1.response)(200, {
         description: "Get Vtex Products by their respective Id's",
     }),
@@ -516,7 +516,7 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getBestSellingProductsrating", null);
 tslib_1.__decorate([
-    (0, rest_1.get)('/vtex-new-arrivals'),
+    (0, rest_1.get)('/vtex/new-arrivals'),
     (0, rest_1.response)(200, {
         description: 'Get VTEX best selling products from the external API',
     }),
@@ -544,7 +544,7 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getVtexCategoryTreeloopback", null);
 tslib_1.__decorate([
-    (0, rest_1.get)('/vtex-plp-by-category/{categoryId}'),
+    (0, rest_1.get)('/vtex/products-by-category/{categoryId}'),
     (0, rest_1.response)(200, {
         description: 'Get VTEX Product List by intelegent search',
     }),
@@ -562,7 +562,7 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getVtexProductByCategory", null);
 tslib_1.__decorate([
-    (0, rest_1.get)('/vtex-plp-by-subcategory/{subCategoryId}'),
+    (0, rest_1.get)('/vtex/products-by-subcategory/{subCategoryId}'),
     (0, rest_1.response)(200, {
         description: 'Get VTEX Product List by intelegent search',
     }),

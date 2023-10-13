@@ -77,22 +77,22 @@ export class CommercecloudController {
       throw error;
     }
   }
-  @get("/sfcc/products-by-category/{categoryId}")
-  @response(200, {
-    description: "Get Salesforce Product List by search category",
-  })
-  async getSalesforceProductByCategory(
-    @param.path.string("categoryId") categoryId: any
-  ): Promise<any> {
-    try {
-      console.log("aaff");
-      const getSalesForceProducts =
-        await this.sfccService.getSalesforceProductByCategory(categoryId);
-        return this.handlegetResponse(getSalesForceProducts);
-    } catch (error) {
-      throw error;
-    }
-  }
+  // @get("/sfcc/products-by-category/{categoryId}")
+  // @response(200, {
+  //   description: "Get Salesforce Product List by search category",
+  // })
+  // async getSalesforceProductByCategory(
+  //   @param.path.string("categoryId") categoryId: any
+  // ): Promise<any> {
+  //   try {
+  //     console.log("aaff");
+  //     const getSalesForceProducts =
+  //       await this.sfccService.getSalesforceProductByCategory(categoryId);
+  //       return this.handlegetResponse(getSalesForceProducts);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
   @get("/sfcc/products-by-category/{category}")
   @response(200, {

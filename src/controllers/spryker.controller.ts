@@ -84,7 +84,7 @@ export class SprykerController {
   }
 
 
-  @get('/spryker/products-by-id/{productId}')
+  @get('/spryker/product-by-id/{productId}')
   @response(200, {
     description: 'Get Plp details from the external API',
   })
@@ -100,7 +100,7 @@ export class SprykerController {
 
 
 
-  @get('/spryker/products-by-query/{query}')
+  @get('/spryker/productsgit -by-query/{query}')
   @response(200,{
     description: 'Get Spryker Product List by search query',
   })

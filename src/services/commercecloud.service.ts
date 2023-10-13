@@ -187,7 +187,8 @@ async searchByFacets(
       "next": page<totalPages ? Number(page)+1 : 0,
       "previous": page>1 ? Number(page)-1 : 0
     }
-    return { ProductData: product_arr, valueFacets: valueFacets, pagination: pagination };
+    console.log("dwadawinside this")
+    return { ProductData: "", valueFacets: valueFacets, pagination: pagination,wad:"ww" };
   } catch (error) {
     return this.handleErrorResponse(error);
   }
@@ -228,7 +229,7 @@ async getsalesForceProductById(pid: any): Promise<any> {
     const variantProductsData = await this.getVariationData(data?.variants);
     return {
       productId: data?.id,
-      name: data?.name,
+      productName: data?.name,
       available: data?.inventory?.orderable,
       description: data?.long_description,
       skus: variantProductsData,
@@ -902,7 +903,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
         'Authorization':`Bearer ${bearer}`
     }
     const response = await this.confirm(endpoint,header,requestBody);
-    console.log("AAfreeeen")
+    console.log("AAfreeeen",response)
     console.log("my response",response?.data)
 
     return response;
