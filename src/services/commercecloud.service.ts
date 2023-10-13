@@ -476,7 +476,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
 
   //Function to create cart:
   async createCart(bearer: any):Promise<any>{
-    const endpoint = '${shopName}/dw/shop/v23_2/baskets?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b';
+    const endpoint = `${shopName}/dw/shop/v23_2/baskets?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
     const header = {
        'Content-Type': 'application/json',
         'Authorization':`Bearer ${bearer}`

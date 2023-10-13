@@ -18,7 +18,7 @@ export class CommercecloudController {
   constructor(
     @inject("services.CommercecloudService")
     private sfccService: CommercecloudService,
-    @inject(RestBindings.Http.REQUEST) private request: Request
+    @inject(RestBindings.Http.REQUEST) private request: Request,
     @inject(RestBindings.Http.RESPONSE) private response: any
     
   ) {}
