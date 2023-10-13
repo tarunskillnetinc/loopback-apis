@@ -1264,20 +1264,20 @@ export class VtexService {
       for (const hit of data.hits) {
         const ProductId = hit.product_id;
         const ProductName = hit.product_name;
-        const SkuImageUrl = hit.image.link; // Extract image URL
+        const images = hit.image.link; // Extract image URL
         const listPrice = hit.price; // Extract the price and name it as listPrice
         const basePrice = hit.price;
     
         console.log('Product ID:', ProductId);
         console.log('Product Name:', ProductName);
-        console.log('Product Image:', SkuImageUrl);
+        console.log('Product Image:', images);
         console.log('List Price:', listPrice);
     
         products.push({
           ProductId,
           skuId: ProductId,
           ProductName,
-          SkuImageUrl,
+          images,
           listPrice,
           basePrice
         });

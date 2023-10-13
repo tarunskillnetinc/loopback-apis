@@ -68,7 +68,7 @@ export class CommercecloudService {
             ProductId: hit.product_id,
             skuId: hit.product_id,
             ProductName: hit.product_name,
-            images: { image1: hit.image.link },
+            images:  hit.image.link ,
             listPrice: hit.price,
             basePrice: hit.price,
         }));
