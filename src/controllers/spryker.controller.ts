@@ -67,6 +67,21 @@ export class SprykerController {
     }
 
   }
+  @get('/spryker/products-by-label/{labelId}')
+  @response(200,{
+    description: 'Get Spryker Product List by search category',
+  })
+  async getSprykerProductByLabels(@param.path.string('labelId') labelId: any): Promise<any>{
+    try{
+      const getSprykerProducts = await this.sprykerService.getSprykerProductByLabels(labelId);
+      return getSprykerProducts;
+    }
+
+    catch(error){
+      throw error;
+    }
+
+  }
 
   @get('/spryker/products-by-sub-category/{subCategoryId}')
   @response(200,{
