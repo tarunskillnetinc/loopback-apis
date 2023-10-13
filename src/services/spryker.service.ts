@@ -125,11 +125,47 @@ export class SprykerService  {
         })
       })
     )
+    
 
     return {"ProductData":product_arr,
             "valueFacets": valueFacets};
     // return response;
   }
+
+  async getSprykerProductByLabels(categoryId: any): Promise<any> {
+    const endpoint = `catalog-search?label=${categoryId}&include=Concrete-products`;
+    const response = await this.fetchFromEndpoint(endpoint);
+    const data = response.data[0];
+    const value = response.data[0].attributes.valueFacets;
+    console.log('data', data);
+
+    const product_arr: any[] = [];
+    const valueFacets = this.getvalueFacets(value);
+
+    await Promise.all(
+        data?.attributes?.abstractProducts?.map((items: any) => {
+            const productImages = items?.images.map((image: any) => image.externalUrlLarge);
+
+            product_arr.push({
+                productId: items?.abstractSku,
+                skuId: items?.abstractSku,
+                productName: items?.abstractName,
+                productImage: productImages, // Product images as a list
+                productPrice: {
+                    "listPrice": items?.prices[0].DEFAULT,
+                    "price": items?.prices[0].DEFAULT,
+                },
+                productLabelId: categoryId,
+            });
+        })
+    );
+    console.log('product_arr', product_arr);
+    return {
+        "ProductData": product_arr,
+        "valueFacets": valueFacets
+    };
+}
+
 
   
   // newonw
