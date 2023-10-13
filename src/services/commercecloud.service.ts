@@ -229,7 +229,7 @@ async getsalesForceProductById(pid: any): Promise<any> {
     const variantProductsData = await this.getVariationData(data?.variants);
     return {
       productId: data?.id,
-      name: data?.name,
+      productName: data?.name,
       available: data?.inventory?.orderable,
       description: data?.long_description,
       skus: variantProductsData,
