@@ -962,8 +962,9 @@ export class VtexService {
   private transformVtexProductDetailPage(response: any,crossSellProducts:any): any {
     return {
       productId: response.productId,
-      name: response.name,
+      productName: response.name,
       available: response.available,
+      description: response.description,
       skus: response.skus,
       crossSellProduct: crossSellProducts
     };

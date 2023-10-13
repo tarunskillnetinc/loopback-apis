@@ -782,8 +782,9 @@ let VtexService = exports.VtexService = class VtexService {
     transformVtexProductDetailPage(response, crossSellProducts) {
         return {
             productId: response.productId,
-            name: response.name,
+            productName: response.name,
             available: response.available,
+            description: response.description,
             skus: response.skus,
             crossSellProduct: crossSellProducts
         };

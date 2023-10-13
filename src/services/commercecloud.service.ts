@@ -141,7 +141,7 @@ private getRefinementValue(response: any): any {
   response?.map((item: any) => {
     value_arr.push({
       name: item.label,
-      value: item?.values?.map((valueObj: any) => valueObj.label),
+      value: item?.values?.map((valueObj: any) => ({"value":valueObj.label})),
     });
   });
   return value_arr;
@@ -259,9 +259,7 @@ private async getVariationData(response: any): Promise<any[]> {
         discountPercent: '',
         bestPrice: response?.price_per_unit,
         spotPrice: '',
-        images: {
-          image1: response?.image_groups[0]?.images[0]?.link,
-        },
+        image: response?.image_groups[0]?.images[0]?.link,
       });
     })
   );
