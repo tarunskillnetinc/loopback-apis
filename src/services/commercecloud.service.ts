@@ -66,9 +66,9 @@ export class CommercecloudService {
 
         return data.hits.map((hit: any) => ({
             ProductId: hit.product_id,
-            skuId: hit.product_id,
+            SkuId: hit.product_id,
             ProductName: hit.product_name,
-            images:  hit.image.link ,
+            SkuImageUrl:  hit.image.link ,
             listPrice: hit.price,
             basePrice: hit.price,
         }));
