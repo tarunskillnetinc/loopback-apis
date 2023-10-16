@@ -440,6 +440,7 @@ export class SprykerService  {
 
   async cartFetchFromEndpoint(endpoint: string, authorization:string): Promise<any> {
     try {
+      const products : any[] = [];
       console.log(endpoint);
       const response = await axios.get(
         `http://103.113.36.20:9003${endpoint}`,
@@ -448,9 +449,36 @@ export class SprykerService  {
             'Authorization':`Bearer ${authorization}`,
           },
         },
-      ); 
-      console.log('afreeee',response.data);
-      return response.data;
+      );
+      const data = response.data.included;
+      console.log("mydata",data)
+      await Promise.all(
+        data.map(async (items:any)=>{
+          const endpoint_two = `http://103.113.36.20:9003/concrete-products/${items.id}?include=concrete-product-image-sets`;
+          const additional_data = await axios.get(endpoint_two);
+          console.log("zayn",additional_data.data);
+          products.push(
+            {
+              "itemId":items.id,
+              "indexId":items.id,
+              "productName":additional_data.data.data.attributes.name,
+              "price":Number(items?.attributes?.calculations?.unitPrice/100),
+              "sellingPrice":Number(items?.attributes?.calculations?.sumNetPrice/100),
+              "quantity":items?.attributes?.quantity,
+              "imageUrl":additional_data?.data?.included[0]?.attributes?.imageSets[0]?.images[0]?.externalUrlLarge
+            }
+          )
+        })
+      );
+
+      const totals = response.data.data
+      const totalizers = {
+        "CartTotal": Number(totals?.attributes?.totals?.grandTotal/100),
+      }
+
+      const finalData = {"products":products,"totalizers":totalizers}
+      // return response.data;
+      return finalData;
     } catch (error) {
       console.log('error', error);
       throw error;
