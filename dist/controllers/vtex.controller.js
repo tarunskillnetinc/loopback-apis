@@ -507,7 +507,7 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getBestSellingProducts", null);
 tslib_1.__decorate([
-    (0, rest_1.get)('/vtex-best-selling-products'),
+    (0, rest_1.get)('/vtex/best-selling-products'),
     (0, rest_1.response)(200, {
         description: 'Get VTEX best selling products from the external API',
     }),
@@ -580,7 +580,7 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getVtexProductBySubCategory", null);
 tslib_1.__decorate([
-    (0, rest_1.get)('/vtex-plp-by-query/{query}'),
+    (0, rest_1.get)('/vtex/-products-by-query/{query}'),
     (0, rest_1.response)(200, {
         description: 'Get VTEX Product List by intelegent search',
     }),

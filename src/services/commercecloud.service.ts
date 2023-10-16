@@ -188,7 +188,7 @@ async searchByFacets(
       "previous": page>1 ? Number(page)-1 : 0
     }
     console.log("dwadawinside this")
-    return { ProductData: "", valueFacets: valueFacets, pagination: pagination,wad:"ww" };
+    return { ProductData: product_arr, valueFacets: valueFacets, pagination: pagination};
   } catch (error) {
     return this.handleErrorResponse(error);
   }
@@ -334,8 +334,8 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
       const endpoint = `${shopName}/dw/shop/v23_2/baskets/${baskets_id}?&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
       console.log(endpoint,"endpoitn");
       const response = await this.cartFetchFromEndpoint(endpoint,header);
-      try{
-      const data = response?.product_items;
+      console.log("wdwadawdwad",response)
+      const data = response?.product_items==undefined?[]:response?.product_items;
       const products: any[] = [];
 
       const productDataPromise = data?.map(async (items:any)=>{
@@ -369,11 +369,6 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
         "totalizers":cartTotals
       }
       return finalData;
-      }
-      catch(error){
-        console.log("error is");
-        return response;
-      }
     }
     // Transformation function
     async transformResponse(inputData:any) {

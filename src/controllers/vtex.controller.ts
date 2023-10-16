@@ -144,7 +144,7 @@ export class VtexController {
       throw error;
     }
   }
-  @get('/vtex-best-selling-products')
+  @get('/vtex/best-selling-products')
   @response(200, {
     description: 'Get VTEX best selling products from the external API',
   })
