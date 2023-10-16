@@ -190,7 +190,6 @@ export class SprykerService  {
     const transformedResponse =
       this.sprykertransformProductDetailPage(finalresponse);
     // return finalresponse
-    return response
     return {
     "productId":response.data.id,
     "productName":response.data.attributes.name,
