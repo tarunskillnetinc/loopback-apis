@@ -100,9 +100,9 @@ export class SprykerService  {
     return dataArr;
   }
 
-  async getSprykerProductByCategory(categoryId: any): Promise<any>{
+  async getSprykerProductByCategory(categoryId: any, count: any, page:any): Promise<any>{
     
-    const endpoint = `catalog-search?category=${categoryId}&include=Concrete-products`;
+    const endpoint = `catalog-search?category=${categoryId}&include=Concrete-products&${count == undefined ? `ipp=` : `ipp=${count}`}&${page == undefined ? `page=` : `page=${page}`}`;
     const response = await this.fetchFromEndpoint(endpoint);
     const data =  response.data[0];
     const value = response.data[0].attributes.valueFacets;
@@ -125,10 +125,15 @@ export class SprykerService  {
         })
       })
     )
-    
 
-    return {"ProductData":product_arr,
-            "valueFacets": valueFacets};
+    const pagination = {
+      "count": response?.data[0]?.attributes?.pagination?.numFound,
+      "totalPages": response?.data[0]?.attributes?.pagination?.maxPage,
+      "perPage": response?.data[0]?.attributes?.pagination?.currentItemsPerPage,
+      "next": response?.data[0]?.attributes?.pagination?.nextPage
+    }
+
+    return {"ProductData":product_arr, "valueFacets": valueFacets, "pagination": pagination};
     // return response;
   }
 
@@ -267,9 +272,9 @@ export class SprykerService  {
     return  skuresponse ;
   }
 
-  async getSprykerProductBySubCategory(subCategoryId: any): Promise<any>{
+  async getSprykerProductBySubCategory(subCategoryId: any, count: any, page:any): Promise<any>{
     
-    const endpoint = `catalog-search?${subCategoryId}&include=Concrete-products`;
+    const endpoint = `catalog-search?${subCategoryId}&include=Concrete-products&${count == undefined ? `ipp=` : `ipp=${count}`}&${page == undefined ? `page=` : `page=${page}`}`;
     const response = await this.fetchFromEndpoint(endpoint);
     const data =  response.data[0];
     console.log('data',data)
@@ -292,7 +297,14 @@ export class SprykerService  {
 
     )
 
-    return product_arr;
+    const pagination = {
+      "count": response?.data[0]?.attributes?.pagination?.numFound,
+      "totalPages": response?.data[0]?.attributes?.pagination?.maxPage,
+      "perPage": response?.data[0]?.attributes?.pagination?.currentItemsPerPage,
+      "next": response?.data[0]?.attributes?.pagination?.nextPage
+    }
+
+    return {"ProductData":product_arr,"pagination": pagination};
     // return response;
   }
 
