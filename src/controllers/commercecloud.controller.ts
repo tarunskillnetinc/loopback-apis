@@ -71,9 +71,22 @@ export class CommercecloudController {
   }
   @get('/sfcc/new-arrivals')
   @response(200, {
-    description: 'Get VTEX best selling products from the external API',
+    description: 'Get sfcc new arrivals products from the external API',
   })
   async getSfBestSellingProducts(): Promise<any> {
+    try {
+      const bestSellingProducts = await this.sfccService.sfBestSelling();
+      return this.handlegetResponse(bestSellingProducts);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @get('/sfcc/best-selling-products')
+  @response(200, {
+    description: 'Get sfcc best selling products from the external API',
+  })
+  async getSfbestsellingproducts(): Promise<any> {
     try {
       const bestSellingProducts = await this.sfccService.sfBestSelling();
       return this.handlegetResponse(bestSellingProducts);
