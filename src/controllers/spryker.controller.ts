@@ -56,9 +56,13 @@ export class SprykerController {
   @response(200,{
     description: 'Get Spryker Product List by search category',
   })
-  async getSprykerProductByCategory(@param.path.string('categoryId') categoryId: any): Promise<any>{
+  async getSprykerProductByCategory(
+    @param.path.string('categoryId') categoryId: any,
+    @param.query.string('productsPerPage') count?: any,
+    @param.query.string('page') page?: any,
+    ): Promise<any>{
     try{
-      const getSprykerProducts = await this.sprykerService.getSprykerProductByCategory(categoryId);
+      const getSprykerProducts = await this.sprykerService.getSprykerProductByCategory(categoryId,count,page);
       return getSprykerProducts;
     }
 
@@ -88,9 +92,13 @@ export class SprykerController {
     description: 'Get VTEX Product List by intelegent search',
   })
 
-  async getSprykerProductBySubCategory(@param.path.string('subCategoryId') subCategoryId: any): Promise<any>{
+  async getSprykerProductBySubCategory(
+    @param.path.string('subCategoryId') subCategoryId: any,
+    @param.query.string('productsPerPage') count?: any,
+    @param.query.string('page') page?: any,
+    ): Promise<any>{
     try{
-      const getSprykerProducts = await this.sprykerService.getSprykerProductBySubCategory(subCategoryId);
+      const getSprykerProducts = await this.sprykerService.getSprykerProductBySubCategory(subCategoryId,count,page);
       return getSprykerProducts;
     }
     catch(error){
