@@ -282,7 +282,7 @@ export class VtexController {
       }
     }
 
-    @get('/vtex-plp-by-query/{query}')
+    @get('/vtex/-products-by-query/{query}')
     @response(200,{
       description: 'Get VTEX Product List by intelegent search',
     })
