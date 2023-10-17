@@ -1,4 +1,4 @@
-import { get, del, post, RestBindings, requestBody, Request, response, param, ResponseObject } from '@loopback/rest';
+import { get, patch , del, post, RestBindings, requestBody, Request, response, param, ResponseObject } from '@loopback/rest';
 import { inject } from '@loopback/core';
 import { VtexService } from '../services';
 import axios, { AxiosResponse } from 'axios';
@@ -456,17 +456,17 @@ export class VtexController {
   }
 
   //For adding items in cart:
-  @post('vtex-add-items/{orderFormId}')
+  @post('vtex/additem/{basket_Id}')
   @response(200, {
     description: "Add items in cart using order form id",
   })
   async addItems(
-    @requestBody() requestBody:{orderItems:[]},
-    @param.path.string('orderFormId') orderFormId: string
+    @requestBody() requestBody:{ customBody: any },
+    @param.path.string('basket_Id') basket_Id: string
     ):Promise<any>{
     try{
       console.log(requestBody);
-      const data = await this.vtexService.addItems(orderFormId , requestBody);
+      const data = await this.vtexService.addItems(basket_Id,requestBody);
       const response = await data;
       return response;
     }

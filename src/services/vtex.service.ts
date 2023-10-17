@@ -1177,14 +1177,11 @@ export class VtexService {
 
     //Function for adding items in cart:
     async addItems(orderFormId:any , requestBody:any): Promise<any> {
-    // const body = {"orderItems":[{"quantity":3,"seller":"1","id":"880582"}]}
-    console.log('requestBody',requestBody);
-    const endpoint = `api/checkout/pub/orderForm/${orderFormId}/items`;
-    try{
-      const url = `${this.dataSource.settings.baseURL}/${endpoint}`;
-      console.log('urlis',url);
-      const response : AxiosResponse<any> = await axios.post(`${this.dataSource.settings.baseURL}/${endpoint}`,
-      requestBody,
+      const newBody = {"orderItems":[{"quantity":`${requestBody.quantity}`,"seller":"1","id":`${requestBody.itemId}`}]}
+      const endpoint = `api/checkout/pub/orderForm/${orderFormId}/items`;
+      try{
+        const response : AxiosResponse<any> = await axios.post(`${this.dataSource.settings.baseURL}/${endpoint}`,
+        newBody,
         {
           headers: {
             Accept: 'application/json',
@@ -1192,13 +1189,12 @@ export class VtexService {
             'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
           }
         }
-      );
-      console.log('itemsaddedare',response);
-      return response.data;
-    }
-    catch(error){
-      throw error
-    }
+        );
+        return response.data;
+      }
+      catch(error){
+        return this.handleErrorResponse(error);
+      }
     }
 
     // Function for updating items in cart
