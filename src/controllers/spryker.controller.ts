@@ -295,13 +295,13 @@ export class SprykerController {
     })
 
     async postAddCartItem(
-      @param.path.string('baskets_id') baskets_id: string,
+      @param.path.string('basket_id') basket_id: string,
       @requestBody() requestBody:{data:any},
       @param.header.string('bearer') bearer: string,
       ):Promise<any>{
         try{
           const header = this.request.headers.bearer;
-        const data = await this.sprykerService.postAddCartItems(baskets_id,requestBody,header);
+        const data = await this.sprykerService.postAddCartItems(basket_id,requestBody,header);
         const response = data;
         return response;
         
@@ -313,21 +313,21 @@ export class SprykerController {
       }
     }
 
-@del('/spryker/post-delete-item-cart/{cartId}/{itemId}')
+@del('/spryker/deleteItem/{cartId}/{itemId}')
     @response(200, {
       description: "Delete Item in the current cart.",
     })
 
  async postDeleteCartItem(
-      @param.path.string('cartId') CartId: string,
+      @param.path.string('basket_id') basket_id: string,
       @param.path.string('itemId') itemId: string,
       @param.header.string('bearer') bearer: string,
       ):Promise<any>{
         try{
-          console.log("cartID",CartId)
+          console.log("cartID",basket_id)
         console.log("itemID",itemId)
         const header = this.request.headers.bearer;
-        const data = await this.sprykerService.postDeleteCartItems(CartId,itemId,header);
+        const data = await this.sprykerService.postDeleteCartItems(basket_id,itemId,header);
         const response = data;
         return response;
       }
@@ -338,21 +338,21 @@ export class SprykerController {
       }
     }
 
-    @patch('/spryker/updateItems/{baskets_id}')
+    @patch('/spryker/updateItems/{basket_id}')
     @response(200, {
       description: "Delete Item in the current cart.",
     })
 
     async postUpdateCartItem(
-      @param.path.string('baskets_id') baskets_id: string,
+      @param.path.string('basket_id') basket_id: string,
       // @param.path.string('itemId') itemId: string,
       @param.header.string('bearer') bearer: string,
       @requestBody() requestBody:{data:any},
       ):Promise<any>{
         try{
-          console.log("cartID",baskets_id)
+          console.log("cartID",basket_id)
         const header = this.request.headers.bearer;
-        const data = await this.sprykerService.postUpdateCartItems(baskets_id,requestBody,header);
+        const data = await this.sprykerService.postUpdateCartItems(basket_id,requestBody,header);
         const response = data;
         return response;
       }
