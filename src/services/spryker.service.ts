@@ -171,7 +171,59 @@ export class SprykerService  {
     };
 }
 
+//new arrival
+async getSprykerNewArrivalProducts(): Promise<any> {
+  const endpoint = `catalog-search?label=4&include=Concrete-products`;
+  const response = await this.fetchFromEndpoint(endpoint);
+  const data = response.data[0];
+  const value = response.data[0].attributes.valueFacets;
+  console.log('data', data);
 
+  const product_arr: any[] = [];
+  const valueFacets = this.getvalueFacets(value);
+  await Promise.all(
+      data?.attributes?.abstractProducts?.map((items: any) => {
+          const productImages = items?.images.map((image: any) => image.externalUrlLarge);
+
+          product_arr.push({
+              ProductId: items?.abstractSku,
+              SkuId: items?.abstractSku,
+              ProductName: items?.abstractName,
+              SkuImageUrl:  items?.images[0].externalUrlLarge, // Product images as a list
+              listPrice: items?.prices[0].DEFAULT,
+              basePrice: items?.prices[0].DEFAULT,
+          });
+      })
+  );
+  console.log('product_arr', product_arr);
+  return product_arr
+}
+
+//best selling products
+async getSprykerSellingProducts(): Promise<any> {
+  const endpoint = `catalog-search?label=4&include=Concrete-products`;
+  const response = await this.fetchFromEndpoint(endpoint);
+  const data = response.data[0];
+  const value = response.data[0].attributes.valueFacets;
+  console.log('data', data);
+
+  const product_arr: any[] = [];
+  const valueFacets = this.getvalueFacets(value);
+  await Promise.all(
+      data?.attributes?.abstractProducts?.map((items: any) => {
+          product_arr.push({
+              ProductId: items?.abstractSku,
+              SkuId: items?.abstractSku,
+              ProductName: items?.abstractName,
+              SkuImageUrl:  items?.images[0].externalUrlLarge, // Product images as a list
+              listPrice: items?.prices[0].DEFAULT,
+              basePrice: items?.prices[0].DEFAULT,
+          });
+      })
+  );
+  console.log('product_arr', product_arr);
+  return product_arr
+}
   
   // newonw
   async getSprykerProductDetails(abstractId: string): Promise<any> {
@@ -440,6 +492,7 @@ export class SprykerService  {
 
   async cartFetchFromEndpoint(endpoint: string, authorization:string): Promise<any> {
     try {
+      const products : any[] = [];
       console.log(endpoint);
       const response = await axios.get(
         `http://103.113.36.20:9003${endpoint}`,
@@ -448,9 +501,36 @@ export class SprykerService  {
             'Authorization':`Bearer ${authorization}`,
           },
         },
-      ); 
-      console.log('afreeee',response.data);
-      return response.data;
+      );
+      const data = response.data.included;
+      console.log("mydata",data)
+      await Promise.all(
+        data.map(async (items:any)=>{
+          const endpoint_two = `http://103.113.36.20:9003/concrete-products/${items.id}?include=concrete-product-image-sets`;
+          const additional_data = await axios.get(endpoint_two);
+          console.log("zayn",additional_data.data);
+          products.push(
+            {
+              "itemId":items.id,
+              "indexId":items.id,
+              "productName":additional_data.data.data.attributes.name,
+              "price":Number(items?.attributes?.calculations?.unitPrice/100),
+              "sellingPrice":Number(items?.attributes?.calculations?.sumNetPrice/100),
+              "quantity":items?.attributes?.quantity,
+              "imageUrl":additional_data?.data?.included[0]?.attributes?.imageSets[0]?.images[0]?.externalUrlLarge
+            }
+          )
+        })
+      );
+
+      const totals = response.data.data
+      const totalizers = {
+        "CartTotal": Number(totals?.attributes?.totals?.grandTotal/100),
+      }
+
+      const finalData = {"products":products,"totalizers":totalizers}
+      // return response.data;
+      return finalData;
     } catch (error) {
       console.log('error', error);
       throw error;
