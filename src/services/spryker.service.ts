@@ -171,7 +171,59 @@ export class SprykerService  {
     };
 }
 
+//new arrival
+async getSprykerNewArrivalProducts(): Promise<any> {
+  const endpoint = `catalog-search?label=4&include=Concrete-products`;
+  const response = await this.fetchFromEndpoint(endpoint);
+  const data = response.data[0];
+  const value = response.data[0].attributes.valueFacets;
+  console.log('data', data);
 
+  const product_arr: any[] = [];
+  const valueFacets = this.getvalueFacets(value);
+  await Promise.all(
+      data?.attributes?.abstractProducts?.map((items: any) => {
+          const productImages = items?.images.map((image: any) => image.externalUrlLarge);
+
+          product_arr.push({
+              ProductId: items?.abstractSku,
+              SkuId: items?.abstractSku,
+              ProductName: items?.abstractName,
+              SkuImageUrl:  items?.images[0].externalUrlLarge, // Product images as a list
+              listPrice: items?.prices[0].DEFAULT,
+              basePrice: items?.prices[0].DEFAULT,
+          });
+      })
+  );
+  console.log('product_arr', product_arr);
+  return product_arr
+}
+
+//best selling products
+async getSprykerSellingProducts(): Promise<any> {
+  const endpoint = `catalog-search?label=4&include=Concrete-products`;
+  const response = await this.fetchFromEndpoint(endpoint);
+  const data = response.data[0];
+  const value = response.data[0].attributes.valueFacets;
+  console.log('data', data);
+
+  const product_arr: any[] = [];
+  const valueFacets = this.getvalueFacets(value);
+  await Promise.all(
+      data?.attributes?.abstractProducts?.map((items: any) => {
+          product_arr.push({
+              ProductId: items?.abstractSku,
+              SkuId: items?.abstractSku,
+              ProductName: items?.abstractName,
+              SkuImageUrl:  items?.images[0].externalUrlLarge, // Product images as a list
+              listPrice: items?.prices[0].DEFAULT,
+              basePrice: items?.prices[0].DEFAULT,
+          });
+      })
+  );
+  console.log('product_arr', product_arr);
+  return product_arr
+}
   
   // newonw
   async getSprykerProductDetails(abstractId: string): Promise<any> {
