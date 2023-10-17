@@ -291,20 +291,20 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
       const headers = {
         "Authorization":`Bearer ${header}`
       }
-
+      var body={
+        "product_id":requestBody?.itemId,
+        "quantity":requestBody?.quantity
+      }
       const endpoint = `https://zzkd-003.dx.commercecloud.salesforce.com/${shopName}/dw/shop/v23_2/baskets/${baskets_id}/items?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
 
-      const response = await axios.post(endpoint,[requestBody],{headers});
+      const response = await axios.post(endpoint,[body],{headers});
       const data = await response;
       const response_data = data.data
       return response_data;
     }
     catch(error){
       console.log("error is",error);
-      return {
-        "status":error?.response.status,
-        "statusText":error?.response?.statusText,
-        "message":error?.response?.data}
+      return this.handleErrorResponse(error)
     }
   }
 
@@ -344,7 +344,8 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
           "productName": items?.product_name,
           "price":items?.base_price,
           "sellingPrice":items?.price,
-          "quantity":items?.quantity
+          "quantity":items?.quantity,
+          "indexId":items?.item_id
         }
         const endpoint_two = `${shopName}/dw/shop/v23_2/products/${items.product_id}/images`;
         const product_images_response = this.cartFetchFromEndpoint(endpoint_two,header);
@@ -358,11 +359,11 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
       products.sort((a, b) => a.price - b.price);
        console.log("shubham",response) 
       const cartTotals = {
-        CartTotal: response.order_total,
-        Items: response.product_total,
-        Discounts: response.order_total - response.product_total,
-        Shipping: response.shipping_total,
-        Tax: response.tax_total,  
+        CartTotal: response.order_total
+        // Items: response.product_total,
+        // Discounts: response.order_total - response.product_total,
+        // Shipping: response.shipping_total,
+        // Tax: response.tax_total,  
       }
       const finalData = {
         "products":products,
