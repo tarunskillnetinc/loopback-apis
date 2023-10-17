@@ -313,10 +313,10 @@ let VtexController = exports.VtexController = class VtexController {
         }
     }
     //For adding items in cart:
-    async addItems(requestBody, orderFormId) {
+    async addItems(requestBody, basket_Id) {
         try {
             console.log(requestBody);
-            const data = await this.vtexService.addItems(orderFormId, requestBody);
+            const data = await this.vtexService.addItems(basket_Id, requestBody);
             const response = await data;
             return response;
         }
@@ -326,9 +326,9 @@ let VtexController = exports.VtexController = class VtexController {
         }
     }
     // For updating Cart details and cart items
-    async updateCartItem(requestBody, orderFormId) {
+    async updateCartItem(requestBody, basket_id) {
         try {
-            const data = await this.vtexService.updateCartItem(orderFormId, requestBody);
+            const data = await this.vtexService.updateCartItem(basket_id, requestBody);
             const response = await data;
             return response;
         }
@@ -338,9 +338,9 @@ let VtexController = exports.VtexController = class VtexController {
         }
     }
     // For deleting cart item
-    async deleteCartItem(requestBody, orderFormId) {
+    async deleteCartItem(basket_Id, item_id) {
         try {
-            const data = await this.vtexService.deleteCartItem(orderFormId, requestBody);
+            const data = await this.vtexService.deleteCartItem(basket_Id, item_id);
             const response = await data;
             return response;
         }
@@ -643,36 +643,36 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "createCustomerCart", null);
 tslib_1.__decorate([
-    (0, rest_1.post)('vtex-add-items/{orderFormId}'),
+    (0, rest_1.post)('vtex/additem/{basket_Id}'),
     (0, rest_1.response)(200, {
         description: "Add items in cart using order form id",
     }),
     tslib_1.__param(0, (0, rest_1.requestBody)()),
-    tslib_1.__param(1, rest_1.param.path.string('orderFormId')),
+    tslib_1.__param(1, rest_1.param.path.string('basket_Id')),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [Object, String]),
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "addItems", null);
 tslib_1.__decorate([
-    (0, rest_1.post)('vtex-update-cart-items/{orderFormId}'),
+    (0, rest_1.patch)('vtex/updateItem/{basket_id}'),
     (0, rest_1.response)(200, {
         description: "Updating Cart details based on Form Id",
     }),
     tslib_1.__param(0, (0, rest_1.requestBody)()),
-    tslib_1.__param(1, rest_1.param.path.string('orderFormId')),
+    tslib_1.__param(1, rest_1.param.path.string('basket_id')),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [Object, String]),
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "updateCartItem", null);
 tslib_1.__decorate([
-    (0, rest_1.post)('vtex-delete-cart-items/{orderFormId}'),
+    (0, rest_1.del)('vtex/deleteItem/{basket_Id}/items/{item_id}'),
     (0, rest_1.response)(200, {
         description: "Updating Cart details based on Form Id",
     }),
-    tslib_1.__param(0, (0, rest_1.requestBody)()),
-    tslib_1.__param(1, rest_1.param.path.string('orderFormId')),
+    tslib_1.__param(0, rest_1.param.path.string('basket_Id')),
+    tslib_1.__param(1, rest_1.param.path.string('item_id')),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Object, String]),
+    tslib_1.__metadata("design:paramtypes", [String, String]),
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "deleteCartItem", null);
 tslib_1.__decorate([
