@@ -953,35 +953,30 @@ let VtexService = exports.VtexService = class VtexService {
     }
     //Function for adding items in cart:
     async addItems(orderFormId, requestBody) {
-        // const body = {"orderItems":[{"quantity":3,"seller":"1","id":"880582"}]}
-        console.log('requestBody', requestBody);
+        const newBody = { "orderItems": [{ "quantity": `${requestBody.quantity}`, "seller": "1", "id": `${requestBody.itemId}` }] };
         const endpoint = `api/checkout/pub/orderForm/${orderFormId}/items`;
         try {
-            const url = `${this.dataSource.settings.baseURL}/${endpoint}`;
-            console.log('urlis', url);
-            const response = await axios_1.default.post(`${this.dataSource.settings.baseURL}/${endpoint}`, requestBody, {
+            const response = await axios_1.default.post(`${this.dataSource.settings.baseURL}/${endpoint}`, newBody, {
                 headers: {
                     Accept: 'application/json',
                     'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
                     'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
                 }
             });
-            console.log('itemsaddedare', response);
             return response.data;
         }
         catch (error) {
-            throw error;
+            return this.handleErrorResponse(error);
         }
     }
     // Function for updating items in cart
     async updateCartItem(orderFormId, requestBody) {
-        // const body = {"orderItems":[{"quantity":5,"index":0}]}
-        console.log("request12345", requestBody);
+        const newBody = { "orderItems": [{ "quantity": `${requestBody.quantity}`, "index": `${requestBody.indexId}` }] };
         const endpoint = `api/checkout/pub/orderForm/${orderFormId}/items/update`;
         try {
             const url = `${this.dataSource.settings.baseURL}/${endpoint}`;
             console.log('urlis', url);
-            const response = await axios_1.default.post(`${this.dataSource.settings.baseURL}/${endpoint}`, requestBody, {
+            const response = await axios_1.default.post(`${this.dataSource.settings.baseURL}/${endpoint}`, newBody, {
                 headers: {
                     Accept: 'application/json',
                     'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
@@ -992,29 +987,26 @@ let VtexService = exports.VtexService = class VtexService {
             return response.data;
         }
         catch (error) {
-            console.log(error);
-            throw error;
+            return this.handleErrorResponse(error);
         }
     }
     // Function for Deleting items in cart
-    async deleteCartItem(orderFormId, requestBody) {
+    async deleteCartItem(orderFormId, item_id) {
+        const customBody = { "orderItems": [{ "quantity": '0', "index": `${item_id}` }] };
         const endpoint = `api/checkout/pub/orderForm/${orderFormId}/items/update`;
         try {
             const url = `${this.dataSource.settings.baseURL}/${endpoint}`;
-            console.log('urlis', url);
-            const response = await axios_1.default.post(`${this.dataSource.settings.baseURL}/${endpoint}`, requestBody, {
+            const response = await axios_1.default.post(`${this.dataSource.settings.baseURL}/${endpoint}`, customBody, {
                 headers: {
                     Accept: 'application/json',
                     'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
                     'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
                 }
             });
-            console.log('updateCartItems', response);
             return response.data;
         }
         catch (error) {
-            console.log(error);
-            throw error;
+            return this.handleErrorResponse(error);
         }
     }
     //Function for getting Cart Details Or Cart Items:

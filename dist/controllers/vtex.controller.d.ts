@@ -31,14 +31,12 @@ export declare class VtexController {
     }, response: Response): Promise<ResponseObject>;
     createCustomerCart(): Promise<any>;
     addItems(requestBody: {
-        orderItems: [];
-    }, orderFormId: string): Promise<any>;
+        customBody: any;
+    }, basket_Id: string): Promise<any>;
     updateCartItem(requestBody: {
-        orderItems: [];
-    }, orderFormId: string): Promise<any>;
-    deleteCartItem(requestBody: {
-        orderItems: [];
-    }, orderFormId: string): Promise<any>;
+        orderItems: any;
+    }, basket_id: string): Promise<any>;
+    deleteCartItem(basket_Id: string, item_id: string): Promise<any>;
     getCartItems(orderFormId: string): Promise<any>;
     getSfBestSellingProducts(): Promise<any>;
     salesForceProduct(productId: string): Promise<any>;

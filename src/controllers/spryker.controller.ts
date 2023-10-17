@@ -258,10 +258,10 @@ export class SprykerController {
 
     async getSprykerCartData(
       @param.path.string('cartId') cartId: any,
-      @param.header.string('bearer') bearer: string,
+      @param.header.string('token') token: string,
       ): Promise<any> {
       try {
-        const header = this.request.headers.bearer;
+        const header = this.request.headers.token;
         const sprykerCartDetail = await this.sprykerService.getSprykerCartDetails(cartId,header);
         return sprykerCartDetail;
       } catch (error) {
@@ -297,10 +297,10 @@ export class SprykerController {
     async postAddCartItem(
       @param.path.string('basket_id') basket_id: string,
       @requestBody() requestBody:{data:any},
-      @param.header.string('bearer') bearer: string,
+      @param.header.string('token') token: string,
       ):Promise<any>{
         try{
-          const header = this.request.headers.bearer;
+          const header = this.request.headers.token;
         const data = await this.sprykerService.postAddCartItems(basket_id,requestBody,header);
         const response = data;
         return response;
@@ -313,7 +313,7 @@ export class SprykerController {
       }
     }
 
-@del('/spryker/deleteItem/{cartId}/{itemId}')
+@del('/spryker/deleteItem/{basket_Id}/{itemId}')
     @response(200, {
       description: "Delete Item in the current cart.",
     })
@@ -321,7 +321,7 @@ export class SprykerController {
  async postDeleteCartItem(
       @param.path.string('basket_id') basket_id: string,
       @param.path.string('itemId') itemId: string,
-      @param.header.string('bearer') bearer: string,
+      @param.header.string('token') token: string,
       ):Promise<any>{
         try{
           console.log("cartID",basket_id)
@@ -346,12 +346,12 @@ export class SprykerController {
     async postUpdateCartItem(
       @param.path.string('basket_id') basket_id: string,
       // @param.path.string('itemId') itemId: string,
-      @param.header.string('bearer') bearer: string,
+      @param.header.string('token') token: string,
       @requestBody() requestBody:{data:any},
       ):Promise<any>{
         try{
           console.log("cartID",basket_id)
-        const header = this.request.headers.bearer;
+        const header = this.request.headers.token;
         const data = await this.sprykerService.postUpdateCartItems(basket_id,requestBody,header);
         const response = data;
         return response;

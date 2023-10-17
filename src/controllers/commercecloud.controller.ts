@@ -269,17 +269,20 @@ export class CommercecloudController {
   }
 
   //Deleting Cart Items:
-  @del('/sfcc/removeItem/{basket_Id}')
+  @del('/sfcc/removeItem/{basket_Id}/items/{item_Id}')
   @response(200,{
     message: "API to remove product from cart"
   })
   async removeItem(
-    @requestBody() requestBody:{itemId:[]},
+    // @requestBody() requestBody:{itemId:[]},
     @param.header.string('token') token: any,
-    @param.path.string('basket_Id') basket_Id : any
+    @param.path.string('basket_Id') basket_Id : any,
+    @param.path.string('item_Id') item_Id : any,
+    @param.query.string('quantity') quantity : any
+
   ): Promise<any>{
     try{
-      const data = await this.sfccService.removeItem(basket_Id,requestBody,token);
+      const data = await this.sfccService.removeItem(basket_Id,item_Id,quantity,token);
       return this.handledeleteResponse(data)
     }
     catch(error){
