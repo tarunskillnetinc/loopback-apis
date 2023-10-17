@@ -1,4 +1,4 @@
-import { get, post, RestBindings, requestBody, Request, response, param, ResponseObject } from '@loopback/rest';
+import { get, del, post, RestBindings, requestBody, Request, response, param, ResponseObject } from '@loopback/rest';
 import { inject } from '@loopback/core';
 import { VtexService } from '../services';
 import axios, { AxiosResponse } from 'axios';
@@ -477,15 +477,15 @@ export class VtexController {
   }
 
   // For updating Cart details and cart items
-  @post('vtex-update-cart-items/{orderFormId}')
+  @patch('vtex/updateItem/{basket_id}')
   @response(200,{
     description:"Updating Cart details based on Form Id",
   })
   async updateCartItem(
-    @requestBody() requestBody:{orderItems:[]},
-    @param.path.string('orderFormId') orderFormId:string):Promise<any>{
+    @requestBody() requestBody:{orderItems:any},
+    @param.path.string('basket_id') basket_id:string):Promise<any>{
     try{
-      const data = await this.vtexService.updateCartItem(orderFormId,requestBody)
+      const data = await this.vtexService.updateCartItem(basket_id,requestBody)
       const response = await data;
       return response;
     }
@@ -496,15 +496,16 @@ export class VtexController {
   }
 
    // For deleting cart item
-   @post('vtex-delete-cart-items/{orderFormId}')
+   @del('vtex/deleteItem/{basket_Id}/items/{item_id}')
    @response(200,{
      description:"Updating Cart details based on Form Id",
    })
    async deleteCartItem(
-     @requestBody() requestBody:{orderItems:[]},
-     @param.path.string('orderFormId') orderFormId:string):Promise<any>{
+     @param.path.string('basket_Id') basket_Id:string,
+     @param.path.string('item_id') item_id:string
+     ):Promise<any>{
      try{
-       const data = await this.vtexService.deleteCartItem(orderFormId,requestBody)
+       const data = await this.vtexService.deleteCartItem(basket_Id,item_id)
        const response = await data;
        return response;
      }

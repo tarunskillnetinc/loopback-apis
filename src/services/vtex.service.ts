@@ -1203,14 +1203,13 @@ export class VtexService {
 
     // Function for updating items in cart
     async updateCartItem(orderFormId:any,requestBody:any):Promise<any>{
-      // const body = {"orderItems":[{"quantity":5,"index":0}]}
-      console.log("request12345",requestBody)
+      const newBody = {"orderItems":[{"quantity":`${requestBody.quantity}`,"index":`${requestBody.indexId}`}]}
       const endpoint = `api/checkout/pub/orderForm/${orderFormId}/items/update`;
       try{
         const url = `${this.dataSource.settings.baseURL}/${endpoint}`;
         console.log('urlis',url);
         const response : AxiosResponse<any> = await axios.post(`${this.dataSource.settings.baseURL}/${endpoint}`,
-        requestBody,
+        newBody,
           {
             headers: {
               Accept: 'application/json',
@@ -1223,19 +1222,18 @@ export class VtexService {
         return response.data;
       }
       catch(error){
-        console.log(error)
-        throw error;
+        return this.handleErrorResponse(error);
       }
     }
 
     // Function for Deleting items in cart
-    async deleteCartItem(orderFormId:any,requestBody:any):Promise<any>{
+    async deleteCartItem(orderFormId:any,item_id:any):Promise<any>{
+      const customBody = {"orderItems":[{"quantity":'0',"index":`${item_id}`}]};
       const endpoint = `api/checkout/pub/orderForm/${orderFormId}/items/update`;
       try{
         const url = `${this.dataSource.settings.baseURL}/${endpoint}`;
-        console.log('urlis',url);
         const response : AxiosResponse<any> = await axios.post(`${this.dataSource.settings.baseURL}/${endpoint}`,
-        requestBody,
+        customBody,
           {
             headers: {
               Accept: 'application/json',
@@ -1244,15 +1242,12 @@ export class VtexService {
             }
           }
         );
-        console.log('updateCartItems',response);
         return response.data;
       }
       catch(error){
-        console.log(error)
-        throw error;
+        return this.handleErrorResponse(error);
       }
     }
-    
 
     //Function for getting Cart Details Or Cart Items:
     async getCartItems(orderFormId:any): Promise<any>{
