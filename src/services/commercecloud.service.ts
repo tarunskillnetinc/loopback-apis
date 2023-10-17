@@ -188,7 +188,7 @@ async searchByFacets(
       "previous": page>1 ? Number(page)-1 : 0
     }
     console.log("dwadawinside this")
-    return { ProductData: product_arr, valueFacets: valueFacets, pagination: pagination};
+    return { productData: product_arr, valueFacets: valueFacets, pagination: pagination};
   } catch (error) {
     return this.handleErrorResponse(error);
   }
@@ -215,7 +215,7 @@ async getSalesforceProductBysubCategory(subcategoryId: any): Promise<any> {
         },
       });
     });
-    return { ProductData: product_arr, valueFacets: valueFacets };
+    return { productData: product_arr, valueFacets: valueFacets };
   } catch (error) {
     return this.handleErrorResponse(error);
   }
@@ -379,9 +379,12 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     } 
     async cartUpdateFromEndpoint(endpoint:string,_requestBody:any, header:string):Promise<any>{
       try{
-        console.log("hiiihhhh",endpoint,_requestBody,header)
+        var body={
+          "quantity":_requestBody?.quantity
+        }
+        console.log("hiiihhhh",endpoint,body,header)
         const response = await axios.patch(`${this.dataSource.settings.baseURL}/${endpoint}`,
-        _requestBody,  
+        body,  
         {
           headers:{
             'Authorization':`Bearer ${header}`,
@@ -400,14 +403,15 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
           "message":error?.response?.data}
       }
     }
-    async updateSalesforceProductItems(baskets_id:any,items_id:any,requestBody:any,header:any):Promise<any>{
-      const endpoint = `${shopName}/dw/shop/v23_2/baskets/${baskets_id}/items/${items_id}`;
+    async updateSalesforceProductItems(baskets_id:any,requestBody:any,header:any):Promise<any>{
+      console.log("wdawad",requestBody)
+      const endpoint = `${shopName}/dw/shop/v23_2/baskets/${baskets_id}/items/${requestBody.itemId}`;
       console.log(endpoint,"updateSalesforceProductItems");
       const response = await this.cartUpdateFromEndpoint(endpoint,requestBody,header);
       const data = response;
       console.log('datas',data)
       return response;
-    }
+    } 
     async getSalesForceCategory(): Promise<any> {
       const product_arr: any[] = [];
       const endpoint = `/${shopName}/dw/shop/v23_2/categories/root?levels=6&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
