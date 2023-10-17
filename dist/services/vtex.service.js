@@ -283,8 +283,17 @@ let VtexService = exports.VtexService = class VtexService {
         const data = await cartData;
         //For Products:
         const products = [];
-        data.items.map((items) => {
+        await Promise.all(data.items.map((items, index) => {
+            const logisticInfo = data.shippingData.logisticsInfo;
+            const itemID = logisticInfo.map((element) => {
+                if (element.itemId === items.id) {
+                    return element.itemIndex;
+                }
+            }).filter((index) => index !== null);
+            const newIndexId = itemID.length > 0 ? itemID[index] : null;
             const products_data = {
+                "itemId": items.id,
+                "indexId": newIndexId,
                 "productName": items.name,
                 "price": items.price / 100,
                 "sellingPrice": items.sellingPrice / 100,
@@ -292,12 +301,10 @@ let VtexService = exports.VtexService = class VtexService {
                 "imageUrl": items.imageUrl
             };
             products.push(products_data);
-        });
+        }));
+        console.log("mytotalizers", data);
         //For Totals:
         let totalizers = { "CartTotal": (data.value) / 100 };
-        data.totalizers.map((items) => {
-            totalizers[items.id] = (items.value) / 100;
-        });
         const final_result = { "products": products, "totalizers": totalizers };
         return final_result;
     }

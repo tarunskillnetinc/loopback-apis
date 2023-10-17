@@ -289,7 +289,7 @@ export class SprykerController {
       }
     }
 
-    @post('/spryker/post-add-item-cart/{cartId}')
+    @post('/spryker/add-items/{cartId}')
     @response(200, {
       description: "Add Item in the current cart.",
     })
