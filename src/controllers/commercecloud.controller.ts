@@ -209,7 +209,7 @@ export class CommercecloudController {
     }
   }
 
-  @post('/sfcc/add-items/{baskets_id}')
+  @post('/sfcc/addItem/{baskets_id}')
   @response(200,{
     description: 'Add Products in Cart',
   })
@@ -246,20 +246,20 @@ export class CommercecloudController {
     }
   }
 
-  @patch('/sfcc/update-cart/{baskets_id}/items/{items_id}')
+  @patch('/sfcc/updateItem/{baskets_id}')
   @response(200,{
     description: 'patch update cart using baskets api',
   })
   async updateSalesforceProductItems(
     @param.path.string('baskets_id') baskets_id: any,
-    @param.path.string('items_id') items_id:any,
+    // @param.path.string('items_id') items_id:any,
     @param.header.string('token') token: string,
     @requestBody() requestBody:{quantity:any}
     ): Promise<any>{
     try{
       console.log('afreen');
       const header = this.request.headers.token;
-      const getSalesForceProducts = await this.sfccService.updateSalesforceProductItems(baskets_id,items_id,requestBody,header);
+      const getSalesForceProducts = await this.sfccService.updateSalesforceProductItems(baskets_id,requestBody,header);
       console.log('getSalesForceProductsbbbb',getSalesForceProducts);
       return this.handlepatchResponse(getSalesForceProducts)
     } 
