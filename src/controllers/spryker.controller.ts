@@ -87,6 +87,37 @@ export class SprykerController {
 
   }
 
+  @get('/spryker/new-arrivals')
+  @response(200,{
+    description: 'Get Spryker Product List by search category',
+  })
+  async getSprykerNewArrivalProducts(): Promise<any>{
+    try{
+      const getSprykerProducts = await this.sprykerService.getSprykerNewArrivalProducts();
+      return getSprykerProducts;
+    }
+
+    catch(error){
+      throw error;
+    }
+
+  }
+
+  @get('/spryker/best-selling-products')
+  @response(200,{
+    description: 'Get Spryker Product List by search category',
+  })
+  async getSprykerSellingProducts(): Promise<any>{
+    try{
+      const getSprykerProducts = await this.sprykerService.getSprykerSellingProducts();
+      return getSprykerProducts;
+    }
+
+    catch(error){
+      throw error;
+    }
+
+  }
   @get('/spryker/products-by-sub-category/{subCategoryId}')
   @response(200,{
     description: 'Get VTEX Product List by intelegent search',

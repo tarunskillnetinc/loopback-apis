@@ -341,22 +341,33 @@ export class VtexService {
     const data = await cartData;
     //For Products:
     const products : any[] = [];
-    data.items.map((items:any)=>{
-      const products_data = {
-        "productName":items.name,
-        "price":items.price/100,
-        "sellingPrice":items.sellingPrice/100,
-        "quantity":items.quantity,
-        "imageUrl":items.imageUrl
-      };
-      products.push(products_data);
-    });
+    await Promise.all(
+      data.items.map((items:any,index:any)=>{
+        const logisticInfo = data.shippingData.logisticsInfo
+        const itemID = logisticInfo.map((element:any)=>{
+          if(element.itemId === items.id){
+            return element.itemIndex;
+          }
+        }).filter((index:any) => index !== null);
+        const newIndexId = itemID.length > 0 ? itemID[index] : null
+
+        const products_data = {
+          "itemId":items.id,
+          "indexId":newIndexId,
+          "productName":items.name,
+          "price":items.price/100,
+          "sellingPrice":items.sellingPrice/100,
+          "quantity":items.quantity,
+          "imageUrl":items.imageUrl
+        };
+        products.push(products_data);
+      })
+    );
+
+    console.log("mytotalizers",data);
 
     //For Totals:
     let totalizers :any = {"CartTotal":(data.value)/100};
-    data.totalizers.map((items:any)=>{
-      totalizers[items.id] = (items.value)/100;
-    })
 
     const final_result = {"products":products,"totalizers":totalizers}
     return final_result;
