@@ -188,7 +188,7 @@ async searchByFacets(
       "previous": page>1 ? Number(page)-1 : 0
     }
     console.log("dwadawinside this")
-    return { ProductData: product_arr, valueFacets: valueFacets, pagination: pagination};
+    return { productData: product_arr, valueFacets: valueFacets, pagination: pagination};
   } catch (error) {
     return this.handleErrorResponse(error);
   }
