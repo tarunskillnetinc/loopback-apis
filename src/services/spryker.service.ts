@@ -556,9 +556,9 @@ async getSprykerSellingProducts(): Promise<any> {
     }
   }
 
-  async postAddCartItems(cartId: any, reqBody: any, authorization:any): Promise<any> {
+  async postAddCartItems(baskets_id: any, reqBody: any, authorization:any): Promise<any> {
     console.log('afren', reqBody);
-    const endpoint = `carts/${cartId}/items`;
+    const endpoint = `carts/${baskets_id}/items`;
     var requestbody ={
       "data": {
           "type": "items",
@@ -593,10 +593,28 @@ async getSprykerSellingProducts(): Promise<any> {
     return data;
   }
 
-  async postUpdateCartItems(cartId: any,itemId:any, reqBody: any, authorization:any): Promise<any> {
+  async postUpdateCartItems(baskets_id: any, reqBody: any, authorization:any): Promise<any> {
     console.log('afren', reqBody);
-    const endpoint = `carts/${cartId}/items/${itemId}`;
-    const response = this.patchCartFetchFromEndpoint(endpoint,reqBody,authorization);
+    var requestbody ={
+      "data": {
+          "type": "items",
+          "attributes": {
+              "sku": reqBody.itemId,
+              "quantity": reqBody.quantity,
+              "merchantReference": "MER000001",
+              "salesUnit": {
+                  "id": 0,
+                  "amount": 0
+              },
+              "productOptions": [
+                  null
+              ]
+          }
+      }
+  }
+  console.log("bodyyy",requestbody)
+    const endpoint = `carts/${baskets_id}/items/${reqBody.itemId}`;
+    const response = this.patchCartFetchFromEndpoint(endpoint,requestbody,authorization);
     const data = await response;
     return data;
   }
@@ -654,7 +672,7 @@ async getSprykerSellingProducts(): Promise<any> {
   }
   
   async patchCartFetchFromEndpoint(
-    endpoint: string,
+    endpoint: any,
     reqBody: any,
     authorization:any,
   ): Promise<any> {
