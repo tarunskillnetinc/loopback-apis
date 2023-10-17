@@ -559,7 +559,24 @@ async getSprykerSellingProducts(): Promise<any> {
   async postAddCartItems(cartId: any, reqBody: any, authorization:any): Promise<any> {
     console.log('afren', reqBody);
     const endpoint = `carts/${cartId}/items`;
-    const response = this.postCartFetchFromEndpoint(endpoint, reqBody,authorization);
+    var requestbody ={
+      "data": {
+          "type": "items",
+          "attributes": {
+              "sku": reqBody.itemId,
+              "quantity": reqBody.quantity,
+              "merchantReference": "MER000001",
+              "salesUnit": {
+                  "id": 0,
+                  "amount": 0
+              },
+              "productOptions": [
+                  null
+              ]
+          }
+      }
+  }
+    const response = this.postCartFetchFromEndpoint(endpoint, requestbody,authorization);
     const data = await response;
     return data;
   }
@@ -586,7 +603,7 @@ async getSprykerSellingProducts(): Promise<any> {
 
   async postCartFetchFromEndpoint(
     endpoint: string,
-    reqBody: string,
+    reqBody: any,
     authorization:any,
   ): Promise<any> {
     try {
