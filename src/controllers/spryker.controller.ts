@@ -241,11 +241,11 @@ export class SprykerController {
 
   @post('/spryker/login')
   async login(
-    @requestBody() requestBody: { username: string; password: string; type:string },
+    @requestBody() requestBody: { email: string; password: string; },
   ): Promise<any> {
     try {
-      const { username, password,type } = requestBody;
-      const login = await this.sprykerService.login(username, password,type);
+      const { email, password } = requestBody;
+      const login = await this.sprykerService.login(email, password);
       return this.handlepostResponse(login)
     } catch (error) {
       console.log('error controller', error)
