@@ -236,11 +236,11 @@ export class SprykerController {
     })
 
     async createCart( 
-      @param.header.string('bearer') bearer: string,
+      @param.header.string('token') token: string,
       // @requestBody() requestBody: { data:any },
       ):Promise<any>{
         try{
-        const header = this.request.headers.bearer;
+        const header = this.request.headers.token;
         var requestBody = {
           "data": {
             "type": "carts",
