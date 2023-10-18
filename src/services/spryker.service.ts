@@ -312,11 +312,8 @@ async getSprykerSellingProducts(): Promise<any> {
         bestPrice: item?.price?.attributes?.price,
         spotPrice: item?.price?.attributes?.prices[1]?.netAmount,
         specifications: item?.attributes?.attributes,
-        images: {
-          image1:
-            // "https://skillnet.vteximg.com.br/arquivos/ids/156198-292-292/x8u1i946.png?v=638294985271830000",
+        images:
             item?.image?.attributes?.imageSets[0]?.images[0]?.externalUrlSmall,
-        },
         measures: " ",
         unitMultiplier: " ",
       });
