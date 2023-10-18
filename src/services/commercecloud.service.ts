@@ -249,7 +249,7 @@ private async getVariationData(response: any): Promise<any[]> {
       skuData.push({
         sku: response?.id,
         skuname: response?.name,
-        dimensions: ' ',
+        specifications: response?.variation_values,
         available: response?.inventory?.orderable,
         availablequantity: response?.inventory?.ats,
         listPriceFormated: currencySymbol(response?.currency) + response?.price,
