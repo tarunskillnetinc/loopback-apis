@@ -245,7 +245,7 @@ export class SprykerController {
   ): Promise<any> {
     try {
       const { email, password } = requestBody;
-      const login = await this.sprykerService.login(email, password);
+      const login = await this.sprykerService.login(email==undefined?"":email, password==undefined?"":password);
       return this.handlepostResponse(login)
     } catch (error) {
       console.log('error controller', error)
