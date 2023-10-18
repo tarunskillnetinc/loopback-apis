@@ -113,11 +113,11 @@ export class SprykerService  {
     await Promise.all(
       data?.attributes?.abstractProducts?.map((items:any)=>{
         product_arr.push({
-        productId:items?.abstractSku,
-        skuId:items?.abstractSku,
-        productName:items?.abstractName,
-        productImage:items?.images[0].externalUrlLarge,
-        productPrice: {
+        product_id:items?.abstractSku,
+        sku_id:items?.abstractSku,
+        product_name:items?.abstractName,
+        product_image:items?.images[0].externalUrlLarge,
+        product_price: {
           "listPrice": items?.prices[0].grossAmount,
           "sellingPrice": items?.prices[0].DEFAULT,
         },
