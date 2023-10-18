@@ -27,8 +27,7 @@ export class VtexService {
       );
       return response.data;
     } catch (error) {
-      console.log('error', error);
-      throw error;
+        return this.handleErrorResponse(error);
     }
   }
 
@@ -57,13 +56,7 @@ export class VtexService {
       );
       return response.data;
     } catch (error) {
-      console.log('error', error);
-      const data = {
-        statusCode: error.response.status,
-        statusText: error.response.statusText,
-        data: error.response.data,
-      };
-      return data;
+        return this.handleErrorResponse(error);
     }
   }
   async fetchSfFromEndpoint(endpoint: string): Promise<any> {
@@ -77,13 +70,7 @@ export class VtexService {
         });
     return response.data;
     } catch (error) {
-      console.log('error', error);
-      const data = {
-        statusCode: error.response.status,
-        statusText: error.response.statusText,
-        data: error.response.data,
-      };
-      return data;
+      return this.handleErrorResponse(error);
     }
   }
   async vtexCategoryTreeLoopbackFetchFromEndpoint(
@@ -100,13 +87,7 @@ export class VtexService {
       });
       return response.data;
     } catch (error) {
-      console.log('error', error);
-      // const data = {
-      //   statusCode: error.response.status,
-      //   statusText: error.response.statusText,
-      //   data: error.response.data,
-      // };
-      // return data;
+        return this.handleErrorResponse(error);
     }
   }
   async getVtexCategoryTree(): Promise<any> {
@@ -274,25 +255,37 @@ export class VtexService {
     const endpoint = `api/catalog/pvt/product/${pid}`;
     const response = this.fetchFromEndpoint(endpoint);
     const data = await response;
-    const endpoint1 = `api/catalog_system/pub/products/variations/${data.Id}`;
+    console.log("smber",data)
+    if(data.status != 200 ){
+      return data;
+    }
+    else{
+      const endpoint1 = `api/catalog_system/pub/products/variations/${data.Id}`;
     const product_variation = this.fetchFromEndpoint(endpoint1);
     const product_variation_response = await product_variation;
+    console.log("danishpdp",product_variation_response)
 
     //Cross Sell products:
     let crossSellProducts:any[] = [];
     const cross_sell_endpoint = `api/catalog_system/pub/products/crossselling/similars/${pid}`;
     const cross_sell_response = this.fetchFromEndpoint(cross_sell_endpoint);
     const cross_sell_data = await cross_sell_response;
-    cross_sell_data.map((items:any)=>{
-      let cross_sell_product = {
-        "productId":items.productId,
-        "productName":items.productName,
-        "imageUrl":items.items[0].images[0].imageUrl,
-        "productTitle":items.productTitle,
-        "productPrice":items.items[0].sellers[0].commertialOffer.Price
-      }
-      crossSellProducts.push(cross_sell_product)
-    });
+    if(cross_sell_data.length == 0){
+      crossSellProducts
+    }
+    else{
+      console.log("crooss_sell",cross_sell_data)
+      cross_sell_data.map((items:any)=>{
+        let cross_sell_product = {
+          "productId":items.productId,
+          "productName":items.productName,
+          "imageUrl":items.items[0].images[0].imageUrl,
+          "productTitle":items.productTitle,
+          "productPrice":items.items[0].sellers[0].commertialOffer.Price
+        }
+        crossSellProducts.push(cross_sell_product)
+      });
+    }
 
     //Product prices and discount:
     product_variation_response.skus.map((items:any,index:any)=>{
@@ -327,6 +320,7 @@ export class VtexService {
     );
     // console.log("transformVtexPdp",transformVtexPdp);
     return transformVtexPdp;
+    }
   }
 
   async getVtexCartDetails(cartId: any): Promise<any> {
@@ -887,14 +881,19 @@ export class VtexService {
   }
 
   async getOrCreateCartId(token:any): Promise<any> {
-    const endpoint = `https://skillnet.vtexcommercestable.com.br/api/checkout/pub/orderForm?forceNewCart=true`;
-    const response = await axios.post(endpoint,null,{
-      headers:{
-        Cookie: `${token}`,
-      }
-    });
-    const data = await response.data
-    return data;
+    try{
+      const endpoint = `https://skillnet.vtexcommercestable.com.br/api/checkout/pub/orderForm?forceNewCart=true`;
+      const response = await axios.post(endpoint,null,{
+        headers:{
+          Cookie: `${token}`,
+        }
+      });
+      const data = await response.data
+      return data;
+    }
+    catch(error){
+      return this.handleErrorResponse(error);
+    }
   }
 
   private transformProductDetails(response: any): any {
@@ -980,68 +979,72 @@ export class VtexService {
       crossSellProduct: crossSellProducts
     };
   }
-    async startLogin(email: string, password: string) {
 
-      const formData = new FormData();
-      formData.append('accountName', 'skillnet');
-      formData.append('scope', 'skillnet');
-      formData.append('returnUrl', 'https://skillnet.myvtex.com/');
-      formData.append('callbackUrl', 'https://skillnet.myvtex.com/api/vtexid/oauth/finish?popup=false'); 
-      formData.append('user', email);
-      formData.append('fingerprint', '');
-  
-      const response = await axios({
-        method: 'post',
-        url: 'https://skillnet.myvtex.com/api/vtexid/pub/authentication/startlogin',
-        data: formData
-      });
-  
-      return response.data;
-  
+  async startLogin(email: string, password: string) {
+    try{
+        const formData = new FormData();
+        formData.append('accountName', 'skillnet');
+        formData.append('scope', 'skillnet');
+        formData.append('returnUrl', 'https://skillnet.myvtex.com/');
+        formData.append('callbackUrl', 'https://skillnet.myvtex.com/api/vtexid/oauth/finish?popup=false'); 
+        formData.append('user', email);
+        formData.append('fingerprint', '');
+        const response = await axios({
+          method: 'post',
+          url: 'https://skillnet.myvtex.com/api/vtexid/pub/authentication/startlogin',
+          data: formData
+        });
+        return response.data;
     }
-  
-    async validateLogin(email: string, password: string) {
-      
+    catch(error){
+      return this.handleErrorResponse(error);
+    }
+  }
+
+  async validateLogin(email: string, password: string) {
+    try{
       const formData = new FormData();
       formData.append('login', email);
       formData.append('password', password);
       formData.append('recaptcha', '');
       formData.append('fingerprint', '');
-  
       const response = await axios({
         method: 'post',
         url: 'https://skillnet.myvtex.com/api/vtexid/pub/authentication/classic/validate', 
         headers: {
           ...formData.getHeaders(),
         },
-        data: formData  
+        data: formData
       });
-  
       return response.data;
-  
     }
-    async startLogins(email: string): Promise<AxiosResponse<any>> {
-      const formData = new FormData();
-      formData.append('accountName', 'skillnet');
-      formData.append('scope', 'skillnet');
-      formData.append('returnUrl', 'https://skillnet.myvtex.com/');
-      formData.append(
-        'callbackUrl',
-        'https://skillnet.myvtex.com/api/vtexid/oauth/finish?popup=false'
+    catch(error){
+      return this.handleErrorResponse(error);
+    }
+  }
+
+  async startLogins(email: string): Promise<AxiosResponse<any>> {
+    const formData = new FormData();
+    formData.append('accountName', 'skillnet');
+    formData.append('scope', 'skillnet');
+    formData.append('returnUrl', 'https://skillnet.myvtex.com/');
+    formData.append(
+      'callbackUrl',
+      'https://skillnet.myvtex.com/api/vtexid/oauth/finish?popup=false'
+    );
+    formData.append('user', email);
+
+    try {
+      const response = await axios.post(
+        'https://skillnet.myvtex.com/api/vtexid/pub/authentication/startlogin',
+        formData
       );
-      formData.append('user', email);
-  
-      try {
-        const response = await axios.post(
-          'https://skillnet.myvtex.com/api/vtexid/pub/authentication/startlogin',
-          formData
-        );
-        console.log('response', response);
-        return response;
-      } catch (error) {
-        throw error;
-      }
+      console.log('response', response);
+      return response;
+    } catch (error) {
+      return this.handleErrorResponse(error);
     }
+  }
     // async getSession(cookie : any): Promise<AxiosResponse<any>> {
     //   const response = await axios.get(
     //     'https://skillnet.myvtex.com/api/sessions?items=*',
@@ -1054,7 +1057,8 @@ export class VtexService {
     //   console.log('response', response.data);
     //   return response;   
     // }
-    async vtexlogin(email: string): Promise<AxiosResponse<any>> {
+  async vtexlogin(email: string): Promise<AxiosResponse<any>> {
+    try{
       const formDataObject = new FormData();  
       formDataObject.append('scope', "skillnet");
       formDataObject.append('accountName', "skillnet");
@@ -1070,58 +1074,53 @@ export class VtexService {
           },
         }
       );
-
       const token = response.data.authenticationToken;
       console.log("token",token)
-  
-      // const response =  await this.fetchFromEndpointpost(endpoint,formDataObject);
-  
-      // const data = await response;
-  
-      // const validateresponse= await this.loginvalidate(response.authenticationToken,body.user,body.password)
-  
-      // console.log("validateresponse",validateresponse)
-  
       return response;
-  
     }
+    catch(error){
+      return this.handleErrorResponse(error);
+    }
+  }
 
-    async validateLogins(
-      email: string,
-      password: string,
-      auth: any
-    ): Promise<AxiosResponse<any>> {
-      try {
-        console.log("auth", auth);
-        const formData = new FormData();
-        formData.append("login", email);
-        formData.append("password", password);
-        formData.append("recaptcha", "");
-        formData.append("fingerprint", "");
-        const authToken = "_vss=" + auth;
-        console.log("authToken", authToken);
-  
-        const response: AxiosResponse<any> = await axios.post(
-          "https://skillnet.myvtex.com/api/vtexid/pub/authentication/classic/validate",
-          formData,
-          {
-            headers: {
-              accept: "*/*",
-              "sec-fetch-dest": "empty",
-              "sec-fetch-mode": "cors",
-              "sec-fetch-site": "same-origin",
-              "sec-gpc": "1",
-              Cookie: authToken,
-            },
-          }
-        );
-        console.log("response", formData);
-        return response;
-      } catch (error) {
-        throw error;
-      }
+  async validateLogins(
+    email: string,
+    password: string,
+    auth: any
+  ): Promise<AxiosResponse<any>> {
+    try {
+      console.log("auth", auth);
+      const formData = new FormData();
+      formData.append("login", email);
+      formData.append("password", password);
+      formData.append("recaptcha", "");
+      formData.append("fingerprint", "");
+      const authToken = "_vss=" + auth;
+      console.log("authToken", authToken);
+
+      const response: AxiosResponse<any> = await axios.post(
+        "https://skillnet.myvtex.com/api/vtexid/pub/authentication/classic/validate",
+        formData,
+        {
+          headers: {
+            accept: "*/*",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "same-origin",
+            "sec-gpc": "1",
+            Cookie: authToken,
+          },
+        }
+      );
+      console.log("response", formData);
+      return response;
+    } catch (error) {
+      return this.handleErrorResponse(error);
     }
-    async createSession(response: any) {
+  }
+
+  async createSession(response: any) {
+    try{
       const sessionresponse: AxiosResponse<any> = await axios.post(
         "https://skillnet.myvtex.com/api/sessions",
         {
@@ -1140,31 +1139,37 @@ export class VtexService {
       // console.log("dataamber", data);
       return sessionresponse;
     }
-    async login(email: any, password: any) {
-      const start = await this.vtexlogin(email);
-      console.log("start", start);
-      const auth = await start.data.authenticationToken;
-      console.log("auth", auth);
-      const validate = await this.validateLogins(email, password, auth);
-      console.log("validate", validate);
-      if (await validate.data.authStatus != "Success") {
-        return {
-          validation: 'Validation failed',
-          session: "cannot create session due to invalid credentials",
-        };
-      }
-      else{
-      const session = await this.createSession(validate.data);
-      console.log("session123", session);
-      validate.data.authCookie.Name = "VtexIdclientAutCookie_skillnet"
-      validate.data.accountAuthCookie.Name = "VtexIdclientAutCookie_13ca6e38-75b0-4070-8cf2-5a61412e4919"
+    catch(error){
+      return this.handleErrorResponse(error);
+    }
+  }
+
+  async login(email: any, password: any) {
+    const start = await this.vtexlogin(email);
+    console.log("start", start);
+    const auth = await start.data.authenticationToken;
+    console.log("auth2454",email,password, auth);
+    const validate = await this.validateLogins(email, password, auth);
+    console.log("validate123", validate);
+    if (await validate.data.authStatus != "Success") {
       return {
-        validation: validate.data,
-        session: session.data,
+        "status": "401",
+        "statusText":"Validation failed" ,
+        "message": "cannot create session due to invalid credentials",
       };
     }
-      // const validate = await this.validateLogin(email, password);
-    } 
+    else{
+    const session = await this.createSession(validate.data);
+    console.log("session123", session);
+    validate.data.authCookie.Name = "VtexIdclientAutCookie_skillnet"
+    validate.data.accountAuthCookie.Name = "VtexIdclientAutCookie_13ca6e38-75b0-4070-8cf2-5a61412e4919"
+    return {
+      validation: validate.data,
+      session: session.data,
+    };
+  }
+    // const validate = await this.validateLogin(email, password);
+  }
 
     //Function to generate Customer Cart:
     async createCustomerCart(): Promise<any>{
@@ -1253,7 +1258,6 @@ export class VtexService {
       return data;
     }
 
-    
     async sfBestSelling(): Promise<any> {
       const endpoint = `shop/v23_2/product_search?refine=cgid%3Dmens&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b&expand=images%2Cprices%2Cavailability%2Cvariations`;
       const response = await this.fetchSfFromEndpoint(endpoint);
