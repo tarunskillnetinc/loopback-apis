@@ -41,10 +41,19 @@ export declare class VtexService {
     startLogins(email: string): Promise<AxiosResponse<any>>;
     vtexlogin(email: string): Promise<AxiosResponse<any>>;
     validateLogins(email: string, password: string, auth: any): Promise<AxiosResponse<any>>;
-    createSession(response: any): Promise<AxiosResponse<any, any>>;
+    createSession(response: any): Promise<any>;
     login(email: any, password: any): Promise<{
+        status: string;
+        statusText: string;
+        message: string;
+        validation?: undefined;
+        session?: undefined;
+    } | {
         validation: any;
         session: any;
+        status?: undefined;
+        statusText?: undefined;
+        message?: undefined;
     }>;
     createCustomerCart(): Promise<any>;
     addItems(orderFormId: any, requestBody: any): Promise<any>;

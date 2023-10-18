@@ -236,11 +236,22 @@ export class SprykerController {
     })
 
     async createCart( 
-      @param.header.string('token') token: string,
-      @requestBody() requestBody: { data:any },
+      @param.header.string('bearer') bearer: string,
+      // @requestBody() requestBody: { data:any },
       ):Promise<any>{
         try{
-        const header = this.request.headers.token;
+        const header = this.request.headers.bearer;
+        var requestBody = {
+          "data": {
+            "type": "carts",
+            "attributes": {
+              "priceMode": "NET_MODE",
+              "currency": "USD",
+              "store": "US",
+              "name": "aafreen Cart"
+            }
+          }
+        }
         const data = await this.sprykerService.creteCart(header,requestBody);
         const response = data;
         return response;
