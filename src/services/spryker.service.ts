@@ -13,6 +13,14 @@ export class SprykerService  {
     @inject('datasources.spryker')
     protected dataSource: SprykerDataSource 
   ) {}
+  
+  handleErrorResponse(error: any): any {
+    return {
+      "status": error?.response.status,
+      "statusText": error?.response?.statusText,
+      "message": error?.response?.data
+    };
+  }
 
   async fetchFromEndpoint(endpoint: string): Promise<any> {
     try {
@@ -20,6 +28,7 @@ export class SprykerService  {
       return response.data;
     } catch (error) {
       console.log(error);
+      return this.handleErrorResponse(error)
       throw error;
     }
   }
@@ -446,6 +455,7 @@ async getSprykerSellingProducts(): Promise<any> {
   }
   catch (error) {
     console.log('err' ,error);
+    return this.handleErrorResponse(error)
     throw error;
   }
     
@@ -475,6 +485,7 @@ async getSprykerSellingProducts(): Promise<any> {
       return response.data;
     } catch (error) {
       console.log('error', error);
+      return this.handleErrorResponse(error)
       throw error;
     }
   }
@@ -501,6 +512,7 @@ async getSprykerSellingProducts(): Promise<any> {
       return response.data;
     } catch (error) {
       console.log('error', error);
+      return this.handleErrorResponse(error)
       throw error;
     }
   }
@@ -548,6 +560,7 @@ async getSprykerSellingProducts(): Promise<any> {
       return finalData;
     } catch (error) {
       console.log('error', error);
+      return this.handleErrorResponse(error)
       throw error;
     }
   }
@@ -567,6 +580,7 @@ async getSprykerSellingProducts(): Promise<any> {
       return response.data;
     } catch (error) {
       console.log('error', error);
+      return this.handleErrorResponse(error)
       throw error;
     }
   }
@@ -655,6 +669,7 @@ async getSprykerSellingProducts(): Promise<any> {
       return response.data;
     } catch (error) {
       console.log('error', error);
+      return this.handleErrorResponse(error)
       throw error;
     }
 
@@ -682,6 +697,7 @@ async getSprykerSellingProducts(): Promise<any> {
     } catch (error) {
 
       console.log('error', error);
+      return this.handleErrorResponse(error)
       throw error;
     }
   }
@@ -707,6 +723,7 @@ async getSprykerSellingProducts(): Promise<any> {
       return response.data;
     } catch (error) {
       console.log('error', error);
+      return this.handleErrorResponse(error)
       throw error;
     }
 
