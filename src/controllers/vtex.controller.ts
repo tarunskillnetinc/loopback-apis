@@ -107,13 +107,13 @@ export class VtexController {
       //     throw error;
       //   }
       // }
-      @get('/vtex-cartDetail/{cartId}')
+      @get('/vtex/cartDetail/{baskets_id}')
       @response(200, {
         description: 'Get VTEX cart details from the external API',
       })
-      async getVtexCartData(@param.path.string('cartId') cartId: any): Promise<any> {
+      async getVtexCartData(@param.path.string('baskets_id') baskets_id: any): Promise<any> {
         try {
-          const vtexCartDetail = await this.vtexService.getVtexCartDetails(cartId);
+          const vtexCartDetail = await this.vtexService.getVtexCartDetails(baskets_id);
           return vtexCartDetail;
         } catch (error) {
           throw error;
