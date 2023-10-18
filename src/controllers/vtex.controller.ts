@@ -444,13 +444,16 @@ export class VtexController {
   }
 
   //For Creating customer cart:
-  @get('/create-customer-cart')
+  @get('/vtex/getCustomerCart/{customerId}')
   @response(200, {
     description: "Create Customer Cart",
   })
-  async createCustomerCart():Promise<any>{
+  async createCustomerCart(
+    @param.header.string('token') token: string,
+    @param.query.string('customerId') customerId?: any,
+    ):Promise<any>{
     try{
-      const data = await this.vtexService.createCustomerCart();
+      const data = await this.vtexService.createCustomerCart(customerId,token);
       const response = await data;
       return response;
     }
