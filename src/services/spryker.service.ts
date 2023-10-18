@@ -334,10 +334,9 @@ async getSprykerSellingProducts(): Promise<any> {
          productName:items?.abstractName,
         productImage:items?.images[0].externalUrlLarge,
         productPrice: {
-          "grossAmount": items?.prices[0].grossAmount,
-          "DEFAULT": items?.prices[0].DEFAULT,
+          "listPrice": items?.prices[0].grossAmount,
+          "sellingPrice": items?.prices[0].DEFAULT,
         },
-        productCategory:subCategoryId,
 
         })
 
