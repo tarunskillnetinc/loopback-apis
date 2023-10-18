@@ -651,7 +651,7 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "createCustomerCart", null);
 tslib_1.__decorate([
-    (0, rest_1.post)('vtex/additem/{basket_Id}'),
+    (0, rest_1.post)('vtex/addItem/{basket_Id}'),
     (0, rest_1.response)(200, {
         description: "Add items in cart using order form id",
     }),
@@ -673,7 +673,7 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "updateCartItem", null);
 tslib_1.__decorate([
-    (0, rest_1.del)('vtex/deleteItem/{basket_Id}/items/{item_id}'),
+    (0, rest_1.del)('vtex/removeItem/{basket_Id}/items/{item_id}'),
     (0, rest_1.response)(200, {
         description: "Updating Cart details based on Form Id",
     }),

@@ -20,9 +20,55 @@ export class SprykerController {
   constructor(
     @inject('services.SprykerService') private sprykerService: SprykerService,
     @inject(RestBindings.Http.REQUEST) private request: Request,
+    @inject(RestBindings.Http.RESPONSE) private response: any,
   ) {}
 
-
+  handlegetResponse(response:any):any{
+    console.log("response12345667",response?.status)
+    if(response?.status!=undefined)
+    {
+      return this.response.status(response?.status).json(response)
+    }
+    else{
+      console.log("else")
+      return this.response.status(200).json(response);
+    }
+  }
+  handlepostResponse(response:any):any{
+    console.log("response123",response)
+    if(response?.status!=undefined)
+    {
+      return this.response.status(response?.status).json(response)
+    }
+    else{
+      if (response?._type=="order") {
+        return this.response.status(200).json(response)
+      }
+      else{
+      return this.response.status(201).json(response);
+      }
+    }
+  }
+  handlepatchResponse(response:any):any{
+    if(response?.status!=undefined)
+    {
+      return this.response.status(response?.status).json(response)
+    }
+    else{
+      console.log("else")
+      return this.response.status(200).json(response);
+    }
+  }
+  handledeleteResponse(response:any):any{
+    if(response?.status!=undefined)
+    {
+      return this.response.status(response?.status).json(response)
+    }
+    else{
+      console.log("else")
+      return this.response.status(204).json(response);
+    }
+  }
 
   // @get('/get-spryker-category-trees')
   // @response(200, {
@@ -45,7 +91,7 @@ export class SprykerController {
   async getSprykerCategoryTree(): Promise<any> {
     try {
       const categoryTrees = await this.sprykerService.getSprykerCategoryTree();
-      return categoryTrees;
+      return this.handlegetResponse(categoryTrees)
     } catch (error) {
       // Handle errors
       throw error;
@@ -63,7 +109,7 @@ export class SprykerController {
     ): Promise<any>{
     try{
       const getSprykerProducts = await this.sprykerService.getSprykerProductByCategory(categoryId,count,page);
-      return getSprykerProducts;
+      return this.handlegetResponse(getSprykerProducts)
     }
 
     catch(error){
@@ -78,7 +124,7 @@ export class SprykerController {
   async getSprykerProductByLabels(@param.path.string('labelId') labelId: any): Promise<any>{
     try{
       const getSprykerProducts = await this.sprykerService.getSprykerProductByLabels(labelId);
-      return getSprykerProducts;
+      return this.handlegetResponse(getSprykerProducts)
     }
 
     catch(error){
@@ -94,7 +140,7 @@ export class SprykerController {
   async getSprykerNewArrivalProducts(): Promise<any>{
     try{
       const getSprykerProducts = await this.sprykerService.getSprykerNewArrivalProducts();
-      return getSprykerProducts;
+      return this.handlegetResponse(getSprykerProducts)
     }
 
     catch(error){
@@ -110,7 +156,8 @@ export class SprykerController {
   async getSprykerSellingProducts(): Promise<any>{
     try{
       const getSprykerProducts = await this.sprykerService.getSprykerSellingProducts();
-      return getSprykerProducts;
+      return this.handlegetResponse(getSprykerProducts)
+      
     }
 
     catch(error){
@@ -130,7 +177,7 @@ export class SprykerController {
     ): Promise<any>{
     try{
       const getSprykerProducts = await this.sprykerService.getSprykerProductBySubCategory(subCategoryId,count,page);
-      return getSprykerProducts;
+      return this.handlegetResponse(getSprykerProducts)
     }
     catch(error){
       throw error;
@@ -145,7 +192,7 @@ export class SprykerController {
   async getProductDetail(@param.path.string('productId') productId: string): Promise<any> {
     try {
       const productDetails = await this.sprykerService.getSprykerProductDetails(productId);
-      return productDetails;
+      return this.handlegetResponse(productDetails)
     } catch (error) {
       // Handle errors
       throw error;
@@ -162,7 +209,8 @@ export class SprykerController {
   async getSprykerProductByQuery(@param.path.string('query') query: any): Promise<any>{
     try{
       const getSprkerProducts = await this.sprykerService.getSprykerProductByQuery(query);
-      return getSprkerProducts;
+      return this.handlegetResponse(getSprkerProducts)
+
     }
     catch(error){
       throw error;
@@ -184,7 +232,7 @@ export class SprykerController {
   ): Promise<any>{
     try{
       const getSprkerProducts = await this.sprykerService.getAllSprykerProducts(color,minprice,maxprice,sort,count,page);
-      return getSprkerProducts;
+      return this.handlegetResponse(getSprkerProducts)
     }
     catch(error){
       throw error;
@@ -198,7 +246,7 @@ export class SprykerController {
     try {
       const { username, password,type } = requestBody;
       const login = await this.sprykerService.login(username, password,type);
-      return login
+      return this.handlepostResponse(login)
     } catch (error) {
       console.log('error controller', error)
       throw error;
@@ -219,9 +267,10 @@ export class SprykerController {
        const headers = this.request.headers.bearer;
       console.log('Authorization Header:', headers);
         const data = await this.sprykerService.getCartId(headers);
+        console.log("response12356",data)
 
         const response = data;
-        return response;
+        return this.handlepostResponse(response)
       }
       catch(error){
         console.log(error);
@@ -236,25 +285,25 @@ export class SprykerController {
     })
 
     async createCart( 
-      @param.header.string('token') token: string,
-      // @requestBody() requestBody: { data:any },
+      @param.header.string('bearer') bearer: string,
+      // @requestBody() requestBody: { data:any }
       ):Promise<any>{
         try{
-        const header = this.request.headers.token;
-        var requestBody = {
-          "data": {
-            "type": "carts",
-            "attributes": {
-              "priceMode": "NET_MODE",
-              "currency": "USD",
-              "store": "US",
-              "name": "aafreen Cart"
+          const header = this.request.headers.token;
+          var requestBody = {
+            "data": {
+              "type": "carts",
+              "attributes": {
+                "priceMode": "NET_MODE",
+                "currency": "USD",
+                "store": "US",
+                "name": "aafreen Cart"
+              }
             }
           }
-        }
         const data = await this.sprykerService.creteCart(header,requestBody);
         const response = data;
-        return response;
+        return this.handlepostResponse(response)
       }
       catch(error){
         console.log(error);
@@ -264,7 +313,7 @@ export class SprykerController {
 
     @get('/spryker/cartDetail/{cartId}')
     @response(200, {
-      description: 'Get Spryker cart details from the external API',
+      description: 'Get VTEX cart details from the external API',
     })
 
     async getSprykerCartData(
@@ -274,7 +323,7 @@ export class SprykerController {
       try {
         const header = this.request.headers.token;
         const sprykerCartDetail = await this.sprykerService.getSprykerCartDetails(cartId,header);
-        return sprykerCartDetail;
+        return this.handlegetResponse(sprykerCartDetail)
       } catch (error) {
         throw error;
       }
@@ -289,11 +338,10 @@ export class SprykerController {
       @param.header.string('bearer') bearer: string,
       ):Promise<any>{
       try{
-        console.log('aafreen')
         const header = this.request.headers.bearer;
         const data = await this.sprykerService.deleteCart(cartId,header)
         const response = await data;
-        return response;
+        return this.handledeleteResponse(response)
       }
       catch(error){
         console.log(error);
@@ -315,8 +363,7 @@ export class SprykerController {
           const header = this.request.headers.token;
         const data = await this.sprykerService.postAddCartItems(basket_id,requestBody,header);
         const response = data;
-        return response;
-        
+        return this.handlepostResponse(response)    
       }
       catch(error){
         console.log("error1234",error);
@@ -339,10 +386,9 @@ export class SprykerController {
           console.log("cartID",basket_id)
         console.log("itemID",itemId)
         const header = this.request.headers.token;
-        console.log("header", header)
         const data = await this.sprykerService.postDeleteCartItems(basket_id,itemId,header);
         const response = data;
-        return response;
+        return this.handledeleteResponse(response)
       }
       catch(error){
         console.log("error1234",error.response.data);
@@ -367,7 +413,7 @@ export class SprykerController {
         const header = this.request.headers.token;
         const data = await this.sprykerService.postUpdateCartItems(basket_id,requestBody,header);
         const response = data;
-        return response;
+        return this.handlepatchResponse(response)
       }
       catch(error){
         console.log("error1234",error.response.data);
@@ -388,7 +434,7 @@ export class SprykerController {
          console.log("header",header)
          const sprykerUserDetail = await this.sprykerService.getSprykerUsersData(customerId,header);
          console.log("sprykerUserDetail",sprykerUserDetail)
-         return sprykerUserDetail;
+         return this.handlegetResponse(sprykerUserDetail)
        } catch (error) {
          throw error;
        }
@@ -409,7 +455,7 @@ async postCheckoutData(
     const header = this.request.headers.bearer;
     const data = await this.sprykerService.postCheckoutData(requestBody,header);
     const response = data;
-    return response;
+    return this.handlepostResponse(response)
   }
   catch(error){
     console.log("error1234",error);
@@ -431,13 +477,12 @@ async postCheckoutOrder(
     const header = this.request.headers.bearer;
     const data = await this.sprykerService.postCheckoutorder(requestBody,header);
     const response = data;
-    return response;
+    return this.handlepostResponse(response)
   }
   catch(error){
     console.log("error1234",error);
     return error.response.data
     throw error;
   }
-}
-    
+}   
 }
