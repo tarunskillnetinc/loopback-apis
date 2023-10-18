@@ -311,7 +311,7 @@ async getSprykerSellingProducts(): Promise<any> {
         bestPrice: item?.price?.attributes?.price,
         spotPrice: item?.price?.attributes?.prices[1]?.netAmount,
         specifications: item?.attributes?.attributes,
-        images:
+        image:
             item?.image?.attributes?.imageSets[0]?.images[0]?.externalUrlSmall,
         measures: " ",
         unitMultiplier: " ",
