@@ -46,11 +46,9 @@ export declare class VtexService {
         status: string;
         statusText: string;
         message: string;
-        validation?: undefined;
-        session?: undefined;
+        bearerToken?: undefined;
     } | {
-        validation: any;
-        session: any;
+        bearerToken: string;
         status?: undefined;
         statusText?: undefined;
         message?: undefined;
