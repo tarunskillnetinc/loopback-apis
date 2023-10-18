@@ -9,7 +9,7 @@ export declare class VtexController {
     getVtexProductDetails(productId: string): Promise<any>;
     getProductById(pid: string): Promise<any>;
     getVtexCollection(collectionId: string): Promise<any>;
-    getVtexCartData(cartId: any): Promise<any>;
+    getVtexCartData(baskets_id: any): Promise<any>;
     gettransformedVtexProductDetails(productId: string): Promise<any>;
     getBestSellingProducts(): Promise<any>;
     getBestSellingProductsrating(): Promise<any>;

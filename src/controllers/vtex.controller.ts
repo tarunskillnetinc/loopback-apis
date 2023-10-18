@@ -460,7 +460,7 @@ export class VtexController {
   }
 
   //For adding items in cart:
-  @post('vtex/additem/{basket_Id}')
+  @post('vtex/addItem/{basket_Id}')
   @response(200, {
     description: "Add items in cart using order form id",
   })
@@ -500,7 +500,7 @@ export class VtexController {
   }
 
    // For deleting cart item
-   @del('vtex/deleteItem/{basket_Id}/items/{item_id}')
+   @del('vtex/removeItem/{basket_Id}/items/{item_id}')
    @response(200,{
      description:"Updating Cart details based on Form Id",
    })

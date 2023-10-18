@@ -646,7 +646,7 @@ export class VtexService {
 
     const finalData:any = {
       productData:product_arr,
-      valuesFacets:available_facets,
+      valueFacets:available_facets,
       pagination:availablePagination
     }
 

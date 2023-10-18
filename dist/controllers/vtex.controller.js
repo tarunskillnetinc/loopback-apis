@@ -87,9 +87,9 @@ let VtexController = exports.VtexController = class VtexController {
     //     throw error;
     //   }
     // }
-    async getVtexCartData(cartId) {
+    async getVtexCartData(baskets_id) {
         try {
-            const vtexCartDetail = await this.vtexService.getVtexCartDetails(cartId);
+            const vtexCartDetail = await this.vtexService.getVtexCartDetails(baskets_id);
             return vtexCartDetail;
         }
         catch (error) {
@@ -223,41 +223,49 @@ let VtexController = exports.VtexController = class VtexController {
             const session = login.session;
             console.log('login', login.validation);
             console.log('login1', login.session);
+            console.log('amber12', authCookie);
             // console.log('login2', data);
             // console.log('login3', await login.data.resp.authCookie);
             // console.log('login4', await login.data.resp.accountAuthCookie);
             // console.log('login3', await login.data.session.sessionToken);
-            response.cookie('VtexIdclientAutCookie_skillnet', authCookie.authCookie.Value, {
-                maxAge: 3600000 * 24,
-                httpOnly: true,
-                secure: true,
-                sameSite: 'none',
-                path: '/',
-            });
-            response.cookie('VtexIdclientAutCookie_13ca6e38-75b0-4070-8cf2-5a61412e4919', authCookie.accountAuthCookie.Value, {
-                maxAge: 3600000 * 24,
-                httpOnly: true,
-                secure: true,
-                sameSite: 'none',
-                path: '/',
-            });
-            response.cookie('sessionToken', session.sessionToken, {
-                // maxAge: 3600000*24,
-                httpOnly: true,
-                secure: true,
-                sameSite: 'none',
-                path: '/',
-            });
-            response.cookie('segmentToken', session.segmentToken, {
-                // maxAge: 3600000*24,
-                httpOnly: true,
-                secure: true,
-                sameSite: 'none',
-                path: '/',
-            });
-            return login;
+            if ((authCookie === null || authCookie === void 0 ? void 0 : authCookie.authCookie) == undefined) {
+                return login;
+            }
+            else {
+                response.cookie('VtexIdclientAutCookie_skillnet', authCookie.authCookie.Value, {
+                    maxAge: 3600000 * 24,
+                    httpOnly: true,
+                    secure: true,
+                    sameSite: 'none',
+                    path: '/',
+                });
+                response.cookie('VtexIdclientAutCookie_13ca6e38-75b0-4070-8cf2-5a61412e4919', authCookie.accountAuthCookie.Value, {
+                    maxAge: 3600000 * 24,
+                    httpOnly: true,
+                    secure: true,
+                    sameSite: 'none',
+                    path: '/',
+                });
+                response.cookie('sessionToken', session.sessionToken, {
+                    // maxAge: 3600000*24,
+                    httpOnly: true,
+                    secure: true,
+                    sameSite: 'none',
+                    path: '/',
+                });
+                response.cookie('segmentToken', session.segmentToken, {
+                    // maxAge: 3600000*24,
+                    httpOnly: true,
+                    secure: true,
+                    sameSite: 'none',
+                    path: '/',
+                });
+                console.log("amber", login);
+                return login;
+            }
         }
         catch (error) {
+            console.log("erroramber", error);
             throw error;
         }
     }
@@ -478,11 +486,11 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getVtexCollection", null);
 tslib_1.__decorate([
-    (0, rest_1.get)('/vtex-cartDetail/{cartId}'),
+    (0, rest_1.get)('/vtex/cartDetail/{baskets_id}'),
     (0, rest_1.response)(200, {
         description: 'Get VTEX cart details from the external API',
     }),
-    tslib_1.__param(0, rest_1.param.path.string('cartId')),
+    tslib_1.__param(0, rest_1.param.path.string('baskets_id')),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [Object]),
     tslib_1.__metadata("design:returntype", Promise)
@@ -562,7 +570,7 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getVtexProductByCategory", null);
 tslib_1.__decorate([
-    (0, rest_1.get)('/vtex/products-by-subcategory/{subCategoryId}'),
+    (0, rest_1.get)('/vtex/products-by-sub-category/{subCategoryId}'),
     (0, rest_1.response)(200, {
         description: 'Get VTEX Product List by intelegent search',
     }),
@@ -618,7 +626,7 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getOrCreateCartId", null);
 tslib_1.__decorate([
-    (0, rest_1.post)('/login'),
+    (0, rest_1.post)('/vtex/login'),
     tslib_1.__param(0, (0, rest_1.requestBody)()),
     tslib_1.__param(1, (0, core_1.inject)(rest_1.RestBindings.Http.RESPONSE)),
     tslib_1.__metadata("design:type", Function),

@@ -236,11 +236,22 @@ export class SprykerController {
     })
 
     async createCart( 
-      @param.header.string('bearer') bearer: string,
-      @requestBody() requestBody: { data:any },
+      @param.header.string('token') token: string,
+      // @requestBody() requestBody: { data:any },
       ):Promise<any>{
         try{
-        const header = this.request.headers.bearer;
+        const header = this.request.headers.token;
+        var requestBody = {
+          "data": {
+            "type": "carts",
+            "attributes": {
+              "priceMode": "NET_MODE",
+              "currency": "USD",
+              "store": "US",
+              "name": "aafreen Cart"
+            }
+          }
+        }
         const data = await this.sprykerService.creteCart(header,requestBody);
         const response = data;
         return response;
@@ -290,7 +301,7 @@ export class SprykerController {
       }
     }
 
-    @post('/spryker/addItems/{basket_id}')
+    @post('/spryker/addItem/{basket_id}')
     @response(200, {
       description: "Add Item in the current cart.",
     })
@@ -314,7 +325,7 @@ export class SprykerController {
       }
     }
 
-@del('/spryker/deleteItem/{basket_id}/{itemId}')
+@del('/spryker/removeItem/{basket_Id}/items/{item_Id}')
     @response(200, {
       description: "Delete Item in the current cart.",
     })
@@ -340,7 +351,7 @@ export class SprykerController {
       }
     }
 
-    @patch('/spryker/updateItems/{basket_id}')
+    @patch('/spryker/updateItem/{basket_id}')
     @response(200, {
       description: "Delete Item in the current cart.",
     })
