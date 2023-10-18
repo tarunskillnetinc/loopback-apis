@@ -113,15 +113,14 @@ export class SprykerService  {
     await Promise.all(
       data?.attributes?.abstractProducts?.map((items:any)=>{
         product_arr.push({
-        productId:items?.abstractSku,
-        skuId:items?.abstractSku,
-        productName:items?.abstractName,
-        productImage:items?.images[0].externalUrlLarge,
-        productPrice: {
-          "grossAmount": items?.prices[0].grossAmount,
-          "DEFAULT": items?.prices[0].DEFAULT,
+        product_id:items?.abstractSku,
+        sku_id:items?.abstractSku,
+        product_name:items?.abstractName,
+        product_image:items?.images[0].externalUrlLarge,
+        product_price: {
+          "listPrice": items?.prices[0].grossAmount,
+          "sellingPrice": items?.prices[0].DEFAULT,
         },
-        productCategory:categoryId,
         })
       })
     )
@@ -312,7 +311,7 @@ async getSprykerSellingProducts(): Promise<any> {
         bestPrice: item?.price?.attributes?.price,
         spotPrice: item?.price?.attributes?.prices[1]?.netAmount,
         specifications: item?.attributes?.attributes,
-        images:
+        image:
             item?.image?.attributes?.imageSets[0]?.images[0]?.externalUrlSmall,
         measures: " ",
         unitMultiplier: " ",
@@ -335,10 +334,9 @@ async getSprykerSellingProducts(): Promise<any> {
          productName:items?.abstractName,
         productImage:items?.images[0].externalUrlLarge,
         productPrice: {
-          "grossAmount": items?.prices[0].grossAmount,
-          "DEFAULT": items?.prices[0].DEFAULT,
+          "listPrice": items?.prices[0].grossAmount,
+          "sellingPrice": items?.prices[0].DEFAULT,
         },
-        productCategory:subCategoryId,
 
         })
 
