@@ -18,9 +18,6 @@ export class VtexController {
     description: 'Get VTEX category tree from the external API',
   })
 
-  
-
-
   async getVtexCategoryTree(): Promise<any> {
     try {
       const vtexCategoryTree = await this.vtexService.getVtexCategoryTree();
@@ -258,7 +255,7 @@ export class VtexController {
 
     }
 
-    @get('/vtex/products-by-subcategory/{subCategoryId}')
+    @get('/vtex/products-by-sub-category/{subCategoryId}')
     @response(200,{
       description: 'Get VTEX Product List by intelegent search',
     })
@@ -337,7 +334,7 @@ export class VtexController {
       }
     }
 
-  @post('/login')
+  @post('/vtex/login')
   async login(
     @requestBody() requestBody: { email: string; password: string },
     @inject(RestBindings.Http.RESPONSE) response: Response,
@@ -350,41 +347,48 @@ export class VtexController {
       const session = login.session;
       console.log('login', login.validation);
       console.log('login1', login.session);
+      console.log('amber12',authCookie)
       // console.log('login2', data);
       // console.log('login3', await login.data.resp.authCookie);
       // console.log('login4', await login.data.resp.accountAuthCookie);
       // console.log('login3', await login.data.session.sessionToken);
-      response.cookie('VtexIdclientAutCookie_skillnet', authCookie.authCookie.Value, {
-        maxAge: 3600000*24,
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none',
-        path: '/',
-      });
-      response.cookie('VtexIdclientAutCookie_13ca6e38-75b0-4070-8cf2-5a61412e4919', authCookie.accountAuthCookie.Value, {
-        maxAge: 3600000*24,
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none',
-        path: '/',
-      });
-      response.cookie('sessionToken', session.sessionToken, {
-        // maxAge: 3600000*24,
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none',
-        path: '/',
-      });
-      response.cookie('segmentToken', session.segmentToken, {
-        // maxAge: 3600000*24,
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none',
-        path: '/',
-      });
-
-      return login
+      if (authCookie?.authCookie==undefined) {
+        return login
+      }
+      else{
+        response.cookie('VtexIdclientAutCookie_skillnet', authCookie.authCookie.Value, {
+          maxAge: 3600000*24,
+          httpOnly: true,
+          secure: true,
+          sameSite: 'none',
+          path: '/',
+        });
+        response.cookie('VtexIdclientAutCookie_13ca6e38-75b0-4070-8cf2-5a61412e4919', authCookie.accountAuthCookie.Value, {
+          maxAge: 3600000*24,
+          httpOnly: true,
+          secure: true,
+          sameSite: 'none',
+          path: '/',
+        });
+        response.cookie('sessionToken', session.sessionToken, {
+          // maxAge: 3600000*24,
+          httpOnly: true,
+          secure: true,
+          sameSite: 'none',
+          path: '/',
+        });
+        response.cookie('segmentToken', session.segmentToken, {
+          // maxAge: 3600000*24,
+          httpOnly: true,
+          secure: true,
+          sameSite: 'none',
+          path: '/',
+        });
+        console.log("amber",login)
+        return login
+      }
     } catch (error) {
+      console.log("erroramber",error)
       throw error;
     }
   }
