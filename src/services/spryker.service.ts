@@ -133,7 +133,7 @@ export class SprykerService  {
       "next": response?.data[0]?.attributes?.pagination?.nextPage
     }
 
-    return {"ProductData":product_arr, "valueFacets": valueFacets, "pagination": pagination};
+    return {"productData":product_arr, "valueFacets": valueFacets, "pagination": pagination};
     // return response;
   }
 
