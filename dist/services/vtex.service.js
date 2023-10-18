@@ -708,7 +708,10 @@ let VtexService = exports.VtexService = class VtexService {
                 }
             });
             const data = await response.data;
-            return data;
+            const baskets = [];
+            baskets.push({ "basket_id": data.orderFormId });
+            // return data;
+            return baskets;
         }
         catch (error) {
             return this.handleErrorResponse(error);

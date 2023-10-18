@@ -423,8 +423,9 @@ async getSprykerSellingProducts(): Promise<any> {
   
   }
 
-  async login(username: string, password: string, type: string): Promise<any>{ 
+  async login(username: string, password: string): Promise<any>{ 
     try{
+    const type="password"  
     const formData = new FormData();
     formData.append('username', username);
     formData.append('password', password);
@@ -439,7 +440,7 @@ async getSprykerSellingProducts(): Promise<any> {
       },
     }
     );
-    const token = response.data.access_token;
+    const token = {"bearerToken":response.data.access_token};
     console.log(' respnser  datA' , response)
     return token;
   }

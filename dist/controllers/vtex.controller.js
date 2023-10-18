@@ -616,7 +616,7 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getAProductById", null);
 tslib_1.__decorate([
-    (0, rest_1.post)('vtex-get-or-create-cart'),
+    (0, rest_1.post)('/vtex/createCart'),
     (0, rest_1.response)(200, {
         description: "Get the current cart or create a new one if it doesn't exist yet.",
     }),
