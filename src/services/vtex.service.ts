@@ -888,8 +888,11 @@ export class VtexService {
           Cookie: `${token}`,
         }
       });
-      const data = await response.data
-      return data;
+      const data = await response.data;
+      const baskets : any[] = [];
+      baskets.push({"basket_id":data.orderFormId});
+      // return data;
+      return baskets;
     }
     catch(error){
       return this.handleErrorResponse(error);

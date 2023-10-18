@@ -318,7 +318,7 @@ export class VtexController {
       }
     }
 
-    @post('vtex-get-or-create-cart')
+    @post('/vtex/createCart')
     @response(200, {
       description: "Get the current cart or create a new one if it doesn't exist yet.",
     })
