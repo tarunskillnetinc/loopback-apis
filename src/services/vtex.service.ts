@@ -1175,12 +1175,20 @@ export class VtexService {
   }
 
     //Function to generate Customer Cart:
-    async createCustomerCart(): Promise<any>{
-      const endpoint = `api/checkout/pub/orderForm?forceNewCart=true`;
-      const cart_response = this.fetchFromEndpoint(endpoint);
-      const order_form_id = await cart_response;
-      console.log("Cart",order_form_id.orderFormId);
-      return order_form_id;
+    async createCustomerCart(customerId:any,token:any): Promise<any>{
+      try{
+        console.log("customerId",customerId,"token",token);
+        const endpoint = `https://skillnet.vtexcommercestable.com.br/api/checkout/pub/orderForm`;
+        const response = await axios.post(endpoint,null,{
+          headers:{
+            Cookie: `${token}`,
+          }
+        });
+        return response.data;
+      }
+      catch(error){
+        return this.handleErrorResponse(error)
+      }
     }
 
     //Function for adding items in cart:
