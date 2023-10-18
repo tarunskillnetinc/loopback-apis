@@ -454,16 +454,35 @@ async getSprykerSellingProducts(): Promise<any> {
 
 
   async getCartId(authorizationHeader: any): Promise<any> {
-    console.log('afren',authorizationHeader);
+    console.log('afrein',authorizationHeader);
     const endpoint = `/carts`;
     const response = this.cartFetchFromEndpoint(endpoint,authorizationHeader);
     const data = await response;
     return data;
   }
 
+  async cartFetchFromEndpoint(endpoint: string, authorization:string): Promise<any> {
+    try {
+    console.log("aaaashu")
+      const response = await axios.get(
+        `http://103.113.36.20:9003${endpoint}`,
+        {
+          headers: {
+            'Authorization':`Bearer ${authorization}`,
+          },
+        },
+      );
+      console.log(response);
+      return response.data;
+    } catch (error) {
+      console.log('error', error);
+      throw error;
+    }
+  }
+
   async getSprykerCartDetails(cartId: any,authorizationHeader:any): Promise<any> {
     const endpoint = `/carts/${cartId}?include=items`;
-    return this.cartFetchFromEndpoint(endpoint,authorizationHeader);
+    return this.cartdetailFetchFromEndpoint(endpoint,authorizationHeader);
   }
 
   async creteCart(authorizationHeader:any,data:any): Promise<any> {
@@ -487,7 +506,7 @@ async getSprykerSellingProducts(): Promise<any> {
     }
   }
 
-  async cartFetchFromEndpoint(endpoint: string, authorization:string): Promise<any> {
+  async cartdetailFetchFromEndpoint(endpoint: string, authorization:string): Promise<any> {
     try {
       const products : any[] = [];
       console.log(endpoint);
@@ -579,13 +598,13 @@ async getSprykerSellingProducts(): Promise<any> {
   }
 
   async postDeleteCartItems(
-    cartId: any,
+    basket_id: any,
     itemId: any,
-    reqBody: any,
+    authorization:any,
   ): Promise<any> {
-    console.log('afren', reqBody);
-    const endpoint = `carts/${cartId}/items/${itemId}`;
-    const response = this.cartDeleteFetchFromEndpoint(endpoint, reqBody);
+    console.log('afren', authorization);
+    const endpoint = `carts/${basket_id}/items/${itemId}`;
+    const response = this.cartDeleteFetchFromEndpoint(endpoint, authorization);
     const data = await response;
     return data;
   }

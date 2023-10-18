@@ -253,7 +253,7 @@ export class SprykerController {
 
     @get('/spryker/cartDetail/{cartId}')
     @response(200, {
-      description: 'Get VTEX cart details from the external API',
+      description: 'Get Spryker cart details from the external API',
     })
 
     async getSprykerCartData(
@@ -278,6 +278,7 @@ export class SprykerController {
       @param.header.string('bearer') bearer: string,
       ):Promise<any>{
       try{
+        console.log('aafreen')
         const header = this.request.headers.bearer;
         const data = await this.sprykerService.deleteCart(cartId,header)
         const response = await data;
@@ -289,7 +290,7 @@ export class SprykerController {
       }
     }
 
-    @post('/spryker/addItems/{baskets_id}')
+    @post('/spryker/addItems/{basket_id}')
     @response(200, {
       description: "Add Item in the current cart.",
     })
@@ -313,7 +314,7 @@ export class SprykerController {
       }
     }
 
-@del('/spryker/deleteItem/{basket_Id}/{itemId}')
+@del('/spryker/deleteItem/{basket_id}/{itemId}')
     @response(200, {
       description: "Delete Item in the current cart.",
     })
@@ -326,7 +327,8 @@ export class SprykerController {
         try{
           console.log("cartID",basket_id)
         console.log("itemID",itemId)
-        const header = this.request.headers.bearer;
+        const header = this.request.headers.token;
+        console.log("header", header)
         const data = await this.sprykerService.postDeleteCartItems(basket_id,itemId,header);
         const response = data;
         return response;
