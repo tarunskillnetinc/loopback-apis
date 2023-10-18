@@ -256,7 +256,7 @@ export class VtexService {
     const response = this.fetchFromEndpoint(endpoint);
     const data = await response;
     console.log("smber",data)
-    if(data.status != 200 ){
+    if(data.status != undefined){
       return data;
     }
     else{
