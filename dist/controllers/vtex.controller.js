@@ -391,9 +391,9 @@ let VtexController = exports.VtexController = class VtexController {
         }
     }
     // For deleting cart item
-    async deleteCartItem(basket_Id, item_id) {
+    async deleteCartItem(basket_Id, index_id) {
         try {
-            const data = await this.vtexService.deleteCartItem(basket_Id, item_id);
+            const data = await this.vtexService.deleteCartItem(basket_Id, index_id);
             const response = await data;
             return this.handledeleteResponse(response);
         }
@@ -720,12 +720,12 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "updateCartItem", null);
 tslib_1.__decorate([
-    (0, rest_1.del)('vtex/removeItem/{basket_Id}/items/{item_id}'),
+    (0, rest_1.del)('vtex/removeItem/{basket_Id}/items/{index_id}'),
     (0, rest_1.response)(200, {
         description: "Updating Cart details based on Form Id",
     }),
     tslib_1.__param(0, rest_1.param.path.string('basket_Id')),
-    tslib_1.__param(1, rest_1.param.path.string('item_id')),
+    tslib_1.__param(1, rest_1.param.path.string('index_id')),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [String, String]),
     tslib_1.__metadata("design:returntype", Promise)

@@ -41,7 +41,7 @@ export declare class VtexController {
     updateCartItem(requestBody: {
         orderItems: any;
     }, basket_id: string): Promise<any>;
-    deleteCartItem(basket_Id: string, item_id: string): Promise<any>;
+    deleteCartItem(basket_Id: string, index_id: string): Promise<any>;
     getCartItems(orderFormId: string): Promise<any>;
     getSfBestSellingProducts(): Promise<any>;
     salesForceProduct(productId: string): Promise<any>;

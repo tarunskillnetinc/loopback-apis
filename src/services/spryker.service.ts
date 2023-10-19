@@ -625,11 +625,11 @@ async getSprykerSellingProducts(): Promise<any> {
 
   async postDeleteCartItems(
     basket_id: any,
-    itemId: any,
+    index_id: any,
     authorization:any,
   ): Promise<any> {
     console.log('afren', authorization);
-    const endpoint = `carts/${basket_id}/items/${itemId}`;
+    const endpoint = `carts/${basket_id}/items/${index_id}`;
     const response = this.cartDeleteFetchFromEndpoint(endpoint, authorization);
     const data = await response;
     return data;

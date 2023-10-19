@@ -549,16 +549,16 @@ export class VtexController {
   }
 
    // For deleting cart item
-   @del('vtex/removeItem/{basket_Id}/items/{item_id}')
+   @del('vtex/removeItem/{basket_Id}/items/{index_id}')
    @response(200,{
      description:"Updating Cart details based on Form Id",
    })
    async deleteCartItem(
      @param.path.string('basket_Id') basket_Id:string,
-     @param.path.string('item_id') item_id:string
+     @param.path.string('index_id') index_id:string
      ):Promise<any>{
      try{
-       const data = await this.vtexService.deleteCartItem(basket_Id,item_id)
+       const data = await this.vtexService.deleteCartItem(basket_Id,index_id)
        const response = await data;
        return this.handledeleteResponse(response)
      }
