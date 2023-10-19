@@ -479,7 +479,7 @@ async getSprykerSellingProducts(): Promise<any> {
       return{"baskets":[{"basket_id":basketId}]}
     }
     else{
-    return{"baskets":[{"basket_id":basketId}]};
+    return{"baskets":[{"basket_id":""}]};
     }
   }
 
@@ -641,7 +641,7 @@ async getSprykerSellingProducts(): Promise<any> {
       "data": {
           "type": "items",
           "attributes": {
-              "sku": reqBody.itemId,
+              "sku": reqBody.indexId,
               "quantity": reqBody.quantity,
               "merchantReference": "MER000001",
               "salesUnit": {
