@@ -73,9 +73,7 @@ export class CommercetoolsController {
   @response(200, {
     description: "Get CommerceTools cart details from the external API",
   })
-  async commerceToolsCart(
-    @param.path.string("productId") productId: string
-  ): Promise<any> {
+  async commerceToolsCart(): Promise<any> {
     try {
       const commerceToolsProductDetails = {
         baskets: [
@@ -95,16 +93,12 @@ export class CommercetoolsController {
   @response(200, {
     description: "Get CommerceTools cart details from the external API",
   })
-  async login(
-    @param.path.string("productId") productId: string
-  ): Promise<any> {
+  async login(): Promise<any> {
     try {
       const commerceToolsProductDetails = {
-        baskets: {
           "customer_id": "noCust",
           "bearerToken": "VtexIdclientAutCookie_skillnet=eyJhbGciOiJFUzI1NiIsImtpZCI6IjI0RjMwRTdGRkU5MDZDODQ5OUFGNTYwNTVCQTE5QkM0QjI2RDAzRDUiLCJ0eXAiOiJqd3QifQ.eyJzdWIiOiJ0YXJ1bmRydXBhbEB5b3BtYWlsLmNvbSIsImFjY291bnQiOiJza2lsbG5ldCIsImF1ZGllbmNlIjoid2Vic3RvcmUiLCJzZXNzIjoiNTRmZDRiZjMtZGEzOS00NDUzLTg2ODAtM2IxOGJjOTMwMDU2IiwiZXhwIjoxNjk3ODA4MDI3LCJ1c2VySWQiOiI0NjE0N2QyMS1mN2EzLTQ3NjYtYmNlZi04Njc2ZDE2NDZjOGMiLCJpYXQiOjE2OTc3MjE2MjcsImlzcyI6InRva2VuLWVtaXR0ZXIiLCJqdGkiOiJhZDRiYzRiMy04NTQzLTQ0MDgtYWE1ZS1lODY0YTQ5MjIxYjcifQ.f0ukS-L0Px2435BL2np3yeoINE3qdYfdcaYxLH06mgACS1q5kniHSCcy7VSN8U_zOj7gQSvDiAOJ9HwD5lcUzw;VtexIdclientAutCookie_13ca6e38-75b0-4070-8cf2-5a61412e4919=eyJhbGciOiJFUzI1NiIsImtpZCI6IjI0RjMwRTdGRkU5MDZDODQ5OUFGNTYwNTVCQTE5QkM0QjI2RDAzRDUiLCJ0eXAiOiJqd3QifQ.eyJzdWIiOiJ0YXJ1bmRydXBhbEB5b3BtYWlsLmNvbSIsImFjY291bnQiOiJza2lsbG5ldCIsImF1ZGllbmNlIjoid2Vic3RvcmUiLCJzZXNzIjoiNTRmZDRiZjMtZGEzOS00NDUzLTg2ODAtM2IxOGJjOTMwMDU2IiwiZXhwIjoxNjk3ODA4MDI3LCJ1c2VySWQiOiI0NjE0N2QyMS1mN2EzLTQ3NjYtYmNlZi04Njc2ZDE2NDZjOGMiLCJpYXQiOjE2OTc3MjE2MjcsImlzcyI6InRva2VuLWVtaXR0ZXIiLCJqdGkiOiJhZDRiYzRiMy04NTQzLTQ0MDgtYWE1ZS1lODY0YTQ5MjIxYjcifQ.f0ukS-L0Px2435BL2np3yeoINE3qdYfdcaYxLH06mgACS1q5kniHSCcy7VSN8U_zOj7gQSvDiAOJ9HwD5lcUzw;sessionToken=eyJhbGciOiJFUzI1NiIsImtpZCI6IkUzRDU4REQ3QjFDQUVGOUQ4MjkyNTRGMUQwQkM2RDlFQ0Q1NjFGNTYiLCJ0eXAiOiJqd3QifQ.eyJhY2NvdW50LmlkIjoiMTNjYTZlMzgtNzViMC00MDcwLThjZjItNWE2MTQxMmU0OTE5IiwiaWQiOiI3YTYyZDFkOC01ZTQwLTQ5ZGYtODkzMy1hYWQ0OTdiNDU1NzMiLCJ2ZXJzaW9uIjoyLCJzdWIiOiJzZXNzaW9uIiwiYWNjb3VudCI6InNlc3Npb24iLCJleHAiOjE2OTg0MTI4MzAsImlhdCI6MTY5NzcyMTYzMCwiaXNzIjoidG9rZW4tZW1pdHRlciIsImp0aSI6IjQzN2NlMTFmLTQ5ZDMtNDk3Zi1hY2Q3LWM5MTNkYjUzZWYzMCJ9.RHwobiGjNg4RH_rUDNgU-94yKRZCCYHrDtBVTdRrAi48wWpYxM-TcB9WPdsWISY0CszK9Jq05c0gJJ6UbC04YQ;segmentToken=eyJjYW1wYWlnbnMiOm51bGwsImNoYW5uZWwiOiIxIiwicHJpY2VUYWJsZXMiOm51bGwsInJlZ2lvbklkIjpudWxsLCJ1dG1fY2FtcGFpZ24iOm51bGwsInV0bV9zb3VyY2UiOm51bGwsInV0bWlfY2FtcGFpZ24iOm51bGwsImN1cnJlbmN5Q29kZSI6IlVTRCIsImN1cnJlbmN5U3ltYm9sIjoiJCIsImNvdW50cnlDb2RlIjoiVVNBIiwiY3VsdHVyZUluZm8iOiJlbi1VUyIsImFkbWluX2N1bHR1cmVJbmZvIjoiZW4tVVMiLCJjaGFubmVsUHJpdmFjeSI6InB1YmxpYyJ9"
-        },
-      };
+        }
 
       return commerceToolsProductDetails;
     } catch (error) {
