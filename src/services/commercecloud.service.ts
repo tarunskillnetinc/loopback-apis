@@ -359,7 +359,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
       products.sort((a, b) => a.price - b.price);
        console.log("shubham",response) 
       const cartTotals = {
-        CartTotal: response.order_total
+        CartTotal: response.product_total
         // Items: response.product_total,
         // Discounts: response.order_total - response.product_total,
         // Shipping: response.shipping_total,
