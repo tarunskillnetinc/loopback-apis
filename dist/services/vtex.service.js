@@ -956,7 +956,7 @@ let VtexService = exports.VtexService = class VtexService {
             validate.data.authCookie.Name = "VtexIdclientAutCookie_skillnet";
             validate.data.accountAuthCookie.Name = "VtexIdclientAutCookie_13ca6e38-75b0-4070-8cf2-5a61412e4919";
             const finalToken = `${validate.data.authCookie.Name}=` + `${validate.data.authCookie.Value};` + `${validate.data.accountAuthCookie.Name}=` + `${validate.data.accountAuthCookie.Value};` + `sessionToken=` + `${session.data.sessionToken};` + `segmentToken=` + `${session.data.segmentToken}`;
-            return { "bearerToken": finalToken };
+            return { customer_id: "", "bearerToken": finalToken };
             // return {
             //   validation: validate.data,
             //   session: session.data,

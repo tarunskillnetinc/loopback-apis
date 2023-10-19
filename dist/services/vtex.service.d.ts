@@ -46,8 +46,10 @@ export declare class VtexService {
         status: string;
         statusText: string;
         message: string;
+        customer_id?: undefined;
         bearerToken?: undefined;
     } | {
+        customer_id: string;
         bearerToken: string;
         status?: undefined;
         statusText?: undefined;
