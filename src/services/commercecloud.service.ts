@@ -188,7 +188,7 @@ async searchByFacets(
       "previous": page>1 ? Number(page)-1 : 0
     }
     console.log("dwadawinside this")
-    return { ProductData: product_arr, valueFacets: valueFacets, pagination: pagination};
+    return { productData: product_arr, valueFacets: valueFacets, pagination: pagination};
   } catch (error) {
     return this.handleErrorResponse(error);
   }
@@ -215,7 +215,7 @@ async getSalesforceProductBysubCategory(subcategoryId: any): Promise<any> {
         },
       });
     });
-    return { ProductData: product_arr, valueFacets: valueFacets };
+    return { productData: product_arr, valueFacets: valueFacets };
   } catch (error) {
     return this.handleErrorResponse(error);
   }
@@ -249,7 +249,7 @@ private async getVariationData(response: any): Promise<any[]> {
       skuData.push({
         sku: response?.id,
         skuname: response?.name,
-        dimensions: ' ',
+        specifications: response?.variation_values,
         available: response?.inventory?.orderable,
         availablequantity: response?.inventory?.ats,
         listPriceFormated: currencySymbol(response?.currency) + response?.price,
@@ -277,7 +277,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     console.log('responseservice123', data);
     if (data.status == 200) {
       const tokenParts = data.headers.authorization.split(' ');
-      return { ...data.data, bearerToken: tokenParts[1] };
+      return { customer_id:data.data.customer_id, bearerToken: tokenParts[1] };
     } else {
       return data;
     }
@@ -379,9 +379,12 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     } 
     async cartUpdateFromEndpoint(endpoint:string,_requestBody:any, header:string):Promise<any>{
       try{
-        console.log("hiiihhhh",endpoint,_requestBody,header)
+        var body={
+          "quantity":_requestBody?.quantity
+        }
+        console.log("hiiihhhh",endpoint,body,header)
         const response = await axios.patch(`${this.dataSource.settings.baseURL}/${endpoint}`,
-        _requestBody,  
+        body,  
         {
           headers:{
             'Authorization':`Bearer ${header}`,
@@ -400,14 +403,15 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
           "message":error?.response?.data}
       }
     }
-    async updateSalesforceProductItems(baskets_id:any,items_id:any,requestBody:any,header:any):Promise<any>{
-      const endpoint = `${shopName}/dw/shop/v23_2/baskets/${baskets_id}/items/${items_id}`;
+    async updateSalesforceProductItems(baskets_id:any,requestBody:any,header:any):Promise<any>{
+      console.log("wdawad",requestBody)
+      const endpoint = `${shopName}/dw/shop/v23_2/baskets/${baskets_id}/items/${requestBody.indexId}`;
       console.log(endpoint,"updateSalesforceProductItems");
       const response = await this.cartUpdateFromEndpoint(endpoint,requestBody,header);
       const data = response;
       console.log('datas',data)
       return response;
-    }
+    } 
     async getSalesForceCategory(): Promise<any> {
       const product_arr: any[] = [];
       const endpoint = `/${shopName}/dw/shop/v23_2/categories/root?levels=6&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
@@ -445,29 +449,26 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
       }
     }
 
-  async removeItem(basket_Id:any, requestBody:any, bearer:any):Promise<any>{
-    const endpoint = `/${shopName}/dw/shop/v23_2/baskets/${basket_Id}/items/${requestBody.item_id}?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
-    const header = {
-      'Authorization':`Bearer ${bearer}`
+    async removeItem(basket_Id:any,index_id:any,quantity:any, bearer:any):Promise<any>{
+      const endpoint = `/${shopName}/dw/shop/v23_2/baskets/${basket_Id}/items/${index_id}?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+      const header = {
+        'Authorization':`Bearer ${bearer}`
+      }
+      const response = this.deleteCartItem(endpoint,header);
+      return response;
     }
-    const response = this.deleteCartItem(endpoint,header);
-    return response;
-  }
-  async deleteCartItem(endpoint:any,header:any){
-    try{
-      console.log("headers",header);
-      const response = await axios.delete(`${this.dataSource.settings.baseURL}/${endpoint}`, {
-        headers: header
-      });
-      return response.data;
+    async deleteCartItem(endpoint:any,header:any){
+      try{
+        console.log("headers",header);
+        const response = await axios.delete(`${this.dataSource.settings.baseURL}/${endpoint}`, {
+          headers: header
+        });
+        return response.data;
+      }
+      catch(error){
+        return this.handleErrorResponse(error)
+      }
     }
-    catch(error){
-      return {
-        "status":error?.response.status,
-        "statusText":error?.response?.statusText,
-        "message":error?.response?.data}
-    }
-  }
 
   //Function to create cart:
   async createCart(bearer: any):Promise<any>{
@@ -479,7 +480,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     const response = this.createUserCart(endpoint,header);
     const data = await response
     console.log("thisis response",data);
-    return response;
+    return{"baskets":[{"basket_id":data.basket_id}]}
   }
   async createUserCart(endpoint:any,header:any){
     var body={}
@@ -517,7 +518,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
         headers: header
       });
       console.log("custome123",response);
-      return response.data;
+      return {"baskets":[{"basket_id": response.data.total== 0 ? "" : response.data.baskets[0].basket_id}]}
     }
     catch(error){
       console.log("error is", error);

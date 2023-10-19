@@ -4,12 +4,17 @@ import { Response } from 'express';
 export declare class VtexController {
     private vtexService;
     private req;
-    constructor(vtexService: VtexService, req: Request);
+    private response;
+    constructor(vtexService: VtexService, req: Request, response: any);
+    handlegetResponse(response: any): any;
+    handlepostResponse(response: any): any;
+    handlepatchResponse(response: any): any;
+    handledeleteResponse(response: any): any;
     getVtexCategoryTree(): Promise<any>;
     getVtexProductDetails(productId: string): Promise<any>;
     getProductById(pid: string): Promise<any>;
     getVtexCollection(collectionId: string): Promise<any>;
-    getVtexCartData(cartId: any): Promise<any>;
+    getVtexCartData(baskets_id: any): Promise<any>;
     gettransformedVtexProductDetails(productId: string): Promise<any>;
     getBestSellingProducts(): Promise<any>;
     getBestSellingProductsrating(): Promise<any>;
@@ -29,16 +34,14 @@ export declare class VtexController {
         email: string;
         password: string;
     }, response: Response): Promise<ResponseObject>;
-    createCustomerCart(): Promise<any>;
+    createCustomerCart(token: string, customerId?: any): Promise<any>;
     addItems(requestBody: {
-        orderItems: [];
-    }, orderFormId: string): Promise<any>;
+        customBody: any;
+    }, basket_Id: string): Promise<any>;
     updateCartItem(requestBody: {
-        orderItems: [];
-    }, orderFormId: string): Promise<any>;
-    deleteCartItem(requestBody: {
-        orderItems: [];
-    }, orderFormId: string): Promise<any>;
+        orderItems: any;
+    }, basket_id: string): Promise<any>;
+    deleteCartItem(basket_Id: string, index_id: string): Promise<any>;
     getCartItems(orderFormId: string): Promise<any>;
     getSfBestSellingProducts(): Promise<any>;
     salesForceProduct(productId: string): Promise<any>;

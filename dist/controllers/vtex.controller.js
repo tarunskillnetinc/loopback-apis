@@ -9,14 +9,57 @@ const axios_1 = tslib_1.__importDefault(require("axios"));
 const FormData = require("form-data");
 // import axios from 'axios';
 let VtexController = exports.VtexController = class VtexController {
-    constructor(vtexService, req) {
+    constructor(vtexService, req, response) {
         this.vtexService = vtexService;
         this.req = req;
+        this.response = response;
+    }
+    handlegetResponse(response) {
+        console.log("response12345667", response === null || response === void 0 ? void 0 : response.status);
+        if ((response === null || response === void 0 ? void 0 : response.status) != undefined) {
+            return this.response.status(response === null || response === void 0 ? void 0 : response.status).json(response);
+        }
+        else {
+            console.log("else");
+            return this.response.status(200).json(response);
+        }
+    }
+    handlepostResponse(response) {
+        console.log("response123", response);
+        if ((response === null || response === void 0 ? void 0 : response.status) != undefined) {
+            return this.response.status(response === null || response === void 0 ? void 0 : response.status).json(response);
+        }
+        else {
+            if ((response === null || response === void 0 ? void 0 : response._type) == "order") {
+                return this.response.status(200).json(response);
+            }
+            else {
+                return this.response.status(201).json(response);
+            }
+        }
+    }
+    handlepatchResponse(response) {
+        if ((response === null || response === void 0 ? void 0 : response.status) != undefined) {
+            return this.response.status(response === null || response === void 0 ? void 0 : response.status).json(response);
+        }
+        else {
+            console.log("else");
+            return this.response.status(200).json(response);
+        }
+    }
+    handledeleteResponse(response) {
+        if ((response === null || response === void 0 ? void 0 : response.status) != undefined) {
+            return this.response.status(response === null || response === void 0 ? void 0 : response.status).json(response);
+        }
+        else {
+            console.log("else");
+            return this.response.status(204).json(response);
+        }
     }
     async getVtexCategoryTree() {
         try {
             const vtexCategoryTree = await this.vtexService.getVtexCategoryTree();
-            return vtexCategoryTree;
+            return this.handlegetResponse(vtexCategoryTree);
         }
         catch (error) {
             throw error;
@@ -25,7 +68,7 @@ let VtexController = exports.VtexController = class VtexController {
     async getVtexProductDetails(productId) {
         try {
             const vtexProductDetails = await this.vtexService.getVtexProductDetails(productId);
-            return vtexProductDetails;
+            return this.handlegetResponse(vtexProductDetails);
         }
         catch (error) {
             throw error;
@@ -60,6 +103,7 @@ let VtexController = exports.VtexController = class VtexController {
             const data = await this.vtexService.getProductById(pid);
             const response = await data;
             console.log('danish', response);
+            return this.handlegetResponse(response);
             return response;
         }
         catch (error) {
@@ -69,7 +113,7 @@ let VtexController = exports.VtexController = class VtexController {
     async getVtexCollection(collectionId) {
         try {
             const vtexProductDetails = await this.vtexService.getVtexCollection(collectionId);
-            return vtexProductDetails;
+            return this.handlegetResponse(vtexProductDetails);
         }
         catch (error) {
             throw error;
@@ -87,10 +131,10 @@ let VtexController = exports.VtexController = class VtexController {
     //     throw error;
     //   }
     // }
-    async getVtexCartData(cartId) {
+    async getVtexCartData(baskets_id) {
         try {
-            const vtexCartDetail = await this.vtexService.getVtexCartDetails(cartId);
-            return vtexCartDetail;
+            const vtexCartDetail = await this.vtexService.getVtexCartDetails(baskets_id);
+            return this.handlegetResponse(vtexCartDetail);
         }
         catch (error) {
             throw error;
@@ -108,7 +152,7 @@ let VtexController = exports.VtexController = class VtexController {
     async getBestSellingProducts() {
         try {
             const bestSellingProducts = await this.vtexService.getBestSellingProducts();
-            return bestSellingProducts;
+            return this.handlegetResponse(bestSellingProducts);
         }
         catch (error) {
             throw error;
@@ -117,7 +161,7 @@ let VtexController = exports.VtexController = class VtexController {
     async getBestSellingProductsrating() {
         try {
             const bestSellingProducts = await this.vtexService.getBestSellingProductsrating();
-            return bestSellingProducts;
+            return this.handlegetResponse(bestSellingProducts);
         }
         catch (error) {
             throw error;
@@ -126,7 +170,7 @@ let VtexController = exports.VtexController = class VtexController {
     async getTopSellingProductsrating() {
         try {
             const bestSellingProducts = await this.vtexService.getTopSellingProductsrating();
-            return bestSellingProducts;
+            return this.handlegetResponse(bestSellingProducts);
         }
         catch (error) {
             throw error;
@@ -136,7 +180,7 @@ let VtexController = exports.VtexController = class VtexController {
         try {
             console.log("categoryID", categoryId);
             const vtexProductListingPage = await this.vtexService.getVtexProducListingPage(categoryId);
-            return vtexProductListingPage;
+            return this.handlegetResponse(vtexProductListingPage);
         }
         catch (error) {
             throw error;
@@ -169,7 +213,7 @@ let VtexController = exports.VtexController = class VtexController {
     async getVtexProductByCategory(categoryId, color, size, minprice, maxprice, sortbyprice, sortbyname, count, page) {
         try {
             const getVtexProducts = await this.vtexService.getVtexProductByCategory(categoryId, color, size, minprice, maxprice, sortbyprice, sortbyname, count, page);
-            return getVtexProducts;
+            return this.handlegetResponse(getVtexProducts);
         }
         catch (error) {
             throw error;
@@ -178,7 +222,7 @@ let VtexController = exports.VtexController = class VtexController {
     async getVtexProductBySubCategory(subCategoryId, color, size, minprice, maxprice, sortbyprice, sortbyname, count, page) {
         try {
             const getVtexProducts = await this.vtexService.getVtexProductBySubCategory(subCategoryId, color, size, minprice, maxprice, sortbyprice, sortbyname, count, page);
-            return getVtexProducts;
+            return this.handlegetResponse(getVtexProducts);
         }
         catch (error) {
             throw error;
@@ -187,7 +231,7 @@ let VtexController = exports.VtexController = class VtexController {
     async getVtexProductByQuery(query, color, size, minprice, maxprice, sortbyprice, sortbyname, count, page) {
         try {
             const getVtexProducts = await this.vtexService.getVtexProductByQuery(query, color, size, minprice, maxprice, sortbyprice, sortbyname, count, page);
-            return getVtexProducts;
+            return this.handlegetResponse(getVtexProducts);
         }
         catch (error) {
             throw error;
@@ -207,7 +251,7 @@ let VtexController = exports.VtexController = class VtexController {
         try {
             const data = await this.vtexService.getOrCreateCartId(token);
             const response = await data;
-            return response;
+            return this.handlepostResponse(response);
         }
         catch (error) {
             console.log(error);
@@ -219,45 +263,54 @@ let VtexController = exports.VtexController = class VtexController {
             const { email, password } = requestBody;
             const login = await this.vtexService.login(email, password);
             // const data = login.resp.authCookie.Value;
-            const authCookie = login.validation;
-            const session = login.session;
-            console.log('login', login.validation);
-            console.log('login1', login.session);
+            // const authCookie = login.validation;
+            // const session = login.session;
+            // console.log('login', login.validation);
+            // console.log('login1', login.session);
+            // console.log('amber12',authCookie)
             // console.log('login2', data);
             // console.log('login3', await login.data.resp.authCookie);
             // console.log('login4', await login.data.resp.accountAuthCookie);
             // console.log('login3', await login.data.session.sessionToken);
-            response.cookie('VtexIdclientAutCookie_skillnet', authCookie.authCookie.Value, {
-                maxAge: 3600000 * 24,
-                httpOnly: true,
-                secure: true,
-                sameSite: 'none',
-                path: '/',
-            });
-            response.cookie('VtexIdclientAutCookie_13ca6e38-75b0-4070-8cf2-5a61412e4919', authCookie.accountAuthCookie.Value, {
-                maxAge: 3600000 * 24,
-                httpOnly: true,
-                secure: true,
-                sameSite: 'none',
-                path: '/',
-            });
-            response.cookie('sessionToken', session.sessionToken, {
-                // maxAge: 3600000*24,
-                httpOnly: true,
-                secure: true,
-                sameSite: 'none',
-                path: '/',
-            });
-            response.cookie('segmentToken', session.segmentToken, {
-                // maxAge: 3600000*24,
-                httpOnly: true,
-                secure: true,
-                sameSite: 'none',
-                path: '/',
-            });
-            return login;
+            // if (authCookie?.authCookie==undefined) {
+            //   return login
+            // }
+            // else{
+            //   response.cookie('VtexIdclientAutCookie_skillnet', authCookie.authCookie.Value, {
+            //     maxAge: 3600000*24,
+            //     httpOnly: true,
+            //     secure: true,
+            //     sameSite: 'none',
+            //     path: '/',
+            //   });
+            //   response.cookie('VtexIdclientAutCookie_13ca6e38-75b0-4070-8cf2-5a61412e4919', authCookie.accountAuthCookie.Value, {
+            //     maxAge: 3600000*24,
+            //     httpOnly: true,
+            //     secure: true,
+            //     sameSite: 'none',
+            //     path: '/',
+            //   });
+            //   response.cookie('sessionToken', session.sessionToken, {
+            //     // maxAge: 3600000*24,
+            //     httpOnly: true,
+            //     secure: true,
+            //     sameSite: 'none',
+            //     path: '/',
+            //   });
+            //   response.cookie('segmentToken', session.segmentToken, {
+            //     // maxAge: 3600000*24,
+            //     httpOnly: true,
+            //     secure: true,
+            //     sameSite: 'none',
+            //     path: '/',
+            //   });
+            //   console.log("amber",login)
+            //   return login
+            // }
+            return this.handlepostResponse(login);
         }
         catch (error) {
+            console.log("erroramber", error);
             throw error;
         }
     }
@@ -302,23 +355,23 @@ let VtexController = exports.VtexController = class VtexController {
         return responseObject;
     }
     //For Creating customer cart:
-    async createCustomerCart() {
+    async createCustomerCart(token, customerId) {
         try {
-            const data = await this.vtexService.createCustomerCart();
+            const data = await this.vtexService.createCustomerCart(customerId, token);
             const response = await data;
-            return response;
+            return this.handlegetResponse(response);
         }
         catch (error) {
             throw error;
         }
     }
     //For adding items in cart:
-    async addItems(requestBody, orderFormId) {
+    async addItems(requestBody, basket_Id) {
         try {
             console.log(requestBody);
-            const data = await this.vtexService.addItems(orderFormId, requestBody);
+            const data = await this.vtexService.addItems(basket_Id, requestBody);
             const response = await data;
-            return response;
+            return this.handlepostResponse(response);
         }
         catch (error) {
             console.log(error);
@@ -326,11 +379,11 @@ let VtexController = exports.VtexController = class VtexController {
         }
     }
     // For updating Cart details and cart items
-    async updateCartItem(requestBody, orderFormId) {
+    async updateCartItem(requestBody, basket_id) {
         try {
-            const data = await this.vtexService.updateCartItem(orderFormId, requestBody);
+            const data = await this.vtexService.updateCartItem(basket_id, requestBody);
             const response = await data;
-            return response;
+            return this.handlepatchResponse(response);
         }
         catch (error) {
             console.log(error);
@@ -338,11 +391,11 @@ let VtexController = exports.VtexController = class VtexController {
         }
     }
     // For deleting cart item
-    async deleteCartItem(requestBody, orderFormId) {
+    async deleteCartItem(basket_Id, index_id) {
         try {
-            const data = await this.vtexService.deleteCartItem(orderFormId, requestBody);
+            const data = await this.vtexService.deleteCartItem(basket_Id, index_id);
             const response = await data;
-            return response;
+            return this.handledeleteResponse(response);
         }
         catch (error) {
             console.log(error);
@@ -354,7 +407,7 @@ let VtexController = exports.VtexController = class VtexController {
         try {
             const data = await this.vtexService.getCartItems(orderFormId);
             const response = await data;
-            return response;
+            return this.handlegetResponse(response);
         }
         catch (error) {
             console.log(error);
@@ -397,7 +450,7 @@ let VtexController = exports.VtexController = class VtexController {
         try {
             const userProfile = await this.vtexService.getUserProfileDetails(email);
             console.log(userProfile, "userProfile");
-            return userProfile;
+            return this.handlegetResponse(userProfile);
         }
         catch (error) {
             throw error;
@@ -409,7 +462,7 @@ let VtexController = exports.VtexController = class VtexController {
             console.log("myparentcat", parentCategory);
             const data = await this.vtexService.facetsResults(parentCategory, color, size, minprice, maxprice, sortbyprice, sortbyname, count, page);
             const response = await data;
-            return response;
+            return this.handlegetResponse(response);
         }
         catch (error) {
             console.log(error);
@@ -421,7 +474,7 @@ let VtexController = exports.VtexController = class VtexController {
         try {
             const data = await this.vtexService.placeOrder(basketId, requestBody);
             console.log("danishresponseis", data);
-            return data;
+            return this.handlepostResponse(data);
         }
         catch (error) {
             return error;
@@ -478,11 +531,11 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getVtexCollection", null);
 tslib_1.__decorate([
-    (0, rest_1.get)('/vtex-cartDetail/{cartId}'),
+    (0, rest_1.get)('/vtex/cartDetail/{baskets_id}'),
     (0, rest_1.response)(200, {
         description: 'Get VTEX cart details from the external API',
     }),
-    tslib_1.__param(0, rest_1.param.path.string('cartId')),
+    tslib_1.__param(0, rest_1.param.path.string('baskets_id')),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [Object]),
     tslib_1.__metadata("design:returntype", Promise)
@@ -562,7 +615,7 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getVtexProductByCategory", null);
 tslib_1.__decorate([
-    (0, rest_1.get)('/vtex/products-by-subcategory/{subCategoryId}'),
+    (0, rest_1.get)('/vtex/products-by-sub-category/{subCategoryId}'),
     (0, rest_1.response)(200, {
         description: 'Get VTEX Product List by intelegent search',
     }),
@@ -608,7 +661,7 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getAProductById", null);
 tslib_1.__decorate([
-    (0, rest_1.post)('vtex-get-or-create-cart'),
+    (0, rest_1.post)('/vtex/createCart'),
     (0, rest_1.response)(200, {
         description: "Get the current cart or create a new one if it doesn't exist yet.",
     }),
@@ -618,7 +671,7 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getOrCreateCartId", null);
 tslib_1.__decorate([
-    (0, rest_1.post)('/login'),
+    (0, rest_1.post)('/vtex/login'),
     tslib_1.__param(0, (0, rest_1.requestBody)()),
     tslib_1.__param(1, (0, core_1.inject)(rest_1.RestBindings.Http.RESPONSE)),
     tslib_1.__metadata("design:type", Function),
@@ -634,45 +687,47 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "testLogin", null);
 tslib_1.__decorate([
-    (0, rest_1.get)('/create-customer-cart'),
+    (0, rest_1.get)('/vtex/getCustomerCart/{customerId}'),
     (0, rest_1.response)(200, {
         description: "Create Customer Cart",
     }),
+    tslib_1.__param(0, rest_1.param.header.string('token')),
+    tslib_1.__param(1, rest_1.param.query.string('customerId')),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", []),
+    tslib_1.__metadata("design:paramtypes", [String, Object]),
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "createCustomerCart", null);
 tslib_1.__decorate([
-    (0, rest_1.post)('vtex-add-items/{orderFormId}'),
+    (0, rest_1.post)('vtex/addItem/{basket_Id}'),
     (0, rest_1.response)(200, {
         description: "Add items in cart using order form id",
     }),
     tslib_1.__param(0, (0, rest_1.requestBody)()),
-    tslib_1.__param(1, rest_1.param.path.string('orderFormId')),
+    tslib_1.__param(1, rest_1.param.path.string('basket_Id')),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [Object, String]),
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "addItems", null);
 tslib_1.__decorate([
-    (0, rest_1.post)('vtex-update-cart-items/{orderFormId}'),
+    (0, rest_1.patch)('vtex/updateItem/{basket_id}'),
     (0, rest_1.response)(200, {
         description: "Updating Cart details based on Form Id",
     }),
     tslib_1.__param(0, (0, rest_1.requestBody)()),
-    tslib_1.__param(1, rest_1.param.path.string('orderFormId')),
+    tslib_1.__param(1, rest_1.param.path.string('basket_id')),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [Object, String]),
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "updateCartItem", null);
 tslib_1.__decorate([
-    (0, rest_1.post)('vtex-delete-cart-items/{orderFormId}'),
+    (0, rest_1.del)('vtex/removeItem/{basket_Id}/items/{index_id}'),
     (0, rest_1.response)(200, {
         description: "Updating Cart details based on Form Id",
     }),
-    tslib_1.__param(0, (0, rest_1.requestBody)()),
-    tslib_1.__param(1, rest_1.param.path.string('orderFormId')),
+    tslib_1.__param(0, rest_1.param.path.string('basket_Id')),
+    tslib_1.__param(1, rest_1.param.path.string('index_id')),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Object, String]),
+    tslib_1.__metadata("design:paramtypes", [String, String]),
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "deleteCartItem", null);
 tslib_1.__decorate([
@@ -775,6 +830,7 @@ tslib_1.__decorate([
 exports.VtexController = VtexController = tslib_1.__decorate([
     tslib_1.__param(0, (0, core_1.inject)('services.VtexService')),
     tslib_1.__param(1, (0, core_1.inject)(rest_1.RestBindings.Http.REQUEST)),
-    tslib_1.__metadata("design:paramtypes", [services_1.VtexService, Object])
+    tslib_1.__param(2, (0, core_1.inject)(rest_1.RestBindings.Http.RESPONSE)),
+    tslib_1.__metadata("design:paramtypes", [services_1.VtexService, Object, Object])
 ], VtexController);
 //# sourceMappingURL=vtex.controller.js.map

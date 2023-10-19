@@ -209,7 +209,7 @@ export class CommercecloudController {
     }
   }
 
-  @post('/sfcc/add-items/{baskets_id}')
+  @post('/sfcc/addItem/{baskets_id}')
   @response(200,{
     description: 'Add Products in Cart',
   })
@@ -246,20 +246,20 @@ export class CommercecloudController {
     }
   }
 
-  @patch('/sfcc/update-cart/{baskets_id}/items/{items_id}')
+  @patch('/sfcc/updateItem/{baskets_id}')
   @response(200,{
     description: 'patch update cart using baskets api',
   })
   async updateSalesforceProductItems(
     @param.path.string('baskets_id') baskets_id: any,
-    @param.path.string('items_id') items_id:any,
+    // @param.path.string('items_id') items_id:any,
     @param.header.string('token') token: string,
     @requestBody() requestBody:{quantity:any}
     ): Promise<any>{
     try{
       console.log('afreen');
       const header = this.request.headers.token;
-      const getSalesForceProducts = await this.sfccService.updateSalesforceProductItems(baskets_id,items_id,requestBody,header);
+      const getSalesForceProducts = await this.sfccService.updateSalesforceProductItems(baskets_id,requestBody,header);
       console.log('getSalesForceProductsbbbb',getSalesForceProducts);
       return this.handlepatchResponse(getSalesForceProducts)
     } 
@@ -269,17 +269,20 @@ export class CommercecloudController {
   }
 
   //Deleting Cart Items:
-  @del('/sfcc/removeItem/{basket_Id}')
+  @del('/sfcc/removeItem/{basket_Id}/items/{index_id}')
   @response(200,{
     message: "API to remove product from cart"
   })
   async removeItem(
-    @requestBody() requestBody:{itemId:[]},
+    // @requestBody() requestBody:{itemId:[]},
     @param.header.string('token') token: any,
-    @param.path.string('basket_Id') basket_Id : any
+    @param.path.string('basket_Id') basket_Id : any,
+    @param.path.string('index_id') index_id : any,
+    @param.query.string('quantity') quantity : any
+
   ): Promise<any>{
     try{
-      const data = await this.sfccService.removeItem(basket_Id,requestBody,token);
+      const data = await this.sfccService.removeItem(basket_Id,index_id,quantity,token);
       return this.handledeleteResponse(data)
     }
     catch(error){
