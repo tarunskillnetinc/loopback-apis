@@ -443,7 +443,7 @@ async getSprykerSellingProducts(): Promise<any> {
     // formData.append('client_id',"" );
     console.log(' form datA' , formData)
     try{
-      const response =  await axios.post('http://103.113.36.20:9003/token',
+      const response =  await axios.post('http://localhost:9003/token',
       formData,
       {
         headers: {
