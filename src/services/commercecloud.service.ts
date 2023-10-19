@@ -405,7 +405,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     }
     async updateSalesforceProductItems(baskets_id:any,requestBody:any,header:any):Promise<any>{
       console.log("wdawad",requestBody)
-      const endpoint = `${shopName}/dw/shop/v23_2/baskets/${baskets_id}/items/${requestBody.itemId}`;
+      const endpoint = `${shopName}/dw/shop/v23_2/baskets/${baskets_id}/items/${requestBody.indexId}`;
       console.log(endpoint,"updateSalesforceProductItems");
       const response = await this.cartUpdateFromEndpoint(endpoint,requestBody,header);
       const data = response;
@@ -518,7 +518,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
         headers: header
       });
       console.log("custome123",response);
-      return response.data;
+      return {"baskets":[{"basket_id": response.data.total== 0 ? "" : response.data.baskets[0].basket_id}]}
     }
     catch(error){
       console.log("error is", error);
