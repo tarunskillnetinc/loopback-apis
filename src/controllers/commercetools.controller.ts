@@ -69,7 +69,7 @@ export class CommercetoolsController {
     }
   }
 
-  @get("/commercetools/createCart")
+  @get("/commercetools/getCustomerCart")
   @response(200, {
     description: "Get CommerceTools cart details from the external API",
   })
