@@ -13,6 +13,14 @@ export class SprykerService  {
     @inject('datasources.spryker')
     protected dataSource: SprykerDataSource 
   ) {}
+  
+  handleErrorResponse(error: any): any {
+    return {
+      "status": error?.response.status,
+      "statusText": error?.response?.statusText,
+      "message": error?.response?.data
+    };
+  }
 
   async fetchFromEndpoint(endpoint: string): Promise<any> {
     try {
@@ -20,6 +28,7 @@ export class SprykerService  {
       return response.data;
     } catch (error) {
       console.log(error);
+      return this.handleErrorResponse(error)
       throw error;
     }
   }
@@ -423,28 +432,35 @@ async getSprykerSellingProducts(): Promise<any> {
   
   }
 
-  async login(username: string, password: string, type: string): Promise<any>{ 
+  async login(username: string, password: string): Promise<any>{ 
     try{
+    const type="password"  
     const formData = new FormData();
     formData.append('username', username);
     formData.append('password', password);
     formData.append('grant_type',type );
     // formData.append('client_id',"" );
     console.log(' form datA' , formData)
-    const response =  await axios.post('http://103.113.36.20:9003/token',
-    formData,
-    {
-      headers: {
-        "Content-Type":"application/x-www-form-urlencoded",
-      },
+    try{
+      const response =  await axios.post('http://103.113.36.20:9003/token',
+      formData,
+      {
+        headers: {
+          "Content-Type":"application/x-www-form-urlencoded",
+        },
+      }
+      );
+      const token = {customer_id:""  ,"bearerToken":response.data.access_token};
+      console.log(' respnser  datA' , response)
+      return token;
+    }catch(error){
+      return this.handleErrorResponse(error)
     }
-    );
-    const token = response.data.access_token;
-    console.log(' respnser  datA' , response)
-    return token;
+    
   }
   catch (error) {
     console.log('err' ,error);
+    return this.handleErrorResponse(error)
     throw error;
   }
     
@@ -474,6 +490,7 @@ async getSprykerSellingProducts(): Promise<any> {
       return response.data;
     } catch (error) {
       console.log('error', error);
+      return this.handleErrorResponse(error)
       throw error;
     }
   }
@@ -500,6 +517,7 @@ async getSprykerSellingProducts(): Promise<any> {
       return response.data;
     } catch (error) {
       console.log('error', error);
+      return this.handleErrorResponse(error)
       throw error;
     }
   }
@@ -547,6 +565,7 @@ async getSprykerSellingProducts(): Promise<any> {
       return finalData;
     } catch (error) {
       console.log('error', error);
+      return this.handleErrorResponse(error)
       throw error;
     }
   }
@@ -566,6 +585,7 @@ async getSprykerSellingProducts(): Promise<any> {
       return response.data;
     } catch (error) {
       console.log('error', error);
+      return this.handleErrorResponse(error)
       throw error;
     }
   }
@@ -654,6 +674,7 @@ async getSprykerSellingProducts(): Promise<any> {
       return response.data;
     } catch (error) {
       console.log('error', error);
+      return this.handleErrorResponse(error)
       throw error;
     }
 
@@ -681,6 +702,7 @@ async getSprykerSellingProducts(): Promise<any> {
     } catch (error) {
 
       console.log('error', error);
+      return this.handleErrorResponse(error)
       throw error;
     }
   }
@@ -706,6 +728,7 @@ async getSprykerSellingProducts(): Promise<any> {
       return response.data;
     } catch (error) {
       console.log('error', error);
+      return this.handleErrorResponse(error)
       throw error;
     }
 

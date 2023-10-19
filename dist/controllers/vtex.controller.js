@@ -219,50 +219,51 @@ let VtexController = exports.VtexController = class VtexController {
             const { email, password } = requestBody;
             const login = await this.vtexService.login(email, password);
             // const data = login.resp.authCookie.Value;
-            const authCookie = login.validation;
-            const session = login.session;
-            console.log('login', login.validation);
-            console.log('login1', login.session);
-            console.log('amber12', authCookie);
+            // const authCookie = login.validation;
+            // const session = login.session;
+            // console.log('login', login.validation);
+            // console.log('login1', login.session);
+            // console.log('amber12',authCookie)
             // console.log('login2', data);
             // console.log('login3', await login.data.resp.authCookie);
             // console.log('login4', await login.data.resp.accountAuthCookie);
             // console.log('login3', await login.data.session.sessionToken);
-            if ((authCookie === null || authCookie === void 0 ? void 0 : authCookie.authCookie) == undefined) {
-                return login;
-            }
-            else {
-                response.cookie('VtexIdclientAutCookie_skillnet', authCookie.authCookie.Value, {
-                    maxAge: 3600000 * 24,
-                    httpOnly: true,
-                    secure: true,
-                    sameSite: 'none',
-                    path: '/',
-                });
-                response.cookie('VtexIdclientAutCookie_13ca6e38-75b0-4070-8cf2-5a61412e4919', authCookie.accountAuthCookie.Value, {
-                    maxAge: 3600000 * 24,
-                    httpOnly: true,
-                    secure: true,
-                    sameSite: 'none',
-                    path: '/',
-                });
-                response.cookie('sessionToken', session.sessionToken, {
-                    // maxAge: 3600000*24,
-                    httpOnly: true,
-                    secure: true,
-                    sameSite: 'none',
-                    path: '/',
-                });
-                response.cookie('segmentToken', session.segmentToken, {
-                    // maxAge: 3600000*24,
-                    httpOnly: true,
-                    secure: true,
-                    sameSite: 'none',
-                    path: '/',
-                });
-                console.log("amber", login);
-                return login;
-            }
+            // if (authCookie?.authCookie==undefined) {
+            //   return login
+            // }
+            // else{
+            //   response.cookie('VtexIdclientAutCookie_skillnet', authCookie.authCookie.Value, {
+            //     maxAge: 3600000*24,
+            //     httpOnly: true,
+            //     secure: true,
+            //     sameSite: 'none',
+            //     path: '/',
+            //   });
+            //   response.cookie('VtexIdclientAutCookie_13ca6e38-75b0-4070-8cf2-5a61412e4919', authCookie.accountAuthCookie.Value, {
+            //     maxAge: 3600000*24,
+            //     httpOnly: true,
+            //     secure: true,
+            //     sameSite: 'none',
+            //     path: '/',
+            //   });
+            //   response.cookie('sessionToken', session.sessionToken, {
+            //     // maxAge: 3600000*24,
+            //     httpOnly: true,
+            //     secure: true,
+            //     sameSite: 'none',
+            //     path: '/',
+            //   });
+            //   response.cookie('segmentToken', session.segmentToken, {
+            //     // maxAge: 3600000*24,
+            //     httpOnly: true,
+            //     secure: true,
+            //     sameSite: 'none',
+            //     path: '/',
+            //   });
+            //   console.log("amber",login)
+            //   return login
+            // }
+            return login;
         }
         catch (error) {
             console.log("erroramber", error);
@@ -310,9 +311,9 @@ let VtexController = exports.VtexController = class VtexController {
         return responseObject;
     }
     //For Creating customer cart:
-    async createCustomerCart() {
+    async createCustomerCart(token, customerId) {
         try {
-            const data = await this.vtexService.createCustomerCart();
+            const data = await this.vtexService.createCustomerCart(customerId, token);
             const response = await data;
             return response;
         }
@@ -616,7 +617,7 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getAProductById", null);
 tslib_1.__decorate([
-    (0, rest_1.post)('vtex-get-or-create-cart'),
+    (0, rest_1.post)('/vtex/createCart'),
     (0, rest_1.response)(200, {
         description: "Get the current cart or create a new one if it doesn't exist yet.",
     }),
@@ -642,12 +643,14 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "testLogin", null);
 tslib_1.__decorate([
-    (0, rest_1.get)('/create-customer-cart'),
+    (0, rest_1.get)('/vtex/getCustomerCart/{customerId}'),
     (0, rest_1.response)(200, {
         description: "Create Customer Cart",
     }),
+    tslib_1.__param(0, rest_1.param.header.string('token')),
+    tslib_1.__param(1, rest_1.param.query.string('customerId')),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", []),
+    tslib_1.__metadata("design:paramtypes", [String, Object]),
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "createCustomerCart", null);
 tslib_1.__decorate([

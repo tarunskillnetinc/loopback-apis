@@ -277,7 +277,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     console.log('responseservice123', data);
     if (data.status == 200) {
       const tokenParts = data.headers.authorization.split(' ');
-      return { ...data.data, bearerToken: tokenParts[1] };
+      return { customer_id:data.data.customer_id, bearerToken: tokenParts[1] };
     } else {
       return data;
     }
@@ -480,7 +480,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     const response = this.createUserCart(endpoint,header);
     const data = await response
     console.log("thisis response",data);
-    return response;
+    return{"baskets":[{"basket_id":data.basket_id}]}
   }
   async createUserCart(endpoint:any,header:any){
     var body={}

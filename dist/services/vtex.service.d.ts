@@ -46,16 +46,16 @@ export declare class VtexService {
         status: string;
         statusText: string;
         message: string;
-        validation?: undefined;
-        session?: undefined;
+        customer_id?: undefined;
+        bearerToken?: undefined;
     } | {
-        validation: any;
-        session: any;
+        customer_id: string;
+        bearerToken: string;
         status?: undefined;
         statusText?: undefined;
         message?: undefined;
     }>;
-    createCustomerCart(): Promise<any>;
+    createCustomerCart(customerId: any, token: any): Promise<any>;
     addItems(orderFormId: any, requestBody: any): Promise<any>;
     updateCartItem(orderFormId: any, requestBody: any): Promise<any>;
     deleteCartItem(orderFormId: any, item_id: any): Promise<any>;

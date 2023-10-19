@@ -29,7 +29,7 @@ export declare class VtexController {
         email: string;
         password: string;
     }, response: Response): Promise<ResponseObject>;
-    createCustomerCart(): Promise<any>;
+    createCustomerCart(token: string, customerId?: any): Promise<any>;
     addItems(requestBody: {
         customBody: any;
     }, basket_Id: string): Promise<any>;

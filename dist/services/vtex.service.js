@@ -708,7 +708,10 @@ let VtexService = exports.VtexService = class VtexService {
                 }
             });
             const data = await response.data;
-            return data;
+            const baskets = [];
+            baskets.push({ "basket_id": data.orderFormId });
+            // return data;
+            return baskets;
         }
         catch (error) {
             return this.handleErrorResponse(error);
@@ -952,20 +955,30 @@ let VtexService = exports.VtexService = class VtexService {
             console.log("session123", session);
             validate.data.authCookie.Name = "VtexIdclientAutCookie_skillnet";
             validate.data.accountAuthCookie.Name = "VtexIdclientAutCookie_13ca6e38-75b0-4070-8cf2-5a61412e4919";
-            return {
-                validation: validate.data,
-                session: session.data,
-            };
+            const finalToken = `${validate.data.authCookie.Name}=` + `${validate.data.authCookie.Value};` + `${validate.data.accountAuthCookie.Name}=` + `${validate.data.accountAuthCookie.Value};` + `sessionToken=` + `${session.data.sessionToken};` + `segmentToken=` + `${session.data.segmentToken}`;
+            return { customer_id: "", "bearerToken": finalToken };
+            // return {
+            //   validation: validate.data,
+            //   session: session.data,
+            // };
         }
         // const validate = await this.validateLogin(email, password);
     }
     //Function to generate Customer Cart:
-    async createCustomerCart() {
-        const endpoint = `api/checkout/pub/orderForm?forceNewCart=true`;
-        const cart_response = this.fetchFromEndpoint(endpoint);
-        const order_form_id = await cart_response;
-        console.log("Cart", order_form_id.orderFormId);
-        return order_form_id;
+    async createCustomerCart(customerId, token) {
+        try {
+            console.log("customerId", customerId, "token", token);
+            const endpoint = `https://skillnet.vtexcommercestable.com.br/api/checkout/pub/orderForm`;
+            const response = await axios_1.default.post(endpoint, null, {
+                headers: {
+                    Cookie: `${token}`,
+                }
+            });
+            return response.data;
+        }
+        catch (error) {
+            return this.handleErrorResponse(error);
+        }
     }
     //Function for adding items in cart:
     async addItems(orderFormId, requestBody) {

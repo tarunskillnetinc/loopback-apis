@@ -318,7 +318,7 @@ export class VtexController {
       }
     }
 
-    @post('vtex-get-or-create-cart')
+    @post('/vtex/createCart')
     @response(200, {
       description: "Get the current cart or create a new one if it doesn't exist yet.",
     })
@@ -343,50 +343,51 @@ export class VtexController {
       const { email, password } = requestBody;
       const login = await this.vtexService.login(email, password);
       // const data = login.resp.authCookie.Value;
-      const authCookie = login.validation;
-      const session = login.session;
-      console.log('login', login.validation);
-      console.log('login1', login.session);
-      console.log('amber12',authCookie)
+      // const authCookie = login.validation;
+      // const session = login.session;
+      // console.log('login', login.validation);
+      // console.log('login1', login.session);
+      // console.log('amber12',authCookie)
       // console.log('login2', data);
       // console.log('login3', await login.data.resp.authCookie);
       // console.log('login4', await login.data.resp.accountAuthCookie);
       // console.log('login3', await login.data.session.sessionToken);
-      if (authCookie?.authCookie==undefined) {
-        return login
-      }
-      else{
-        response.cookie('VtexIdclientAutCookie_skillnet', authCookie.authCookie.Value, {
-          maxAge: 3600000*24,
-          httpOnly: true,
-          secure: true,
-          sameSite: 'none',
-          path: '/',
-        });
-        response.cookie('VtexIdclientAutCookie_13ca6e38-75b0-4070-8cf2-5a61412e4919', authCookie.accountAuthCookie.Value, {
-          maxAge: 3600000*24,
-          httpOnly: true,
-          secure: true,
-          sameSite: 'none',
-          path: '/',
-        });
-        response.cookie('sessionToken', session.sessionToken, {
-          // maxAge: 3600000*24,
-          httpOnly: true,
-          secure: true,
-          sameSite: 'none',
-          path: '/',
-        });
-        response.cookie('segmentToken', session.segmentToken, {
-          // maxAge: 3600000*24,
-          httpOnly: true,
-          secure: true,
-          sameSite: 'none',
-          path: '/',
-        });
-        console.log("amber",login)
-        return login
-      }
+      // if (authCookie?.authCookie==undefined) {
+      //   return login
+      // }
+      // else{
+      //   response.cookie('VtexIdclientAutCookie_skillnet', authCookie.authCookie.Value, {
+      //     maxAge: 3600000*24,
+      //     httpOnly: true,
+      //     secure: true,
+      //     sameSite: 'none',
+      //     path: '/',
+      //   });
+      //   response.cookie('VtexIdclientAutCookie_13ca6e38-75b0-4070-8cf2-5a61412e4919', authCookie.accountAuthCookie.Value, {
+      //     maxAge: 3600000*24,
+      //     httpOnly: true,
+      //     secure: true,
+      //     sameSite: 'none',
+      //     path: '/',
+      //   });
+      //   response.cookie('sessionToken', session.sessionToken, {
+      //     // maxAge: 3600000*24,
+      //     httpOnly: true,
+      //     secure: true,
+      //     sameSite: 'none',
+      //     path: '/',
+      //   });
+      //   response.cookie('segmentToken', session.segmentToken, {
+      //     // maxAge: 3600000*24,
+      //     httpOnly: true,
+      //     secure: true,
+      //     sameSite: 'none',
+      //     path: '/',
+      //   });
+      //   console.log("amber",login)
+      //   return login
+      // }
+      return login
     } catch (error) {
       console.log("erroramber",error)
       throw error;
@@ -444,13 +445,16 @@ export class VtexController {
   }
 
   //For Creating customer cart:
-  @get('/create-customer-cart')
+  @get('/vtex/getCustomerCart/{customerId}')
   @response(200, {
     description: "Create Customer Cart",
   })
-  async createCustomerCart():Promise<any>{
+  async createCustomerCart(
+    @param.header.string('token') token: string,
+    @param.query.string('customerId') customerId?: any,
+    ):Promise<any>{
     try{
-      const data = await this.vtexService.createCustomerCart();
+      const data = await this.vtexService.createCustomerCart(customerId,token);
       const response = await data;
       return response;
     }
