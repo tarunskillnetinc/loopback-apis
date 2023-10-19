@@ -69,7 +69,7 @@ export class CommercetoolsController {
     }
   }
 
-  @get("/commercetools/createCart")
+  @get("/commercetools/getCustomerCart")
   @response(200, {
     description: "Get CommerceTools cart details from the external API",
   })
@@ -89,7 +89,7 @@ export class CommercetoolsController {
     }
   }
 
-  @post('/commercetools/add-items/{baskets_id}')
+  @post('/commercetools/addItem/{baskets_id}')
   @response(200,{
     description: 'Add Products in Cart',
   })
@@ -108,7 +108,7 @@ export class CommercetoolsController {
     }
   }
 
-  @post('/commercetools/update-items/{baskets_id}')
+  @post('/commercetools/updateItem/{baskets_id}')
   @response(200,{
     description: 'Add Products in Cart',
   })

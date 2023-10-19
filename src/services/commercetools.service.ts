@@ -4,7 +4,7 @@ import axios from "axios";
 import {CommercetoolsDataSource} from '../datasources';
 
 
-const token = "qgjKu-_PXOZM0KKEQ874PUd3SDZYTtrr"
+const token = "AkXVYKuBVsBIcfNRKoVg5MTF3M6GzMqs"
 export class CommercetoolsProvider {
   constructor(
     // commercetools must match the name property in the datasource json file
@@ -63,7 +63,7 @@ export class CommercetoolsProvider {
         });
       });
   
-      return { ProductData: product_arr};
+      return { productData: product_arr};
     } catch (error) {
       return this.handleErrorResponse(error);
     }
@@ -95,7 +95,7 @@ export class CommercetoolsProvider {
         });
       });
   
-      return { ProductData: product_arr};
+      return { productData: product_arr};
     } catch (error) {
       return this.handleErrorResponse(error);
     }
