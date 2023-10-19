@@ -4,7 +4,12 @@ import { Response } from 'express';
 export declare class VtexController {
     private vtexService;
     private req;
-    constructor(vtexService: VtexService, req: Request);
+    private response;
+    constructor(vtexService: VtexService, req: Request, response: any);
+    handlegetResponse(response: any): any;
+    handlepostResponse(response: any): any;
+    handlepatchResponse(response: any): any;
+    handledeleteResponse(response: any): any;
     getVtexCategoryTree(): Promise<any>;
     getVtexProductDetails(productId: string): Promise<any>;
     getProductById(pid: string): Promise<any>;

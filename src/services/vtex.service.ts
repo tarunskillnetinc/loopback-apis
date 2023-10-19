@@ -264,7 +264,6 @@ export class VtexService {
     const product_variation = this.fetchFromEndpoint(endpoint1);
     const product_variation_response = await product_variation;
     console.log("danishpdp",product_variation_response)
-
     //Cross Sell products:
     let crossSellProducts:any[] = [];
     const cross_sell_endpoint = `api/catalog_system/pub/products/crossselling/similars/${pid}`;
@@ -287,8 +286,9 @@ export class VtexService {
       });
     }
 
-    //Product prices and discount:
-    product_variation_response.skus.map((items:any,index:any)=>{
+    if(product_variation_response.status==undefined){
+      //Product prices and discount:
+    product_variation_response?.skus?.map((items:any,index:any)=>{
       delete(items.measures);
       const specification_data = items.dimensions;
       if(items.hasOwnProperty("dimensions")){
@@ -320,6 +320,11 @@ export class VtexService {
     );
     // console.log("transformVtexPdp",transformVtexPdp);
     return transformVtexPdp;
+    }
+    else{
+      return this.transformVtexProductDetailPage(data,crossSellProducts)
+    }
+    
     }
   }
 
@@ -973,12 +978,13 @@ export class VtexService {
     return categoryChildren;
   }
   private transformVtexProductDetailPage(response: any,crossSellProducts:any): any {
+    console.log("res12",response)
     return {
-      productId: response.productId,
-      productName: response.name,
-      available: response.available,
-      description: response.description,
-      skus: response.skus,
+      productId: response.productId==undefined?response.Id:response.productId,
+      productName: response.name==undefined?response.Name:response.name,
+      available: response.available==undefined?response.Isvisible:response.available,
+      description: response.description==undefined?response.Description:response.description,
+      skus: response.skus==undefined?[]:response.skus,
       crossSellProduct: crossSellProducts
     };
   }
@@ -1187,7 +1193,7 @@ export class VtexService {
             Cookie: `${token}`,
           }
         });
-        return response.data;
+        return  {"baskets":[{"basket_id": response.data.orderFormId}]};
       }
       catch(error){
         return this.handleErrorResponse(error)

@@ -435,6 +435,7 @@ async getSprykerSellingProducts(): Promise<any> {
   async login(username: string, password: string): Promise<any>{ 
     try{
     const type="password"  
+    console.log("wew",username,password)
     const formData = new FormData();
     formData.append('username', username);
     formData.append('password', password);
@@ -472,7 +473,14 @@ async getSprykerSellingProducts(): Promise<any> {
     const endpoint = `/carts`;
     const response = this.cartFetchFromEndpoint(endpoint,authorizationHeader);
     const data = await response;
-    return data;
+    console.log(data.data.length==0  ,"afreen")
+    if(data.data.length == 1 ){
+      var basketId =  data.data[0].id;
+      return{"baskets":[{"basket_id":basketId}]}
+    }
+    else{
+    return{"baskets":[{"basket_id":basketId}]};
+    }
   }
 
   async cartFetchFromEndpoint(endpoint: string, authorization:string): Promise<any> {

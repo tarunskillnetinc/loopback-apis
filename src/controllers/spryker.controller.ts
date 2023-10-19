@@ -254,13 +254,14 @@ export class SprykerController {
   }
 
 
-  @get('/spryker/get-cart-id')
+  @get('/spryker/getCustomerCart/{customerId}')
     @response(200, {
       description: "Get the current cart.",
     })
 
     async getCartId( 
       @param.header.string('bearer') bearer: string,
+      @param.query.string('customerId') customerId: any,
       // @param.query.string('authorization') authorization: string,
       ):Promise<any>{
         try{

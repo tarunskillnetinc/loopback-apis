@@ -11,8 +11,54 @@ export class VtexController {
   constructor(
     @inject('services.VtexService') private vtexService: VtexService,
     @inject(RestBindings.Http.REQUEST) private req: Request,
+    @inject(RestBindings.Http.RESPONSE) private response:any  
   ) {}
-
+  handlegetResponse(response:any):any{
+    console.log("response12345667",response?.status)
+    if(response?.status!=undefined)
+    {
+      return this.response.status(response?.status).json(response)
+    }
+    else{
+      console.log("else")
+      return this.response.status(200).json(response);
+    }
+  }
+  handlepostResponse(response:any):any{
+    console.log("response123",response)
+    if(response?.status!=undefined)
+    {
+      return this.response.status(response?.status).json(response)
+    }
+    else{
+      if (response?._type=="order") {
+        return this.response.status(200).json(response)
+      }
+      else{
+      return this.response.status(201).json(response);
+      }
+    }
+  }
+  handlepatchResponse(response:any):any{
+    if(response?.status!=undefined)
+    {
+      return this.response.status(response?.status).json(response)
+    }
+    else{
+      console.log("else")
+      return this.response.status(200).json(response);
+    }
+  }
+  handledeleteResponse(response:any):any{
+    if(response?.status!=undefined)
+    {
+      return this.response.status(response?.status).json(response)
+    }
+    else{
+      console.log("else")
+      return this.response.status(204).json(response);
+    }
+  }
   @get('/vtex/category-tree')
   @response(200, {
     description: 'Get VTEX category tree from the external API',
@@ -21,7 +67,7 @@ export class VtexController {
   async getVtexCategoryTree(): Promise<any> {
     try {
       const vtexCategoryTree = await this.vtexService.getVtexCategoryTree();
-      return vtexCategoryTree;
+      return this.handlegetResponse(vtexCategoryTree)
     } catch (error) {
       throw error;
     }
@@ -33,7 +79,7 @@ export class VtexController {
   async getVtexProductDetails(@param.path.string('productId') productId: string): Promise<any> {
     try {
       const vtexProductDetails = await this.vtexService.getVtexProductDetails(productId);
-      return vtexProductDetails;
+      return this.handlegetResponse(vtexProductDetails)
     } catch (error) {
       throw error;
     }
@@ -72,6 +118,7 @@ export class VtexController {
       const data = await this.vtexService.getProductById(pid)
       const response = await data;
       console.log('danish',response);
+      return this.handlegetResponse(response)
       return response;
     }
     catch(error){
@@ -87,7 +134,7 @@ export class VtexController {
       async getVtexCollection(@param.path.string('collectionId') collectionId: string): Promise<any> {
         try {
           const vtexProductDetails = await this.vtexService.getVtexCollection(collectionId);
-          return vtexProductDetails;
+          return this.handlegetResponse(vtexProductDetails)
         } catch (error) {
           throw error;
         }
@@ -111,7 +158,7 @@ export class VtexController {
       async getVtexCartData(@param.path.string('baskets_id') baskets_id: any): Promise<any> {
         try {
           const vtexCartDetail = await this.vtexService.getVtexCartDetails(baskets_id);
-          return vtexCartDetail;
+          return this.handlegetResponse(vtexCartDetail)
         } catch (error) {
           throw error;
         }
@@ -136,7 +183,7 @@ export class VtexController {
   async getBestSellingProducts(): Promise<any> {
     try {
       const bestSellingProducts = await this.vtexService.getBestSellingProducts();
-      return bestSellingProducts;
+      return this.handlegetResponse(bestSellingProducts)
     } catch (error) {
       throw error;
     }
@@ -148,7 +195,7 @@ export class VtexController {
   async getBestSellingProductsrating(): Promise<any> {
     try {
       const bestSellingProducts = await this.vtexService.getBestSellingProductsrating();
-      return bestSellingProducts;
+      return this.handlegetResponse(bestSellingProducts)
     } catch (error) {
       throw error;
     }
@@ -161,7 +208,7 @@ export class VtexController {
   async getTopSellingProductsrating(): Promise<any> {
     try {
       const bestSellingProducts = await this.vtexService.getTopSellingProductsrating();
-      return bestSellingProducts;
+      return this.handlegetResponse(bestSellingProducts)
     } catch (error) {
       throw error;
     }
@@ -181,8 +228,7 @@ export class VtexController {
           console.log("categoryID",categoryId)
 
           const vtexProductListingPage = await this.vtexService.getVtexProducListingPage(categoryId);
-
-          return vtexProductListingPage;
+          return this.handlegetResponse(vtexProductListingPage)
 
         } catch (error) {
 
@@ -242,9 +288,7 @@ export class VtexController {
       try{
 
         const getVtexProducts = await this.vtexService.getVtexProductByCategory(categoryId,color,size,minprice,maxprice,sortbyprice,sortbyname,count,page);
-
-        return getVtexProducts;
-
+        return this.handlegetResponse(getVtexProducts)
       }
 
       catch(error){
@@ -272,7 +316,7 @@ export class VtexController {
       ): Promise<any>{
       try{
         const getVtexProducts = await this.vtexService.getVtexProductBySubCategory(subCategoryId,color,size,minprice,maxprice,sortbyprice,sortbyname,count,page);
-        return getVtexProducts;
+        return this.handlegetResponse(getVtexProducts)
       }
       catch(error){
         throw error;
@@ -296,7 +340,7 @@ export class VtexController {
       ): Promise<any>{
       try{
         const getVtexProducts = await this.vtexService.getVtexProductByQuery(query,color,size,minprice,maxprice,sortbyprice,sortbyname,count,page);
-        return getVtexProducts;
+        return this.handlegetResponse(getVtexProducts)
       }
       catch(error){
         throw error;
@@ -326,7 +370,7 @@ export class VtexController {
       try{
         const data = await this.vtexService.getOrCreateCartId(token)
         const response = await data;
-        return response;
+        return this.handlepostResponse(response)
       }
       catch(error){
         console.log(error);
@@ -387,7 +431,8 @@ export class VtexController {
       //   console.log("amber",login)
       //   return login
       // }
-      return login
+      return this.handlepostResponse(login)
+
     } catch (error) {
       console.log("erroramber",error)
       throw error;
@@ -456,7 +501,7 @@ export class VtexController {
     try{
       const data = await this.vtexService.createCustomerCart(customerId,token);
       const response = await data;
-      return response;
+      return this.handlegetResponse(response)
     }
     catch(error){
       throw error;
@@ -476,7 +521,7 @@ export class VtexController {
       console.log(requestBody);
       const data = await this.vtexService.addItems(basket_Id,requestBody);
       const response = await data;
-      return response;
+      return this.handlepostResponse(response)
     }
     catch(error){
       console.log(error);
@@ -495,7 +540,7 @@ export class VtexController {
     try{
       const data = await this.vtexService.updateCartItem(basket_id,requestBody)
       const response = await data;
-      return response;
+      return this.handlepatchResponse(response)
     }
     catch(error){
       console.log(error);
@@ -515,7 +560,7 @@ export class VtexController {
      try{
        const data = await this.vtexService.deleteCartItem(basket_Id,item_id)
        const response = await data;
-       return response;
+       return this.handledeleteResponse(response)
      }
      catch(error){
        console.log(error);
@@ -532,7 +577,7 @@ export class VtexController {
       try{
         const data = await this.vtexService.getCartItems(orderFormId);
         const response = await data;
-        return response;
+        return this.handlegetResponse(response)
       }
       catch(error){
         console.log(error);
@@ -629,7 +674,7 @@ export class VtexController {
     try {
       const userProfile = await this.vtexService.getUserProfileDetails(email);
       console.log(userProfile, "userProfile")
-      return userProfile;
+      return this.handlegetResponse(userProfile)
     } catch (error) {
         throw error;
     }
@@ -657,7 +702,7 @@ export class VtexController {
       console.log("myparentcat",parentCategory);
       const data = await this.vtexService.facetsResults(parentCategory,color,size,minprice,maxprice,sortbyprice,sortbyname,count,page);
       const response = await data;
-      return response;
+      return this.handlegetResponse(response);
     }
     catch(error){
       console.log(error);
@@ -677,7 +722,7 @@ export class VtexController {
     try{
       const data = await this.vtexService.placeOrder(basketId,requestBody);
       console.log("danishresponseis",data);
-      return data;
+      return this.handlepostResponse(data)
     }
     catch(error){
       return error;
