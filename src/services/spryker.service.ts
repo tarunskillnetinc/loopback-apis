@@ -441,17 +441,22 @@ async getSprykerSellingProducts(): Promise<any> {
     formData.append('grant_type',type );
     // formData.append('client_id',"" );
     console.log(' form datA' , formData)
-    const response =  await axios.post('http://103.113.36.20:9003/token',
-    formData,
-    {
-      headers: {
-        "Content-Type":"application/x-www-form-urlencoded",
-      },
+    try{
+      const response =  await axios.post('http://103.113.36.20:9003/token',
+      formData,
+      {
+        headers: {
+          "Content-Type":"application/x-www-form-urlencoded",
+        },
+      }
+      );
+      const token = {customer_id:""  ,"bearerToken":response.data.access_token};
+      console.log(' respnser  datA' , response)
+      return token;
+    }catch(error){
+      return this.handleErrorResponse(error)
     }
-    );
-    const token = {"bearerToken":response.data.access_token};
-    console.log(' respnser  datA' , response)
-    return token;
+    
   }
   catch (error) {
     console.log('err' ,error);
