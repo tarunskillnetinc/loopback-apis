@@ -449,8 +449,8 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
       }
     }
 
-    async removeItem(basket_Id:any,item_Id:any,quantity:any, bearer:any):Promise<any>{
-      const endpoint = `/${shopName}/dw/shop/v23_2/baskets/${basket_Id}/items/${item_Id}?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    async removeItem(basket_Id:any,index_id:any,quantity:any, bearer:any):Promise<any>{
+      const endpoint = `/${shopName}/dw/shop/v23_2/baskets/${basket_Id}/items/${index_id}?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
       const header = {
         'Authorization':`Bearer ${bearer}`
       }

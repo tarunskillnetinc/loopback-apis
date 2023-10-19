@@ -1248,8 +1248,8 @@ export class VtexService {
     }
 
     // Function for Deleting items in cart
-    async deleteCartItem(orderFormId:any,item_id:any):Promise<any>{
-      const customBody = {"orderItems":[{"quantity":'0',"index":`${item_id}`}]};
+    async deleteCartItem(orderFormId:any,index_id:any):Promise<any>{
+      const customBody = {"orderItems":[{"quantity":'0',"index":`${index_id}`}]};
       const endpoint = `api/checkout/pub/orderForm/${orderFormId}/items/update`;
       try{
         const url = `${this.dataSource.settings.baseURL}/${endpoint}`;
