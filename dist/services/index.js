@@ -7,4 +7,5 @@ tslib_1.__exportStar(require("./vtex.service"), exports);
 tslib_1.__exportStar(require("./spryker.service"), exports);
 tslib_1.__exportStar(require("./spryker.service"), exports);
 tslib_1.__exportStar(require("./commercecloud.service"), exports);
+tslib_1.__exportStar(require("./commercetools.service"), exports);
 //# sourceMappingURL=index.js.map

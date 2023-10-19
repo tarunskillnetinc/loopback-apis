@@ -4,3 +4,4 @@ export * from './vtex.service';
 export * from './spryker.service';
 export * from './spryker.service';
 export * from './commercecloud.service';
+export * from './commercetools.service';
