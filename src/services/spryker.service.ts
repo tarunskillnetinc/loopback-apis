@@ -27,7 +27,7 @@ export class SprykerService  {
       const response = await axios.get(`${this.dataSource.settings.baseURL}/${endpoint}`);
       return response.data;
     } catch (error) {
-      console.log(error);
+
       return this.handleErrorResponse(error)
       throw error;
     }
@@ -62,11 +62,9 @@ export class SprykerService  {
 
   async functionSprykerCategoryTreeLoopbackForData(responseData:any){
     var data = responseData.data;
-    console.log('aaf',responseData);
     var dataArr:any = [];
 
    await data[0]?.attributes?.abstractProducts?.map(async(responseitem:any,index:any)=>{
-    console.log('aafreen' , responseitem);
     const FinalData = await {
       attributes:{
         "sku": responseitem?.abstractSku,
@@ -115,7 +113,6 @@ export class SprykerService  {
     const response = await this.fetchFromEndpoint(endpoint);
     const data =  response.data[0];
     const value = response.data[0].attributes.valueFacets;
-    console.log('data',data)
     const product_arr:any[] = [];
     const valueFacets =
  this.getvalueFacets(value);
@@ -150,8 +147,6 @@ export class SprykerService  {
     const response = await this.fetchFromEndpoint(endpoint);
     const data = response.data[0];
     const value = response.data[0].attributes.valueFacets;
-    console.log('data', data);
-
     const product_arr: any[] = [];
     const valueFacets = this.getvalueFacets(value);
 
@@ -172,7 +167,6 @@ export class SprykerService  {
             });
         })
     );
-    console.log('product_arr', product_arr);
     return {
         "ProductData": product_arr,
         "valueFacets": valueFacets
@@ -185,8 +179,6 @@ async getSprykerNewArrivalProducts(): Promise<any> {
   const response = await this.fetchFromEndpoint(endpoint);
   const data = response.data[0];
   const value = response.data[0].attributes.valueFacets;
-  console.log('data', data);
-
   const product_arr: any[] = [];
   const valueFacets = this.getvalueFacets(value);
   await Promise.all(
@@ -203,7 +195,6 @@ async getSprykerNewArrivalProducts(): Promise<any> {
           });
       })
   );
-  console.log('product_arr', product_arr);
   return product_arr
 }
 
@@ -213,8 +204,6 @@ async getSprykerSellingProducts(): Promise<any> {
   const response = await this.fetchFromEndpoint(endpoint);
   const data = response.data[0];
   const value = response.data[0].attributes.valueFacets;
-  console.log('data', data);
-
   const product_arr: any[] = [];
   const valueFacets = this.getvalueFacets(value);
   await Promise.all(
@@ -229,7 +218,6 @@ async getSprykerSellingProducts(): Promise<any> {
           });
       })
   );
-  console.log('product_arr', product_arr);
   return product_arr
 }
   
@@ -237,9 +225,7 @@ async getSprykerSellingProducts(): Promise<any> {
   async getSprykerProductDetails(abstractId: string): Promise<any> {
     const product_arr: any[] = [];
     const endpoint = `abstract-products/${abstractId}?include=abstract-product-image-sets%2Cabstract-product-prices%2Cconcrete-product-availabilities%2Cproduct-labels%2Cproduct-options%2Cproduct-reviews%2Cproduct-measurement-units%2Csales-units%2Cbundled-products%2Cproduct-offers`;
-    // return this.fetchFromEndpoint(endpoint);
     const response = await this.fetchFromEndpoint(endpoint);
-    // console.log("abstract",response)
     await Promise.all(
       response.data.attributes.attributeMap.product_concrete_ids?.map(
         async (item: any) => {
@@ -251,10 +237,8 @@ async getSprykerSellingProducts(): Promise<any> {
       )
     );
     const finalresponse = product_arr;
-    // console.log("finalresponse",finalresponse)
     const transformedResponse =
       this.sprykertransformProductDetailPage(finalresponse);
-    // return finalresponse
     return {
     "productId":response.data.id,
     "productName":response.data.attributes.name,
@@ -298,9 +282,7 @@ async getSprykerSellingProducts(): Promise<any> {
       }
     });
 
-    // console.log("dataresponse12345567", dataresponse);
     dataresponse.map(async (item: any) => {
-      // console.log("item", item?.attributes?.sku ,"result", item?.price?.attributes?.prices[1]?.netAmount);
       const listPrice = item?.price?.attributes?.prices[1]?.netAmount;
       const discountPrice = item?.price?.attributes?.price;
       const discountPercent = Math.round(
@@ -334,7 +316,6 @@ async getSprykerSellingProducts(): Promise<any> {
     const endpoint = `catalog-search?${subCategoryId}&include=Concrete-products&${count == undefined ? `ipp=` : `ipp=${count}`}&${page == undefined ? `page=` : `page=${page}`}`;
     const response = await this.fetchFromEndpoint(endpoint);
     const data =  response.data[0];
-    console.log('data',data)
     const product_arr:any[] = [];
     await Promise.all(
       data?.attributes?.abstractProducts?.map((items:any)=>{
@@ -387,7 +368,6 @@ async getSprykerSellingProducts(): Promise<any> {
     const endpoint = `catalog-search?color=${color || ''}&price%5Bmin%5D=${minprice || ''}&price%5Bmax%5D=${maxprice || ''}&ipp=${count || ''}&page=${page || ''}&sort=${sort || ''}`;
     const response = await this.fetchFromEndpoint(endpoint);
     const data = response.data;
-    console.log('data',data[0]?.attributes?.pagination);
     const paginations = data[0]?.attributes?.pagination
     const pages ={
         count: paginations.numFound,
@@ -435,13 +415,10 @@ async getSprykerSellingProducts(): Promise<any> {
   async login(username: string, password: string): Promise<any>{ 
     try{
     const type="password"  
-    console.log("wew",username,password)
     const formData = new FormData();
     formData.append('username', username);
     formData.append('password', password);
     formData.append('grant_type',type );
-    // formData.append('client_id',"" );
-    console.log(' form datA' , formData)
     try{
       const response =  await axios.post('http://103.113.36.20:9003/token',
       formData,
@@ -452,7 +429,6 @@ async getSprykerSellingProducts(): Promise<any> {
       }
       );
       const token = {customer_id:""  ,"bearerToken":response.data.access_token};
-      console.log(' respnser  datA' , response)
       return token;
     }catch(error){
       return this.handleErrorResponse(error)
@@ -460,7 +436,6 @@ async getSprykerSellingProducts(): Promise<any> {
     
   }
   catch (error) {
-    console.log('err' ,error);
     return this.handleErrorResponse(error)
     throw error;
   }
@@ -470,7 +445,6 @@ async getSprykerSellingProducts(): Promise<any> {
 
   async getCartId(authorizationHeader: any): Promise<any> {
     const endpoint = `carts`;
-    console.log("itzzzzzzzzzzzzzzzzzkhannnnnnnn");
     const response = this.cartFetchFromEndpoint(endpoint,authorizationHeader);
     const data = await response;
     if(data.data.length == 1 ){
@@ -484,7 +458,6 @@ async getSprykerSellingProducts(): Promise<any> {
 
   async cartFetchFromEndpoint(endpoint: string, authorization:string): Promise<any> {
     try {
-    console.log("aaaashu")
       const response = await axios.get(
         (`${this.dataSource.settings.baseURL}/${endpoint}`),
         {
@@ -493,10 +466,8 @@ async getSprykerSellingProducts(): Promise<any> {
           },
         },
       );
-      console.log(response);
       return response.data;
     } catch (error) {
-      console.log('error', error);
       return this.handleErrorResponse(error)
       throw error;
     }
@@ -521,10 +492,8 @@ async getSprykerSellingProducts(): Promise<any> {
           },
         },
       );
-      console.log(response);
       return response.data;
     } catch (error) {
-      console.log('error', error);
       return this.handleErrorResponse(error)
       throw error;
     }
@@ -533,7 +502,6 @@ async getSprykerSellingProducts(): Promise<any> {
   async cartdetailFetchFromEndpoint(endpoint: string, authorization:string): Promise<any> {
     try {
       const products : any[] = [];
-      console.log(endpoint);
       const response = await axios.get(
         (`${this.dataSource.settings.baseURL}/${endpoint}`),
         {
@@ -543,12 +511,10 @@ async getSprykerSellingProducts(): Promise<any> {
         },
       );
       const data = response.data.included;
-      console.log("mydata",data)
       await Promise.all(
         data.map(async (items:any)=>{
           const endpoint_two = `http://103.113.36.20:9003/concrete-products/${items.id}?include=concrete-product-image-sets`;
           const additional_data = await axios.get(endpoint_two);
-          console.log("zayn",additional_data.data);
           products.push(
             {
               "itemId":items.id,
@@ -572,7 +538,6 @@ async getSprykerSellingProducts(): Promise<any> {
       // return response.data;
       return finalData;
     } catch (error) {
-      console.log('error', error);
       return this.handleErrorResponse(error)
       throw error;
     }
@@ -589,18 +554,14 @@ async getSprykerSellingProducts(): Promise<any> {
           },
         },
       ); 
-      console.log('aaffff',response.data);
-      console.log('deleted');
       return response.data;
     } catch (error) {
-      console.log('error', error);
       return this.handleErrorResponse(error)
       throw error;
     }
   }
 
   async postAddCartItems(baskets_id: any, reqBody: any, authorization:any): Promise<any> {
-    console.log('afren', reqBody);
     const endpoint = `carts/${baskets_id}/items`;
     var requestbody ={
       "data": {
@@ -629,7 +590,6 @@ async getSprykerSellingProducts(): Promise<any> {
     index_id: any,
     authorization:any,
   ): Promise<any> {
-    console.log('afren', authorization);
     const endpoint = `carts/${basket_id}/items/${index_id}`;
     const response = this.cartDeleteFetchFromEndpoint(endpoint, authorization);
     const data = await response;
@@ -637,7 +597,6 @@ async getSprykerSellingProducts(): Promise<any> {
   }
 
   async postUpdateCartItems(baskets_id: any, reqBody: any, authorization:any): Promise<any> {
-    console.log('afren', reqBody);
     var requestbody ={
       "data": {
           "type": "items",
@@ -655,7 +614,6 @@ async getSprykerSellingProducts(): Promise<any> {
           }
       }
   }
-  console.log("bodyyy",requestbody)
     const endpoint = `carts/${baskets_id}/items/${reqBody.itemId}`;
     const response = this.patchCartFetchFromEndpoint(endpoint,requestbody,authorization);
     const data = await response;
@@ -677,11 +635,8 @@ async getSprykerSellingProducts(): Promise<any> {
           },
         },
       );
-
-      console.log('postcartresponse', response);
       return response.data;
     } catch (error) {
-      console.log('error', error);
       return this.handleErrorResponse(error)
       throw error;
     }
@@ -703,12 +658,9 @@ async getSprykerSellingProducts(): Promise<any> {
           },
         },
       );
-      console.log('postcartresponse', response);
       return response.statusText;
 
     } catch (error) {
-
-      console.log('error', error);
       return this.handleErrorResponse(error)
       throw error;
     }
@@ -720,7 +672,6 @@ async getSprykerSellingProducts(): Promise<any> {
     authorization:any,
   ): Promise<any> {
     try {
-      console.log("url123",`http://103.113.36.20:9003/${endpoint}`)
       const response = await axios.patch(
         (`${this.dataSource.settings.baseURL}/${endpoint}`),
         reqBody,
@@ -730,11 +681,9 @@ async getSprykerSellingProducts(): Promise<any> {
           },
         },
       );
-
-      console.log('postcartresponse', response);
       return response.data;
     } catch (error) {
-      console.log('error', error);
+      
       return this.handleErrorResponse(error)
       throw error;
     }
@@ -744,7 +693,6 @@ async getSprykerSellingProducts(): Promise<any> {
 
   private getvalueFacets(response: any): any {
     const value_arr:any[] = [];
-  console.log("aafreeee",response);
     response?.map((item: any) => {
       value_arr.push({
          name: item.name,
@@ -766,7 +714,6 @@ async getSprykerUsersData(customerId: any, authorization: any): Promise<any> {
   const endpoint2 = `/customers`
   const newData = await this.cartFetchFromEndpoint(endpoint2,authorization)
   const EmailData = newData.data[0] || {};
-  console.log('newData',newData);
   // Extract user profile data
 
   const userProfile = {
@@ -798,12 +745,10 @@ async getSprykerUsersData(customerId: any, authorization: any): Promise<any> {
     userProfile,
     availableAddresses,
   };
-  console.log("object", formattedData);
   return formattedData;
 }
 
 async postCheckoutData(reqBody: any, authorization: any): Promise<any> {
-  console.log('afren', reqBody);
   const endpoint = `checkout-data?include=shipments%2Cshipment-methods%2Caddresses%2Cpayment-methods%2Citems`;
 
   const response = this.postCartFetchFromEndpoint(
@@ -834,7 +779,6 @@ async postCheckoutData(reqBody: any, authorization: any): Promise<any> {
 }
 
 async postCheckoutorder(reqBody: any, authorization: any): Promise<any> {
-  console.log('afren', reqBody);
   const endpoint =`checkout`;
 
   const response = this.postCartFetchFromEndpoint(
