@@ -43,8 +43,8 @@ let VtexService = exports.VtexService = class VtexService {
             const response = await axios_1.default.get(`https://hometest--skillnet.myvtex.com/${endpoint}`, {
                 headers: {
                     Accept: 'application/json',
-                    'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
-                    'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+                    'X-VTEX-API-AppToken': vtexAppToken,
+                    'X-VTEX-API-AppKey': vtexAppKey,
                 },
             });
             return response.data;
