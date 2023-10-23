@@ -4,7 +4,12 @@ import { Response } from 'express';
 export declare class VtexController {
     private vtexService;
     private req;
-    constructor(vtexService: VtexService, req: Request);
+    private response;
+    constructor(vtexService: VtexService, req: Request, response: any);
+    handlegetResponse(response: any): any;
+    handlepostResponse(response: any): any;
+    handlepatchResponse(response: any): any;
+    handledeleteResponse(response: any): any;
     getVtexCategoryTree(): Promise<any>;
     getVtexProductDetails(productId: string): Promise<any>;
     getProductById(pid: string): Promise<any>;
@@ -36,7 +41,7 @@ export declare class VtexController {
     updateCartItem(requestBody: {
         orderItems: any;
     }, basket_id: string): Promise<any>;
-    deleteCartItem(basket_Id: string, item_id: string): Promise<any>;
+    deleteCartItem(basket_Id: string, index_id: string): Promise<any>;
     getCartItems(orderFormId: string): Promise<any>;
     getSfBestSellingProducts(): Promise<any>;
     salesForceProduct(productId: string): Promise<any>;

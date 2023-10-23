@@ -205,6 +205,7 @@ let VtexService = exports.VtexService = class VtexService {
         return this.fetchFromEndpoint(endpoint);
     }
     async getProductById(pid) {
+        var _a;
         const endpoint = `api/catalog/pvt/product/${pid}`;
         const response = this.fetchFromEndpoint(endpoint);
         const data = await response;
@@ -238,32 +239,37 @@ let VtexService = exports.VtexService = class VtexService {
                     crossSellProducts.push(cross_sell_product);
                 });
             }
-            //Product prices and discount:
-            product_variation_response.skus.map((items, index) => {
-                delete (items.measures);
-                const specification_data = items.dimensions;
-                if (items.hasOwnProperty("dimensions")) {
-                    items["specifications"] = specification_data;
-                    delete (items.dimensions);
-                }
-                var dollerAmount_list_price = items.listPriceFormated;
-                var dollerAmount_sell_price = items.bestPriceFormated;
-                var numericValueListPrice = dollerAmount_list_price.replace(/[$,]/g, '');
-                var numericValueSellPrice = dollerAmount_sell_price.replace(/[$,]/g, '');
-                var intValue_list_price = parseInt(numericValueListPrice, 10);
-                var intValue_sell_price = parseInt(numericValueSellPrice);
-                var intValue_discount = Math.round(intValue_list_price - intValue_sell_price);
-                var intValue_discount_percentage = Math.round((intValue_discount / intValue_list_price) * 100);
-                items.discountValue = intValue_discount;
-                items.discountPercentage = intValue_discount_percentage;
-                console.log("mylistPrice", intValue_list_price, "mysellprice", intValue_sell_price);
-            });
-            product_variation_response['categoryId'] = data.CategoryId;
-            product_variation_response['brandId'] = data.BrandId;
-            product_variation_response['description'] = data.Description;
-            const transformVtexPdp = this.transformVtexProductDetailPage(product_variation_response, crossSellProducts);
-            // console.log("transformVtexPdp",transformVtexPdp);
-            return transformVtexPdp;
+            if (product_variation_response.status == undefined) {
+                //Product prices and discount:
+                (_a = product_variation_response === null || product_variation_response === void 0 ? void 0 : product_variation_response.skus) === null || _a === void 0 ? void 0 : _a.map((items, index) => {
+                    delete (items.measures);
+                    const specification_data = items.dimensions;
+                    if (items.hasOwnProperty("dimensions")) {
+                        items["specifications"] = specification_data;
+                        delete (items.dimensions);
+                    }
+                    var dollerAmount_list_price = items.listPriceFormated;
+                    var dollerAmount_sell_price = items.bestPriceFormated;
+                    var numericValueListPrice = dollerAmount_list_price.replace(/[$,]/g, '');
+                    var numericValueSellPrice = dollerAmount_sell_price.replace(/[$,]/g, '');
+                    var intValue_list_price = parseInt(numericValueListPrice, 10);
+                    var intValue_sell_price = parseInt(numericValueSellPrice);
+                    var intValue_discount = Math.round(intValue_list_price - intValue_sell_price);
+                    var intValue_discount_percentage = Math.round((intValue_discount / intValue_list_price) * 100);
+                    items.discountValue = intValue_discount;
+                    items.discountPercentage = intValue_discount_percentage;
+                    console.log("mylistPrice", intValue_list_price, "mysellprice", intValue_sell_price);
+                });
+                product_variation_response['categoryId'] = data.CategoryId;
+                product_variation_response['brandId'] = data.BrandId;
+                product_variation_response['description'] = data.Description;
+                const transformVtexPdp = this.transformVtexProductDetailPage(product_variation_response, crossSellProducts);
+                // console.log("transformVtexPdp",transformVtexPdp);
+                return transformVtexPdp;
+            }
+            else {
+                return this.transformVtexProductDetailPage(data, crossSellProducts);
+            }
         }
     }
     async getVtexCartDetails(cartId) {
@@ -789,12 +795,13 @@ let VtexService = exports.VtexService = class VtexService {
         return categoryChildren;
     }
     transformVtexProductDetailPage(response, crossSellProducts) {
+        console.log("res12", response);
         return {
-            productId: response.productId,
-            productName: response.name,
-            available: response.available,
-            description: response.description,
-            skus: response.skus,
+            productId: response.productId == undefined ? response.Id : response.productId,
+            productName: response.name == undefined ? response.Name : response.name,
+            available: response.available == undefined ? response.Isvisible : response.available,
+            description: response.description == undefined ? response.Description : response.description,
+            skus: response.skus == undefined ? [] : response.skus,
             crossSellProduct: crossSellProducts
         };
     }
@@ -974,7 +981,7 @@ let VtexService = exports.VtexService = class VtexService {
                     Cookie: `${token}`,
                 }
             });
-            return response.data;
+            return { "baskets": [{ "basket_id": response.data.orderFormId }] };
         }
         catch (error) {
             return this.handleErrorResponse(error);
@@ -1020,8 +1027,8 @@ let VtexService = exports.VtexService = class VtexService {
         }
     }
     // Function for Deleting items in cart
-    async deleteCartItem(orderFormId, item_id) {
-        const customBody = { "orderItems": [{ "quantity": '0', "index": `${item_id}` }] };
+    async deleteCartItem(orderFormId, index_id) {
+        const customBody = { "orderItems": [{ "quantity": '0', "index": `${index_id}` }] };
         const endpoint = `api/checkout/pub/orderForm/${orderFormId}/items/update`;
         try {
             const url = `${this.dataSource.settings.baseURL}/${endpoint}`;

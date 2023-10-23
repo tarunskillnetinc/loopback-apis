@@ -435,6 +435,7 @@ async getSprykerSellingProducts(): Promise<any> {
   async login(username: string, password: string): Promise<any>{ 
     try{
     const type="password"  
+    console.log("wew",username,password)
     const formData = new FormData();
     formData.append('username', username);
     formData.append('password', password);
@@ -472,7 +473,14 @@ async getSprykerSellingProducts(): Promise<any> {
     const endpoint = `/carts`;
     const response = this.cartFetchFromEndpoint(endpoint,authorizationHeader);
     const data = await response;
-    return data;
+    console.log(data.data.length==0  ,"afreen")
+    if(data.data.length == 1 ){
+      var basketId =  data.data[0].id;
+      return{"baskets":[{"basket_id":basketId}]}
+    }
+    else{
+    return{"baskets":[{"basket_id":""}]};
+    }
   }
 
   async cartFetchFromEndpoint(endpoint: string, authorization:string): Promise<any> {
@@ -617,11 +625,11 @@ async getSprykerSellingProducts(): Promise<any> {
 
   async postDeleteCartItems(
     basket_id: any,
-    itemId: any,
+    index_id: any,
     authorization:any,
   ): Promise<any> {
     console.log('afren', authorization);
-    const endpoint = `carts/${basket_id}/items/${itemId}`;
+    const endpoint = `carts/${basket_id}/items/${index_id}`;
     const response = this.cartDeleteFetchFromEndpoint(endpoint, authorization);
     const data = await response;
     return data;
@@ -633,7 +641,7 @@ async getSprykerSellingProducts(): Promise<any> {
       "data": {
           "type": "items",
           "attributes": {
-              "sku": reqBody.itemId,
+              "sku": reqBody.indexId,
               "quantity": reqBody.quantity,
               "merchantReference": "MER000001",
               "salesUnit": {

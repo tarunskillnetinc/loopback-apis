@@ -254,13 +254,14 @@ export class SprykerController {
   }
 
 
-  @get('/spryker/get-cart-id')
+  @get('/spryker/getCustomerCart/{customerId}')
     @response(200, {
       description: "Get the current cart.",
     })
 
     async getCartId( 
       @param.header.string('bearer') bearer: string,
+      @param.query.string('customerId') customerId: any,
       // @param.query.string('authorization') authorization: string,
       ):Promise<any>{
         try{
@@ -372,21 +373,21 @@ export class SprykerController {
       }
     }
 
-@del('/spryker/removeItem/{basket_Id}/items/{item_Id}')
+@del('/spryker/removeItem/{basket_Id}/items/{index_id}')
     @response(200, {
       description: "Delete Item in the current cart.",
     })
 
  async postDeleteCartItem(
       @param.path.string('basket_id') basket_id: string,
-      @param.path.string('itemId') itemId: string,
+      @param.path.string('index_id') index_id: string,
       @param.header.string('token') token: string,
       ):Promise<any>{
         try{
           console.log("cartID",basket_id)
-        console.log("itemID",itemId)
+        console.log("itemID",index_id)
         const header = this.request.headers.token;
-        const data = await this.sprykerService.postDeleteCartItems(basket_id,itemId,header);
+        const data = await this.sprykerService.postDeleteCartItems(basket_id,index_id,header);
         const response = data;
         return this.handledeleteResponse(response)
       }

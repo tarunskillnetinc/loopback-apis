@@ -359,7 +359,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
       products.sort((a, b) => a.price - b.price);
        console.log("shubham",response) 
       const cartTotals = {
-        CartTotal: response.order_total
+        CartTotal: response.product_total
         // Items: response.product_total,
         // Discounts: response.order_total - response.product_total,
         // Shipping: response.shipping_total,
@@ -405,7 +405,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     }
     async updateSalesforceProductItems(baskets_id:any,requestBody:any,header:any):Promise<any>{
       console.log("wdawad",requestBody)
-      const endpoint = `${shopName}/dw/shop/v23_2/baskets/${baskets_id}/items/${requestBody.itemId}`;
+      const endpoint = `${shopName}/dw/shop/v23_2/baskets/${baskets_id}/items/${requestBody.indexId}`;
       console.log(endpoint,"updateSalesforceProductItems");
       const response = await this.cartUpdateFromEndpoint(endpoint,requestBody,header);
       const data = response;
@@ -449,8 +449,8 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
       }
     }
 
-    async removeItem(basket_Id:any,item_Id:any,quantity:any, bearer:any):Promise<any>{
-      const endpoint = `/${shopName}/dw/shop/v23_2/baskets/${basket_Id}/items/${item_Id}?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    async removeItem(basket_Id:any,index_id:any,quantity:any, bearer:any):Promise<any>{
+      const endpoint = `/${shopName}/dw/shop/v23_2/baskets/${basket_Id}/items/${index_id}?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
       const header = {
         'Authorization':`Bearer ${bearer}`
       }
@@ -518,7 +518,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
         headers: header
       });
       console.log("custome123",response);
-      return response.data;
+      return {"baskets":[{"basket_id": response.data.total== 0 ? "" : response.data.baskets[0].basket_id}]}
     }
     catch(error){
       console.log("error is", error);
