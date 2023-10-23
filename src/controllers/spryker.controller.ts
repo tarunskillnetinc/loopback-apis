@@ -24,7 +24,6 @@ export class SprykerController {
   ) {}
 
   handlegetResponse(response:any):any{
-    console.log("response12345667",response?.status)
     if(response?.status!=undefined)
     {
       return this.response.status(response?.status).json(response)
@@ -35,7 +34,6 @@ export class SprykerController {
     }
   }
   handlepostResponse(response:any):any{
-    console.log("response123",response)
     if(response?.status!=undefined)
     {
       return this.response.status(response?.status).json(response)
@@ -260,16 +258,13 @@ export class SprykerController {
     })
 
     async getCartId( 
-      @param.header.string('bearer') bearer: string,
+      @param.header.string('token') token: string,
       @param.query.string('customerId') customerId: any,
       // @param.query.string('authorization') authorization: string,
       ):Promise<any>{
         try{
-       const headers = this.request.headers.bearer;
-      console.log('Authorization Header:', headers);
+       const headers = this.request.headers.token;
         const data = await this.sprykerService.getCartId(headers);
-        console.log("response12356",data)
-
         const response = data;
         return this.handlepostResponse(response)
       }
@@ -286,7 +281,7 @@ export class SprykerController {
     })
 
     async createCart( 
-      @param.header.string('bearer') bearer: string,
+      @param.header.string('token') token: string,
       // @requestBody() requestBody: { data:any }
       ):Promise<any>{
         try{
@@ -379,7 +374,7 @@ export class SprykerController {
     })
 
  async postDeleteCartItem(
-      @param.path.string('basket_id') basket_id: string,
+      @param.path.string('basket_Id') basket_id: string,
       @param.path.string('index_id') index_id: string,
       @param.header.string('token') token: string,
       ):Promise<any>{
@@ -410,7 +405,6 @@ export class SprykerController {
       @requestBody() requestBody:{data:any},
       ):Promise<any>{
         try{
-          console.log("cartID",basket_id)
         const header = this.request.headers.token;
         const data = await this.sprykerService.postUpdateCartItems(basket_id,requestBody,header);
         const response = data;
@@ -432,9 +426,7 @@ export class SprykerController {
        ): Promise<any> {
        try {
          const header = this.request.headers.bearer;
-         console.log("header",header)
          const sprykerUserDetail = await this.sprykerService.getSprykerUsersData(customerId,header);
-         console.log("sprykerUserDetail",sprykerUserDetail)
          return this.handlegetResponse(sprykerUserDetail)
        } catch (error) {
          throw error;
@@ -459,7 +451,6 @@ async postCheckoutData(
     return this.handlepostResponse(response)
   }
   catch(error){
-    console.log("error1234",error);
     return error.response.data
     throw error;
   }
