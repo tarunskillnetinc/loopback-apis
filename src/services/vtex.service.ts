@@ -4,8 +4,9 @@ import {VtexDataSource} from '../datasources';
 import FormData = require('form-data');
 import {response} from '@loopback/rest';
 import { CountSchema } from '@loopback/repository';
-
-
+require('dotenv').config();
+const vtexAppToken=process.env.VTEX_APP_TOKEN
+const vtexAppKey=process.env.VTEX_APP_KEY
 @injectable()
 export class VtexService {
   constructor(
@@ -20,8 +21,8 @@ export class VtexService {
           headers: {
             Accept: 'application/json',
             'X-VTEX-API-AppToken':
-              'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
-            'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+            vtexAppToken,
+            'X-VTEX-API-AppKey': vtexAppKey,
           },
         },
       );
@@ -49,8 +50,8 @@ export class VtexService {
           headers: {
             Accept: 'application/json',
             'X-VTEX-API-AppToken':
-              'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
-            'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+            vtexAppToken,
+            'X-VTEX-API-AppKey': vtexAppKey,
           },
         },
       );
@@ -81,8 +82,8 @@ export class VtexService {
         headers: {
           Accept: 'application/json',
           'X-VTEX-API-AppToken':
-            'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
-          'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+            vtexAppToken,
+            'X-VTEX-API-AppKey': vtexAppKey,
         },
       });
       return response.data;
@@ -420,9 +421,9 @@ export class VtexService {
 
             'Content-Type':'application/json',
 
-            'X-VTEX-API-AppKey':'vtexappkey-skillnet-VOZXMR',
-
-            'X-VTEX-API-AppToken':'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT'
+            'X-VTEX-API-AppToken':
+            vtexAppToken,
+            'X-VTEX-API-AppKey': vtexAppKey,
 
           }
 
@@ -479,9 +480,9 @@ export class VtexService {
 
             'Content-Type':'application/json',
 
-            'X-VTEX-API-AppKey':'vtexappkey-skillnet-VOZXMR',
-
-            'X-VTEX-API-AppToken':'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT'
+            'X-VTEX-API-AppToken':
+            vtexAppToken,
+            'X-VTEX-API-AppKey': vtexAppKey,
 
           }
 
@@ -880,7 +881,7 @@ export class VtexService {
 
   async getOrCreateCartId(token:any): Promise<any> {
     try{
-      const endpoint = `https://skillnet.vtexcommercestable.com.br/api/checkout/pub/orderForm?forceNewCart=true`;
+      const endpoint = `${this.dataSource.settings.baseURL}/api/checkout/pub/orderForm?forceNewCart=true`;
       const response = await axios.post(endpoint,null,{
         headers:{
           Cookie: `${token}`,
@@ -918,7 +919,7 @@ export class VtexService {
   private CategroychildrenDataloopback(response: any): any {
     const categoryChildren: any = [];
     response?.map(async (childitem: any) => {
-      const endpoint = `https://skillnet.vtexcommercestable.com.br/api/io/_v/api/intelligent-search/product_search/category-2/${childitem.name}`;
+      const endpoint = `${this.dataSource.settings.baseURL}/api/io/_v/api/intelligent-search/product_search/category-2/${childitem.name}`;
       const response = await this.vtexCategoryTreeLoopbackFetchFromEndpoint(
         endpoint,
       );
@@ -1164,7 +1165,7 @@ export class VtexService {
     //Function to generate Customer Cart:
     async createCustomerCart(customerId:any,token:any): Promise<any>{
       try{
-        const endpoint = `https://skillnet.vtexcommercestable.com.br/api/checkout/pub/orderForm`;
+        const endpoint = `${this.dataSource.settings.baseURL}/api/checkout/pub/orderForm`;
         const response = await axios.post(endpoint,null,{
           headers:{
             Cookie: `${token}`,
@@ -1187,8 +1188,9 @@ export class VtexService {
         {
           headers: {
             Accept: 'application/json',
-            'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
-            'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+            'X-VTEX-API-AppToken':
+            vtexAppToken,
+            'X-VTEX-API-AppKey': vtexAppKey,
           }
         }
         );
@@ -1210,8 +1212,9 @@ export class VtexService {
           {
             headers: {
               Accept: 'application/json',
-              'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
-              'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+              'X-VTEX-API-AppToken':
+            vtexAppToken,
+            'X-VTEX-API-AppKey': vtexAppKey,
             }
           }
         );
@@ -1233,8 +1236,9 @@ export class VtexService {
           {
             headers: {
               Accept: 'application/json',
-              'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
-              'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+              'X-VTEX-API-AppToken':
+            vtexAppToken,
+            'X-VTEX-API-AppKey': vtexAppKey,
             }
           }
         );
@@ -1471,8 +1475,8 @@ export class VtexService {
       const headers = {
         Accept: 'application/json',
         'X-VTEX-API-AppToken':
-          'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
-        'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+            vtexAppToken,
+            'X-VTEX-API-AppKey': vtexAppKey,
       };
       const response = await axios.post(`${this.dataSource.settings.baseURL}/${endpoint}`,requestBody,{headers});
       return response.data;
@@ -1497,8 +1501,8 @@ export class VtexService {
     try{
       const headers = {
         'X-VTEX-API-AppToken':
-          'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
-        'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+            vtexAppToken,
+            'X-VTEX-API-AppKey': vtexAppKey,
       };
       const response = await axios.post(`https://skillnet.vtexpayments.com.br/${endpoint}`,[requestBody],{headers});
       return response.data;
