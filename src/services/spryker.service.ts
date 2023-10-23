@@ -469,11 +469,10 @@ async getSprykerSellingProducts(): Promise<any> {
 
 
   async getCartId(authorizationHeader: any): Promise<any> {
-    console.log('afrein',authorizationHeader);
-    const endpoint = `/carts`;
+    const endpoint = `carts`;
+    console.log("itzzzzzzzzzzzzzzzzzkhannnnnnnn");
     const response = this.cartFetchFromEndpoint(endpoint,authorizationHeader);
     const data = await response;
-    console.log(data.data.length==0  ,"afreen")
     if(data.data.length == 1 ){
       var basketId =  data.data[0].id;
       return{"baskets":[{"basket_id":basketId}]}
@@ -487,7 +486,7 @@ async getSprykerSellingProducts(): Promise<any> {
     try {
     console.log("aaaashu")
       const response = await axios.get(
-        `http://103.113.36.20:9003${endpoint}`,
+        (`${this.dataSource.settings.baseURL}/${endpoint}`),
         {
           headers: {
             'Authorization':`Bearer ${authorization}`,
@@ -504,7 +503,7 @@ async getSprykerSellingProducts(): Promise<any> {
   }
 
   async getSprykerCartDetails(cartId: any,authorizationHeader:any): Promise<any> {
-    const endpoint = `/carts/${cartId}?include=items`;
+    const endpoint = `carts/${cartId}?include=items`;
     return this.cartdetailFetchFromEndpoint(endpoint,authorizationHeader);
   }
 
@@ -512,8 +511,9 @@ async getSprykerSellingProducts(): Promise<any> {
     try {
       const formData = new FormData();
     // formData.append('data', data);
+    const endpoint = `carts`
       const response = await axios.post(
-        `http://103.113.36.20:9003/carts`,
+        (`${this.dataSource.settings.baseURL}/${endpoint}`),
       data,
         {
           headers: {
@@ -535,7 +535,7 @@ async getSprykerSellingProducts(): Promise<any> {
       const products : any[] = [];
       console.log(endpoint);
       const response = await axios.get(
-        `http://103.113.36.20:9003${endpoint}`,
+        (`${this.dataSource.settings.baseURL}/${endpoint}`),
         {
           headers: {
             'Authorization':`Bearer ${authorization}`,
@@ -580,8 +580,9 @@ async getSprykerSellingProducts(): Promise<any> {
 
   async deleteCart(cartId: string, authorization:any): Promise<any> {
     try {
+      const endpoint = `carts/${cartId}` 
       const response = await axios.delete(
-        `http://103.113.36.20:9003/carts/${cartId}`,
+        (`${this.dataSource.settings.baseURL}/${endpoint}`),
         {
           headers: {
             'Authorization':`Bearer ${authorization}`,
@@ -667,9 +668,8 @@ async getSprykerSellingProducts(): Promise<any> {
     authorization:any,
   ): Promise<any> {
     try {
-      console.log("url123",`http://103.113.36.20:9003/${endpoint}`)
       const response = await axios.post(
-        `http://103.113.36.20:9003/${endpoint}`,
+        (`${this.dataSource.settings.baseURL}/${endpoint}`),
         reqBody,
         {
           headers: {
@@ -694,9 +694,8 @@ async getSprykerSellingProducts(): Promise<any> {
   ): Promise<any> {
 
     try {
-      console.log("url123",`http://103.113.36.20:9003/${endpoint}`)
       const response = await axios.delete(
-        `http://103.113.36.20:9003/${endpoint}`,
+        (`${this.dataSource.settings.baseURL}/${endpoint}`),
         {
           headers: {
             Authorization:
@@ -723,7 +722,7 @@ async getSprykerSellingProducts(): Promise<any> {
     try {
       console.log("url123",`http://103.113.36.20:9003/${endpoint}`)
       const response = await axios.patch(
-        `http://103.113.36.20:9003/${endpoint}`,
+        (`${this.dataSource.settings.baseURL}/${endpoint}`),
         reqBody,
         {
           headers: {
