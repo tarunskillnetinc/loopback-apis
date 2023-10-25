@@ -374,11 +374,16 @@ let VtexService = exports.VtexService = class VtexService {
             });
             const response_with_rating = await data_with_rating;
             const product_price_response = await this.fetchFromEndpoint(endpoint_two);
-            items.basePrice = product_price_response.basePrice;
-            items.listPrice = product_price_response.costPrice;
-            items.rating_avg = response_with_rating.data.average;
-            items.rating_count = response_with_rating.data.totalCount;
-            emptyarray.push({ ...items });
+            emptyarray.push({
+                productId: items.ProductId,
+                skuId: items.SkuId,
+                productName: items.ProductName,
+                skuImageUrl: items.SkuImageUrl,
+                basePrice: product_price_response.basePrice,
+                listPrice: product_price_response.costPrice,
+                rating_avg: response_with_rating.data.average,
+                rating_count: response_with_rating.data.totalCount
+            });
             return items; // Return the updated item
         }));
         // return this.fetchFromEndpoint(endpoint);

@@ -455,64 +455,44 @@ export class VtexService {
 
   }
   async getTopSellingProductsrating(): Promise<any> {
-
     const endpoint = `api/catalog/pvt/collection/147/products`;
-
     const response =  this.fetchFromEndpoint(endpoint);
-
     const data = await response;
-
     var emptyarray:any[]=[]
 
- 
-
     await Promise.all(
-
       data.Data.map(async (items: any) => {
-
         const endpoint_two = `api/pricing/prices/${items.SkuId}`;
-
         const endpoint_three = `https://skillnet.myvtex.com/reviews-and-ratings/api/rating/${items.ProductId}`;
-
         const data_with_rating = await axios.get(endpoint_three,{
-
           headers:{
-
             'Content-Type':'application/json',
-
             'X-VTEX-API-AppToken':
             vtexAppToken,
             'X-VTEX-API-AppKey': vtexAppKey,
-
           }
-
         });
 
         const response_with_rating = await data_with_rating;
-
         const product_price_response = await this.fetchFromEndpoint(endpoint_two);
 
-        items.basePrice = product_price_response.basePrice;
-
-        items.listPrice = product_price_response.costPrice;
-
-        items.rating_avg = response_with_rating.data.average;
-
-        items.rating_count = response_with_rating.data.totalCount;
-
-        emptyarray.push({ ...items });
-
+        emptyarray.push({
+          productId: items.ProductId,
+          skuId: items.SkuId,
+          productName: items.ProductName,
+          skuImageUrl: items.SkuImageUrl,
+          basePrice : product_price_response.basePrice,
+          listPrice : product_price_response.costPrice,
+          rating_avg : response_with_rating.data.average,
+          rating_count : response_with_rating.data.totalCount
+        })
         return items; // Return the updated item
-
       })
-
     );
-
     // return this.fetchFromEndpoint(endpoint);
-
     return emptyarray;
-
   }
+  
   async getNewSellingProducts(): Promise<any> {
     const endpoint = `api/catalog/pvt/collection/137/products`;
     const response =  this.fetchFromEndpoint(endpoint);
