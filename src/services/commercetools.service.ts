@@ -310,25 +310,25 @@ export class CommercetoolsProvider {
       console.log('data', data);
   
       const products = [] as Array<{
-        ProductId: string;
-        SkuId: string;
-        ProductName: string;
-        SkuImageUrl: string;
+        productId: string;
+        skuId: string;
+        productName: string;
+        skuImageUrl: string;
         listPrice: number;
         basePrice: number;
       }>;
   
       data.results.forEach((result: any) => {
-        console.log('result', result);
+        console.log('result', result);    
         const product = result.product.obj;
         const masterVariant = product.masterData.current.masterVariant;
         const price = masterVariant.prices.find((price: any) => price.country === "US"); // Assuming you want the price in USD
   
         const productInfo = {
-          ProductId: product.id,
-          SkuId: masterVariant.sku,
-          ProductName: product.masterData.current.name['en-US'],
-          SkuImageUrl: masterVariant.images[0].url, // Assuming you want the first image
+          productId: product.id,
+          skuId: masterVariant.sku,
+          productName: product.masterData.current.name['en-US'],
+          skuImageUrl: masterVariant.images[0].url, // Assuming you want the first image
           listPrice: price.value.centAmount / 100, // Convert centAmount to dollars
           basePrice: price.value.centAmount / 100, // Convert centAmount to dollars
         };

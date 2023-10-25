@@ -66,10 +66,10 @@ export class CommercecloudService {
         const data = await response;
 
         return data.hits.map((hit: any) => ({
-            ProductId: hit.product_id,
-            SkuId: hit.product_id,
-            ProductName: hit.product_name,
-            SkuImageUrl:  hit.image.link ,
+            productId: hit.product_id,
+            skuId: hit.product_id,
+            productName: hit.product_name,
+            skuImageUrl:  hit.image.link ,
             listPrice: hit.price,
             basePrice: hit.price,
         }));

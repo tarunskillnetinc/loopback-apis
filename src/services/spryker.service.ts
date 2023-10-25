@@ -186,10 +186,10 @@ async getSprykerNewArrivalProducts(): Promise<any> {
           const productImages = items?.images.map((image: any) => image.externalUrlLarge);
 
           product_arr.push({
-              ProductId: items?.abstractSku,
-              SkuId: items?.abstractSku,
-              ProductName: items?.abstractName,
-              SkuImageUrl:  items?.images[0].externalUrlLarge, // Product images as a list
+              productId: items?.abstractSku,
+              skuId: items?.abstractSku,
+              productName: items?.abstractName,
+              skuImageUrl:  items?.images[0].externalUrlLarge, // Product images as a list
               listPrice: items?.prices[0].DEFAULT,
               basePrice: items?.prices[0].DEFAULT,
           });
@@ -209,10 +209,10 @@ async getSprykerSellingProducts(): Promise<any> {
   await Promise.all(
       data?.attributes?.abstractProducts?.map((items: any) => {
           product_arr.push({
-              ProductId: items?.abstractSku,
-              SkuId: items?.abstractSku,
-              ProductName: items?.abstractName,
-              SkuImageUrl:  items?.images[0].externalUrlLarge, // Product images as a list
+              productId: items?.abstractSku,
+              skuId: items?.abstractSku,
+              productName: items?.abstractName,
+              skuImageUrl:  items?.images[0].externalUrlLarge, // Product images as a list
               listPrice: items?.prices[0].DEFAULT,
               basePrice: items?.prices[0].DEFAULT,
           });
