@@ -29,7 +29,6 @@ export class SprykerController {
       return this.response.status(response?.status).json(response)
     }
     else{
-      console.log("else")
       return this.response.status(200).json(response);
     }
   }
@@ -53,7 +52,6 @@ export class SprykerController {
       return this.response.status(response?.status).json(response)
     }
     else{
-      console.log("else")
       return this.response.status(200).json(response);
     }
   }
@@ -63,7 +61,6 @@ export class SprykerController {
       return this.response.status(response?.status).json(response)
     }
     else{
-      console.log("else")
       return this.response.status(204).json(response);
     }
   }
@@ -246,7 +243,6 @@ export class SprykerController {
       const login = await this.sprykerService.login(email==undefined?"":email, password==undefined?"":password);
       return this.handlepostResponse(login)
     } catch (error) {
-      console.log('error controller', error)
       throw error;
     }
   }
@@ -269,7 +265,6 @@ export class SprykerController {
         return this.handlepostResponse(response)
       }
       catch(error){
-        console.log(error);
         throw error;
         
       }
@@ -302,7 +297,6 @@ export class SprykerController {
         return this.handlepostResponse(response)
       }
       catch(error){
-        console.log(error);
         throw error;
       }
     }
@@ -340,7 +334,6 @@ export class SprykerController {
         return this.handledeleteResponse(response)
       }
       catch(error){
-        console.log(error);
         throw error;
       }
     }
@@ -362,7 +355,6 @@ export class SprykerController {
         return this.handlepostResponse(response)    
       }
       catch(error){
-        console.log("error1234",error);
         return error.response.data
         throw error;
       }
@@ -379,15 +371,12 @@ export class SprykerController {
       @param.header.string('token') token: string,
       ):Promise<any>{
         try{
-          console.log("cartID",basket_id)
-        console.log("itemID",index_id)
         const header = this.request.headers.token;
         const data = await this.sprykerService.postDeleteCartItems(basket_id,index_id,header);
         const response = data;
         return this.handledeleteResponse(response)
       }
       catch(error){
-        console.log("error1234",error.response.data);
         return error.response
         throw error;
       }
@@ -411,7 +400,6 @@ export class SprykerController {
         return this.handlepatchResponse(response)
       }
       catch(error){
-        console.log("error1234",error.response.data);
         return error.response
         throw error;
       }
@@ -472,7 +460,6 @@ async postCheckoutOrder(
     return this.handlepostResponse(response)
   }
   catch(error){
-    console.log("error1234",error);
     return error.response.data
     throw error;
   }
