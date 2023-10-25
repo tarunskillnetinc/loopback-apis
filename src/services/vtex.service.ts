@@ -433,27 +433,23 @@ export class VtexService {
 
         const product_price_response = await this.fetchFromEndpoint(endpoint_two);
 
-        items.basePrice = product_price_response.basePrice;
+  emptyarray.push({
+    productId: items.ProductId,
+    skuId: items.SkuId,
+    productName: items.ProductName,
+    skuImageUrl: items.SkuImageUrl,
+    basePrice : product_price_response.basePrice,
+    listPrice : product_price_response.costPrice,
+    rating_avg : response_with_rating.data.average,
+    rating_count : response_with_rating.data.totalCount
+  })
+  return items; // Return the updated item
+})
+);
+// return this.fetchFromEndpoint(endpoint);
+return emptyarray;
+}
 
-        items.listPrice = product_price_response.costPrice;
-
-        items.rating_avg = response_with_rating.data.average;
-
-        items.rating_count = response_with_rating.data.totalCount;
-
-        emptyarray.push({ ...items });
-
-        return items; // Return the updated item
-
-      })
-
-    );
-
-    // return this.fetchFromEndpoint(endpoint);
-
-    return emptyarray;
-
-  }
   async getTopSellingProductsrating(): Promise<any> {
     const endpoint = `api/catalog/pvt/collection/147/products`;
     const response =  this.fetchFromEndpoint(endpoint);
@@ -492,7 +488,7 @@ export class VtexService {
     // return this.fetchFromEndpoint(endpoint);
     return emptyarray;
   }
-  
+
   async getNewSellingProducts(): Promise<any> {
     const endpoint = `api/catalog/pvt/collection/137/products`;
     const response =  this.fetchFromEndpoint(endpoint);
