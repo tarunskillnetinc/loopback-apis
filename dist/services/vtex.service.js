@@ -6,6 +6,9 @@ const core_1 = require("@loopback/core");
 const axios_1 = tslib_1.__importDefault(require("axios"));
 const datasources_1 = require("../datasources");
 const FormData = require("form-data");
+require('dotenv').config();
+const vtexAppToken = process.env.VTEX_APP_TOKEN;
+const vtexAppKey = process.env.VTEX_APP_KEY;
 let VtexService = exports.VtexService = class VtexService {
     constructor(dataSource) {
         this.dataSource = dataSource;
@@ -15,8 +18,8 @@ let VtexService = exports.VtexService = class VtexService {
             const response = await axios_1.default.get(`${this.dataSource.settings.baseURL}/${endpoint}`, {
                 headers: {
                     Accept: 'application/json',
-                    'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
-                    'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+                    'X-VTEX-API-AppToken': vtexAppToken,
+                    'X-VTEX-API-AppKey': vtexAppKey,
                 },
             });
             return response.data;
@@ -40,8 +43,8 @@ let VtexService = exports.VtexService = class VtexService {
             const response = await axios_1.default.get(`https://hometest--skillnet.myvtex.com/${endpoint}`, {
                 headers: {
                     Accept: 'application/json',
-                    'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
-                    'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+                    'X-VTEX-API-AppToken': vtexAppToken,
+                    'X-VTEX-API-AppKey': vtexAppKey,
                 },
             });
             return response.data;
@@ -70,8 +73,8 @@ let VtexService = exports.VtexService = class VtexService {
             const response = await axios_1.default.get(`${endpoint}`, { timeout: 100000,
                 headers: {
                     Accept: 'application/json',
-                    'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
-                    'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+                    'X-VTEX-API-AppToken': vtexAppToken,
+                    'X-VTEX-API-AppKey': vtexAppKey,
                 },
             });
             return response.data;
@@ -209,7 +212,6 @@ let VtexService = exports.VtexService = class VtexService {
         const endpoint = `api/catalog/pvt/product/${pid}`;
         const response = this.fetchFromEndpoint(endpoint);
         const data = await response;
-        console.log("smber", data);
         if (data.status != undefined) {
             return data;
         }
@@ -217,7 +219,6 @@ let VtexService = exports.VtexService = class VtexService {
             const endpoint1 = `api/catalog_system/pub/products/variations/${data.Id}`;
             const product_variation = this.fetchFromEndpoint(endpoint1);
             const product_variation_response = await product_variation;
-            console.log("danishpdp", product_variation_response);
             //Cross Sell products:
             let crossSellProducts = [];
             const cross_sell_endpoint = `api/catalog_system/pub/products/crossselling/similars/${pid}`;
@@ -227,7 +228,6 @@ let VtexService = exports.VtexService = class VtexService {
                 crossSellProducts;
             }
             else {
-                console.log("crooss_sell", cross_sell_data);
                 cross_sell_data.map((items) => {
                     let cross_sell_product = {
                         "productId": items.productId,
@@ -258,7 +258,6 @@ let VtexService = exports.VtexService = class VtexService {
                     var intValue_discount_percentage = Math.round((intValue_discount / intValue_list_price) * 100);
                     items.discountValue = intValue_discount;
                     items.discountPercentage = intValue_discount_percentage;
-                    console.log("mylistPrice", intValue_list_price, "mysellprice", intValue_sell_price);
                 });
                 product_variation_response['categoryId'] = data.CategoryId;
                 product_variation_response['brandId'] = data.BrandId;
@@ -302,7 +301,6 @@ let VtexService = exports.VtexService = class VtexService {
             };
             products.push(products_data);
         }));
-        console.log("mytotalizers", data);
         //For Totals:
         let totalizers = { "CartTotal": (data.value) / 100 };
         const final_result = { "products": products, "totalizers": totalizers };
@@ -343,8 +341,8 @@ let VtexService = exports.VtexService = class VtexService {
             const data_with_rating = await axios_1.default.get(endpoint_three, {
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
-                    'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT'
+                    'X-VTEX-API-AppToken': vtexAppToken,
+                    'X-VTEX-API-AppKey': vtexAppKey,
                 }
             });
             const response_with_rating = await data_with_rating;
@@ -370,8 +368,8 @@ let VtexService = exports.VtexService = class VtexService {
             const data_with_rating = await axios_1.default.get(endpoint_three, {
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
-                    'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT'
+                    'X-VTEX-API-AppToken': vtexAppToken,
+                    'X-VTEX-API-AppKey': vtexAppKey,
                 }
             });
             const response_with_rating = await data_with_rating;
@@ -707,7 +705,7 @@ let VtexService = exports.VtexService = class VtexService {
     }
     async getOrCreateCartId(token) {
         try {
-            const endpoint = `https://skillnet.vtexcommercestable.com.br/api/checkout/pub/orderForm?forceNewCart=true`;
+            const endpoint = `${this.dataSource.settings.baseURL}/api/checkout/pub/orderForm?forceNewCart=true`;
             const response = await axios_1.default.post(endpoint, null, {
                 headers: {
                     Cookie: `${token}`,
@@ -734,20 +732,17 @@ let VtexService = exports.VtexService = class VtexService {
         };
     }
     vtextransformCategoryTreeloopback(response) {
-        // console.log("response1234",response)
         const categoryTreemap = [];
         response === null || response === void 0 ? void 0 : response.map(async (item, index) => {
             var childrendata = this.CategroychildrenDataloopback(item.children);
-            // console.log("dwadawdaw",childrendata)
             categoryTreemap.push(childrendata);
         });
-        // console.log("categoryTreemap",categoryTreemap)
         return categoryTreemap;
     }
     CategroychildrenDataloopback(response) {
         const categoryChildren = [];
         response === null || response === void 0 ? void 0 : response.map(async (childitem) => {
-            const endpoint = `https://skillnet.vtexcommercestable.com.br/api/io/_v/api/intelligent-search/product_search/category-2/${childitem.name}`;
+            const endpoint = `${this.dataSource.settings.baseURL}/api/io/_v/api/intelligent-search/product_search/category-2/${childitem.name}`;
             const response = await this.vtexCategoryTreeLoopbackFetchFromEndpoint(endpoint);
             if (response) {
                 categoryChildren.push({
@@ -760,7 +755,6 @@ let VtexService = exports.VtexService = class VtexService {
         return categoryChildren;
     }
     vtextransformCategoryTree(response) {
-        // console.log("response1234",response)
         const categoryTreemap = [];
         response === null || response === void 0 ? void 0 : response.map(async (item, index) => {
             // item.children.map(async (childitem: any) => {
@@ -795,7 +789,6 @@ let VtexService = exports.VtexService = class VtexService {
         return categoryChildren;
     }
     transformVtexProductDetailPage(response, crossSellProducts) {
-        console.log("res12", response);
         return {
             productId: response.productId == undefined ? response.Id : response.productId,
             productName: response.name == undefined ? response.Name : response.name,
@@ -855,7 +848,6 @@ let VtexService = exports.VtexService = class VtexService {
         formData.append('user', email);
         try {
             const response = await axios_1.default.post('https://skillnet.myvtex.com/api/vtexid/pub/authentication/startlogin', formData);
-            console.log('response', response);
             return response;
         }
         catch (error) {
@@ -888,7 +880,6 @@ let VtexService = exports.VtexService = class VtexService {
                 },
             });
             const token = response.data.authenticationToken;
-            console.log("token", token);
             return response;
         }
         catch (error) {
@@ -897,14 +888,12 @@ let VtexService = exports.VtexService = class VtexService {
     }
     async validateLogins(email, password, auth) {
         try {
-            console.log("auth", auth);
             const formData = new FormData();
             formData.append("login", email);
             formData.append("password", password);
             formData.append("recaptcha", "");
             formData.append("fingerprint", "");
             const authToken = "_vss=" + auth;
-            console.log("authToken", authToken);
             const response = await axios_1.default.post("https://skillnet.myvtex.com/api/vtexid/pub/authentication/classic/validate", formData, {
                 headers: {
                     accept: "*/*",
@@ -915,7 +904,6 @@ let VtexService = exports.VtexService = class VtexService {
                     Cookie: authToken,
                 },
             });
-            console.log("response", formData);
             return response;
         }
         catch (error) {
@@ -931,7 +919,6 @@ let VtexService = exports.VtexService = class VtexService {
                         response.accountAuthCookie.Value)}`,
                 },
             });
-            console.log("sessionreponse123", sessionresponse);
             // const data:any = {
             //   resp:response,
             //   session:sessionresponse.data,
@@ -945,11 +932,8 @@ let VtexService = exports.VtexService = class VtexService {
     }
     async login(email, password) {
         const start = await this.vtexlogin(email);
-        console.log("start", start);
         const auth = await start.data.authenticationToken;
-        console.log("auth2454", email, password, auth);
         const validate = await this.validateLogins(email, password, auth);
-        console.log("validate123", validate);
         if (await validate.data.authStatus != "Success") {
             return {
                 "status": "401",
@@ -959,7 +943,6 @@ let VtexService = exports.VtexService = class VtexService {
         }
         else {
             const session = await this.createSession(validate.data);
-            console.log("session123", session);
             validate.data.authCookie.Name = "VtexIdclientAutCookie_skillnet";
             validate.data.accountAuthCookie.Name = "VtexIdclientAutCookie_13ca6e38-75b0-4070-8cf2-5a61412e4919";
             const finalToken = `${validate.data.authCookie.Name}=` + `${validate.data.authCookie.Value};` + `${validate.data.accountAuthCookie.Name}=` + `${validate.data.accountAuthCookie.Value};` + `sessionToken=` + `${session.data.sessionToken};` + `segmentToken=` + `${session.data.segmentToken}`;
@@ -974,8 +957,7 @@ let VtexService = exports.VtexService = class VtexService {
     //Function to generate Customer Cart:
     async createCustomerCart(customerId, token) {
         try {
-            console.log("customerId", customerId, "token", token);
-            const endpoint = `https://skillnet.vtexcommercestable.com.br/api/checkout/pub/orderForm`;
+            const endpoint = `${this.dataSource.settings.baseURL}/api/checkout/pub/orderForm`;
             const response = await axios_1.default.post(endpoint, null, {
                 headers: {
                     Cookie: `${token}`,
@@ -995,8 +977,8 @@ let VtexService = exports.VtexService = class VtexService {
             const response = await axios_1.default.post(`${this.dataSource.settings.baseURL}/${endpoint}`, newBody, {
                 headers: {
                     Accept: 'application/json',
-                    'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
-                    'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+                    'X-VTEX-API-AppToken': vtexAppToken,
+                    'X-VTEX-API-AppKey': vtexAppKey,
                 }
             });
             return response.data;
@@ -1011,15 +993,13 @@ let VtexService = exports.VtexService = class VtexService {
         const endpoint = `api/checkout/pub/orderForm/${orderFormId}/items/update`;
         try {
             const url = `${this.dataSource.settings.baseURL}/${endpoint}`;
-            console.log('urlis', url);
             const response = await axios_1.default.post(`${this.dataSource.settings.baseURL}/${endpoint}`, newBody, {
                 headers: {
                     Accept: 'application/json',
-                    'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
-                    'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+                    'X-VTEX-API-AppToken': vtexAppToken,
+                    'X-VTEX-API-AppKey': vtexAppKey,
                 }
             });
-            console.log('updateCartItems', response);
             return response.data;
         }
         catch (error) {
@@ -1035,8 +1015,8 @@ let VtexService = exports.VtexService = class VtexService {
             const response = await axios_1.default.post(`${this.dataSource.settings.baseURL}/${endpoint}`, customBody, {
                 headers: {
                     Accept: 'application/json',
-                    'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
-                    'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+                    'X-VTEX-API-AppToken': vtexAppToken,
+                    'X-VTEX-API-AppKey': vtexAppKey,
                 }
             });
             return response.data;
@@ -1055,9 +1035,7 @@ let VtexService = exports.VtexService = class VtexService {
     async sfBestSelling() {
         const endpoint = `shop/v23_2/product_search?refine=cgid%3Dmens&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b&expand=images%2Cprices%2Cavailability%2Cvariations`;
         const response = await this.fetchSfFromEndpoint(endpoint);
-        // console.log('response', response.hits)
         const data = await response;
-        console.log('res', data);
         const products = [];
         for (const hit of data.hits) {
             const ProductId = hit.product_id;
@@ -1065,10 +1043,6 @@ let VtexService = exports.VtexService = class VtexService {
             const SkuImageUrl = hit.image.link; // Extract image URL
             const listPrice = hit.price; // Extract the price and name it as listPrice
             const basePrice = hit.price;
-            console.log('Product ID:', ProductId);
-            console.log('Product Name:', ProductName);
-            console.log('Product Image:', SkuImageUrl);
-            console.log('List Price:', listPrice);
             products.push({
                 ProductId,
                 skuId: ProductId,
@@ -1078,14 +1052,12 @@ let VtexService = exports.VtexService = class VtexService {
                 basePrice
             });
         }
-        console.log('Products:', products);
         return products;
     }
     async salesForceProduct(pid) {
         const endpoint = `shop/v23_2/products/${pid}?null=null&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b&expand=images%2Cprices%2Cavailability%2Cvariations%2Cpromotions%2Cset_products&all_images=true`;
         const response = await this.fetchSfFromEndpoint(endpoint);
         const data = await response; // Parse JSON response
-        console.log('res', data);
         const productId = data.id;
         const name = data.name;
         const available = data.inventory.orderable;
@@ -1096,9 +1068,6 @@ let VtexService = exports.VtexService = class VtexService {
             const availableQuantity = data.inventory.stock_level;
             const listPriceFormated = variant.price_per_unit;
             const listPrice = variant.price;
-            console.log('listPrice', variant.inventory);
-            console.log('listPriceVal', data);
-            console.log('listPriceValdsd', data.image_groups[0].images[0].link);
             const image = data.image_groups[0].images[0].link;
             const sellerId = variant.sellerId;
             const seller = variant.seller;
@@ -1137,7 +1106,6 @@ let VtexService = exports.VtexService = class VtexService {
         let facets_colors;
         let facets_size;
         let prices;
-        console.log("color", color, size);
         if (color) {
             facets_colors = color.replace(/,/g, "/color/");
         }
@@ -1147,13 +1115,9 @@ let VtexService = exports.VtexService = class VtexService {
         if (minprice && maxprice) {
             prices = true;
         }
-        console.log('prices', prices);
-        console.log("colors are", facets_colors);
-        console.log("sizes are", facets_size);
         const endpoint = `api/io/_v/api/intelligent-search/product_search/category-2/${category}/${prices ? `price/${minprice}:${maxprice}` : ""}${facets_colors != undefined ? `/color/${facets_colors}` : ""}/${facets_size ? `size/${facets_size}` : ""}?${sortbyprice ? `sort=price:${sortbyprice}` : ""}&${sortbyname ? `sort=name:${sortbyname}` : ""}&${count ? `count=${count}` : ""}&${page ? `page=${page}` : ""}`;
         const response = this.fetchFromEndpoint(endpoint);
         const data = await response;
-        console.log("response is", data);
         filteredData["products"] = data.products;
         filteredData["recordsFiltered"] = data.recordsFiltered;
         if (page < data.pagination.count) {
@@ -1180,7 +1144,6 @@ let VtexService = exports.VtexService = class VtexService {
         const endpoint = `api/checkout/pub/profiles/?email=${email}`;
         const response = this.fetchFromEndpoint(endpoint);
         const data = await response;
-        console.log("data", data);
         const formattedData = {
             userProfile: {
                 email: `${data.userProfile.email}`,
@@ -1201,14 +1164,12 @@ let VtexService = exports.VtexService = class VtexService {
     }
     //Function for getting filter results for parent categories:
     async facetsResults(parentCategory, color, size, minprice, maxprice, sortbyprice, sortbyname, count, page) {
-        console.log("parentcat", parentCategory);
         let filteredData = {};
         let nextIndex;
         let prevIndex;
         let facets_colors;
         let facets_size;
         let prices;
-        console.log("color", color, size);
         if (color) {
             facets_colors = color.replace(/,/g, "/color/");
         }
@@ -1221,10 +1182,8 @@ let VtexService = exports.VtexService = class VtexService {
         const endpoint = `api/io/_v/api/intelligent-search/product_search/category-1/${parentCategory}/${prices ? `price/${minprice}:${maxprice}` : ""}${facets_colors != undefined ? `/color/${facets_colors}` : ""}/${facets_size ? `size/${facets_size}` : ""}?${sortbyprice ? `sort=price:${sortbyprice}` : ""}${sortbyname ? `sort=name:${sortbyname}` : ""}${count ? `count=${count}` : ""}${page ? `page=${page}` : ""}`;
         const response = this.fetchFromEndpoint(endpoint);
         const data = await response;
-        console.log("response is", data);
         filteredData["products"] = data.products;
         filteredData["recordsFiltered"] = data.recordsFiltered;
-        console.log("pageis", page, "total", data.pagination.totalPages);
         if (page < data.pagination.count) {
             //@ts-ignore
             nextIndex = Number(page) + 1;
@@ -1247,11 +1206,9 @@ let VtexService = exports.VtexService = class VtexService {
     }
     //Function for Placing an Order from existing cart:
     async placeOrder(basketId, requestBody) {
-        console.log("mybody", requestBody);
         const endpoint = `api/checkout/pub/orderForm/${basketId}/transaction`;
         try {
             const response = await this.placeOrderEndpoint(endpoint, requestBody);
-            console.log("kskkk", response);
             return response;
         }
         catch (error) {
@@ -1262,11 +1219,10 @@ let VtexService = exports.VtexService = class VtexService {
         try {
             const headers = {
                 Accept: 'application/json',
-                'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
-                'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+                'X-VTEX-API-AppToken': vtexAppToken,
+                'X-VTEX-API-AppKey': vtexAppKey,
             };
             const response = await axios_1.default.post(`${this.dataSource.settings.baseURL}/${endpoint}`, requestBody, { headers });
-            console.log("responseis", response.data);
             return response.data;
         }
         catch (error) {
@@ -1278,26 +1234,19 @@ let VtexService = exports.VtexService = class VtexService {
         const endpoint = `api/pub/transactions/${transactionId}/payments`;
         try {
             const response = await this.approvePaymentEndpoint(endpoint, requestBody);
-            // console.log("payment approved",response);
-            console.log("number1", response);
             return { message: "Payment Approved" };
-            // return response;
         }
         catch (error) {
             return this.handleErrorResponse(error);
         }
     }
     async approvePaymentEndpoint(endpoint, requestBody) {
-        console.log("mybody", requestBody);
         try {
             const headers = {
-                'X-VTEX-API-AppToken': 'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
-                'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+                'X-VTEX-API-AppToken': vtexAppToken,
+                'X-VTEX-API-AppKey': vtexAppKey,
             };
-            console.log("number2");
-            console.log("myurlis", `https://skillnet.vtexpayments.com.br/${endpoint}`);
             const response = await axios_1.default.post(`https://skillnet.vtexpayments.com.br/${endpoint}`, [requestBody], { headers });
-            console.log("mynewData", response);
             return response.data;
         }
         catch (error) {

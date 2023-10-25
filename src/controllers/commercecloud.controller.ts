@@ -658,4 +658,24 @@ export class CommercecloudController {
        throw error;
      }
    }
+
+
+   //checkout test
+   @post('/sfcc/CheckoutDetails/{baskets_id}')
+  @response(200,{
+    description: 'Get Salesforce Payment Methods',
+  })
+  async CheckoutDetails(
+    @requestBody() requestBody: {},
+    @param.header.string('token') token: string,
+    ): Promise<any>{
+    try{
+      const header = this.request.headers.token;
+      const getSalesForceProducts = await this.sfccService.CheckoutDetails(requestBody,header);
+      return this.handlegetResponse(getSalesForceProducts)
+    }
+    catch(error){
+      throw error;
+    }
+  }
 }

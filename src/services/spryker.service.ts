@@ -420,7 +420,8 @@ async getSprykerSellingProducts(): Promise<any> {
     formData.append('password', password);
     formData.append('grant_type',type );
     try{
-      const response =  await axios.post('http://103.113.36.20:9003/token',
+      const endpoint = `token`;
+      const response =  await axios.post((`${this.dataSource.settings.baseURL}/${endpoint}`),
       formData,
       {
         headers: {
