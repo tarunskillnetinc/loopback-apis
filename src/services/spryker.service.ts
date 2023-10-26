@@ -119,11 +119,11 @@ export class SprykerService  {
     await Promise.all(
       data?.attributes?.abstractProducts?.map((items:any)=>{
         product_arr.push({
-        product_id:items?.abstractSku,
-        sku_id:items?.abstractSku,
-        product_name:items?.abstractName,
-        product_image:items?.images[0].externalUrlLarge,
-        product_price: {
+        productId:items?.abstractSku,
+        skuId:items?.abstractSku,
+        productName:items?.abstractName,
+        productImage:items?.images[0].externalUrlLarge,
+        productPrice: {
           "listPrice": items?.prices[0].grossAmount,
           "sellingPrice": items?.prices[0].DEFAULT,
         },
@@ -291,10 +291,10 @@ async getSprykerSellingProducts(): Promise<any> {
       skuresponse.push({
          
         sku: item?.attributes?.sku,
-        skuname: item?.attributes?.name,
+        skuName: item?.attributes?.name,
         dimensions: " ",
         available: item?.availability?.attributes?.availability,
-        availablequantity: item?.availability?.attributes?.quantity,
+        availableQuantity: item?.availability?.attributes?.quantity,
         listPriceFormated: item?.price?.attributes?.prices[0].currency.symbol+ (listPrice?listPrice/100:discountPrice/100),
         listPrice: listPrice?listPrice:discountPrice,
         bestPriceFormated: item?.price?.attributes?.prices[0].currency.symbol+ discountPrice/100,
@@ -353,7 +353,7 @@ async getSprykerSellingProducts(): Promise<any> {
     const modifyData = data[0]?.attributes?.abstractProducts?.map((item: any) => {
       return {
         
-        sku_id: item.abstractSku,
+        skuId: item.abstractSku,
         ProductName: item.abstractName,
         productPrice: item.price,
         url: item.url,

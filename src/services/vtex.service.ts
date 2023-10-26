@@ -578,18 +578,18 @@ return emptyarray;
 
         product_arr.push({
 
-          product_id:items?.productId,
+          productId:items?.productId,
 
-          sku_id:items?.productId,
+          skuId:items?.productId,
 
-         product_name:items?.productName,
+         productName:items?.productName,
 
-        product_image:items?.items[0]?.images[0].imageUrl,
+        productImage:items?.items[0]?.images[0].imageUrl,
 
-        product_rating:"",
+        productRating:"",
 
         //@ts-ignore
-        product_price:{"sellingPrice":sales_price,"listPrice":list_price,"discount":Number(list_price-sales_price),"discountPercentage":new_discount_percentage},
+        productPrice:{"sellingPrice":sales_price,"listPrice":list_price,"discount":Number(list_price-sales_price),"discountPercentage":new_discount_percentage},
 
         })
 
@@ -694,14 +694,14 @@ return emptyarray;
         })
 
         product_arr.push({
-          product_id:items?.productId,
-          sku_id:items?.productId,
-          product_name:items?.productName,
-          product_image:items?.items[0]?.images[0].imageUrl,
-          product_rating:"",
-          product_price:items?.priceRange,
+          productId:items?.productId,
+          skuId:items?.productId,
+          productName:items?.productName,
+          productImage:items?.items[0]?.images[0].imageUrl,
+          productRating:"",
+          productPrice:items?.priceRange,
           //@ts-ignore
-          product_price:{"sellingPrice":sales_price,"listPrice":list_price,"discount":Number(list_price-sales_price),"discountPercentage":new_discount_percentage},
+          productPrice:{"sellingPrice":sales_price,"listPrice":list_price,"discount":Number(list_price-sales_price),"discountPercentage":new_discount_percentage},
         })
       })
     )
@@ -804,13 +804,13 @@ return emptyarray;
         })
 
         product_arr.push({
-          product_id:items?.productId,
-          sku_id:items?.productId,
-          product_name:items?.productName,
-          product_image:items?.items[0]?.images[0].imageUrl,
-          product_rating:"",
+          productId:items?.productId,
+          skuId:items?.productId,
+          productName:items?.productName,
+          productImage:items?.items[0]?.images[0].imageUrl,
+          productRating:"",
           //@ts-ignore
-          product_price:{"sellingPrice":sales_price,"listPrice":list_price,"discount":Number(list_price-sales_price),"discountPercentage":new_discount_percentage},
+          productPrice:{"sellingPrice":sales_price,"listPrice":list_price,"discount":Number(list_price-sales_price),"discountPercentage":new_discount_percentage},
         })
       })
     )

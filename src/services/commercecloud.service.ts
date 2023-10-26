@@ -169,11 +169,11 @@ async searchByFacets(
     const valueFacets = this.getRefinementValue(value);
     response?.hits?.map((items: any) => {
       product_arr.push({
-        product_id: items?.product_id,
-        sku_id: items?.product_id,
-        product_name: items?.product_name,
-        product_image: items?.image?.dis_base_link,
-        product_price: {
+        productId: items?.product_id,
+        skuId: items?.product_id,
+        productName: items?.product_name,
+        productImage: items?.image?.dis_base_link,
+        productPrice: {
           listPrice: items?.price,
           sellingPrice: ' ',
           discount: ' ',
@@ -205,11 +205,11 @@ async getSalesforceProductBysubCategory(subcategoryId: any): Promise<any> {
     const data = response;
     response?.hits?.map((items: any) => {
       product_arr.push({
-        product_id: items?.product_id,
-        sku_id: items?.product_id,
-        product_name: items?.product_name,
-        product_image: items?.image.dis_base_link,
-        product_price: {
+        productId: items?.product_id,
+        skuId: items?.product_id,
+        productName: items?.product_name,
+        productImage: items?.image.dis_base_link,
+        productPrice: {
           listPrice: items?.price,
           sellingPrice: null,
           discount: null,
@@ -249,10 +249,10 @@ private async getVariationData(response: any): Promise<any[]> {
       const response = await this.fetchFromEndpoint(endpoint);
       skuData.push({
         sku: response?.id,
-        skuname: response?.name,
+        skuName: response?.name,
         specifications: response?.variation_values,
         available: response?.inventory?.orderable,
-        availablequantity: response?.inventory?.ats,
+        availableQuantity: response?.inventory?.ats,
         listPriceFormated: currencySymbol(response?.currency) + response?.price,
         listPrice: response?.price,
         bestPriceFormated:
@@ -1013,11 +1013,11 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
       const valueFacets = this.getRefinementValue(value);
       response?.hits?.map((items: any) => {
         product_arr.push({
-          product_id: items?.product_id,
-          sku_id: items?.product_id,
-          product_name: items?.product_name,
-          product_image: items?.image?.dis_base_link,
-          product_price: {
+          productId: items?.product_id,
+          skuId: items?.product_id,
+          productName: items?.product_name,
+          productImage: items?.image?.dis_base_link,
+          productPrice: {
             listPrice: items?.price,
             sellingPrice: ' ',
             discount: ' ',

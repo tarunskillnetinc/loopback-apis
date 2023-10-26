@@ -466,13 +466,13 @@ let VtexService = exports.VtexService = class VtexService {
                 });
             });
             product_arr.push({
-                product_id: items === null || items === void 0 ? void 0 : items.productId,
-                sku_id: items === null || items === void 0 ? void 0 : items.productId,
-                product_name: items === null || items === void 0 ? void 0 : items.productName,
-                product_image: (_a = items === null || items === void 0 ? void 0 : items.items[0]) === null || _a === void 0 ? void 0 : _a.images[0].imageUrl,
-                product_rating: "",
+                productId: items === null || items === void 0 ? void 0 : items.productId,
+                skuId: items === null || items === void 0 ? void 0 : items.productId,
+                productName: items === null || items === void 0 ? void 0 : items.productName,
+                productImage: (_a = items === null || items === void 0 ? void 0 : items.items[0]) === null || _a === void 0 ? void 0 : _a.images[0].imageUrl,
+                productRating: "",
                 //@ts-ignore
-                product_price: { "sellingPrice": sales_price, "listPrice": list_price, "discount": Number(list_price - sales_price), "discountPercentage": new_discount_percentage },
+                productPrice: { "sellingPrice": sales_price, "listPrice": list_price, "discount": Number(list_price - sales_price), "discountPercentage": new_discount_percentage },
             });
         }));
         let nextIndex;
@@ -565,14 +565,14 @@ let VtexService = exports.VtexService = class VtexService {
                 });
             });
             product_arr.push({
-                product_id: items === null || items === void 0 ? void 0 : items.productId,
-                sku_id: items === null || items === void 0 ? void 0 : items.productId,
-                product_name: items === null || items === void 0 ? void 0 : items.productName,
-                product_image: (_a = items === null || items === void 0 ? void 0 : items.items[0]) === null || _a === void 0 ? void 0 : _a.images[0].imageUrl,
-                product_rating: "",
-                product_price: items === null || items === void 0 ? void 0 : items.priceRange,
+                productId: items === null || items === void 0 ? void 0 : items.productId,
+                skuId: items === null || items === void 0 ? void 0 : items.productId,
+                productName: items === null || items === void 0 ? void 0 : items.productName,
+                productImage: (_a = items === null || items === void 0 ? void 0 : items.items[0]) === null || _a === void 0 ? void 0 : _a.images[0].imageUrl,
+                productRating: "",
+                productPrice: items === null || items === void 0 ? void 0 : items.priceRange,
                 //@ts-ignore
-                product_price: { "sellingPrice": sales_price, "listPrice": list_price, "discount": Number(list_price - sales_price), "discountPercentage": new_discount_percentage },
+                productPrice: { "sellingPrice": sales_price, "listPrice": list_price, "discount": Number(list_price - sales_price), "discountPercentage": new_discount_percentage },
             });
         }));
         //For Pagination:
@@ -665,13 +665,13 @@ let VtexService = exports.VtexService = class VtexService {
                 });
             });
             product_arr.push({
-                product_id: items === null || items === void 0 ? void 0 : items.productId,
-                sku_id: items === null || items === void 0 ? void 0 : items.productId,
-                product_name: items === null || items === void 0 ? void 0 : items.productName,
-                product_image: (_a = items === null || items === void 0 ? void 0 : items.items[0]) === null || _a === void 0 ? void 0 : _a.images[0].imageUrl,
-                product_rating: "",
+                productId: items === null || items === void 0 ? void 0 : items.productId,
+                skuId: items === null || items === void 0 ? void 0 : items.productId,
+                productName: items === null || items === void 0 ? void 0 : items.productName,
+                productImage: (_a = items === null || items === void 0 ? void 0 : items.items[0]) === null || _a === void 0 ? void 0 : _a.images[0].imageUrl,
+                productRating: "",
                 //@ts-ignore
-                product_price: { "sellingPrice": sales_price, "listPrice": list_price, "discount": Number(list_price - sales_price), "discountPercentage": new_discount_percentage },
+                productPrice: { "sellingPrice": sales_price, "listPrice": list_price, "discount": Number(list_price - sales_price), "discountPercentage": new_discount_percentage },
             });
         }));
         //Pagination:
