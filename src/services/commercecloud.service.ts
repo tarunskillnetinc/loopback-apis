@@ -4,9 +4,10 @@ import axios from "axios";
 import { CommercecloudDataSource } from "../datasources";
 import currencySymbol from "currency-symbol-map";
 import { v4 as uuidv4 } from "uuid";
+require('dotenv').config();
+const shopName=process.env.SHOP_NAME
+const clientId=process.env.CLIENT_ID
 
-
-const shopName = "s/Ref-VinodCSQT";
 export class CommercecloudService {
   constructor(
     // commercecloud must match the name property in the datasource json file
@@ -59,16 +60,16 @@ export class CommercecloudService {
   async sfBestSelling(): Promise<any> {
     try {
         console.log("SFCC service: sfBestSelling");
-        const endpoint = `/${shopName}/dw/shop/v23_2/product_search?refine=cgid%3Dnewarrivals&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b&expand=images%2Cprices%2Cavailability%2Cvariations`;
+        const endpoint = `/${shopName}/dw/shop/v23_2/product_search?refine=cgid%3Dnewarrivals&client_id=${clientId}&expand=images%2Cprices%2Cavailability%2Cvariations`;
         const response = await this.fetchFromEndpoint(endpoint);
 
         const data = await response;
 
         return data.hits.map((hit: any) => ({
-            ProductId: hit.product_id,
-            SkuId: hit.product_id,
-            ProductName: hit.product_name,
-            SkuImageUrl:  hit.image.link ,
+            productId: hit.product_id,
+            skuId: hit.product_id,
+            productName: hit.product_name,
+            skuImageUrl:  hit.image.link ,
             listPrice: hit.price,
             basePrice: hit.price,
         }));
@@ -112,7 +113,7 @@ export class CommercecloudService {
 async getSalesforceProductByCategory(categoryId: any): Promise<any> {
   try {
     const product_arr: any[] = [];
-    const endpoint = `/${shopName}/dw/shop/v23_2/product_search?refine=cgid=${categoryId}&expand=images,prices&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const endpoint = `/${shopName}/dw/shop/v23_2/product_search?refine=cgid=${categoryId}&expand=images,prices&client_id=${clientId}`;
     const response = await this.fetchFromEndpoint(endpoint);
     const value = response.refinements;
     const valueFacets = this.getRefinementValue(value);
@@ -141,7 +142,7 @@ private getRefinementValue(response: any): any {
   response?.map((item: any) => {
     value_arr.push({
       name: item.label,
-      value: item?.values?.map((valueObj: any) => ({"value":valueObj.label})),
+      value: item.label=="Price"?item?.values?.map((valueObj: any) => ({"value":({from:parseInt((valueObj.value).slice(1,-1).split('..')[0]),to:parseInt((valueObj.value).slice(1,-1).split('..')[1])})})):item?.values?.map((valueObj: any) => ({"value":valueObj.value}))
     });
   });
   return value_arr;
@@ -161,18 +162,18 @@ async searchByFacets(
   console.log('SFCC service: searchByFacets');
   const product_arr: any[] = [];
   const startValue = (Number(page)-1)*productsPerPage;
-  const endpoint = `/${shopName}/dw/shop/v23_2/product_search?refine=cgid=${category}&refine_1=c_refinementColor=${color==undefined?"":color}&refine_2=price=${minprice==undefined && maxprice==undefined?"":("("+minprice+".."+maxprice+")")}&refine_3=c_size=${size==undefined?"":size}&sort=${sortbyname==undefined?"":sortbyname}&${productsPerPage == undefined ? "count=" : `count=${productsPerPage}`}&${page == undefined ? "start=" : `start=${startValue}`}&expand=images,prices&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+  const endpoint = `/${shopName}/dw/shop/v23_2/product_search?refine=cgid=${category}&refine_1=c_refinementColor=${color==undefined?"":color}&refine_2=price=${minprice==undefined && maxprice==undefined?"":("("+minprice+".."+maxprice+")")}&refine_3=c_size=${size==undefined?"":size}&sort=${sortbyname==undefined?"":sortbyname}&${productsPerPage == undefined ? "count=" : `count=${productsPerPage}`}&${page == undefined ? "start=" : `start=${startValue}`}&expand=images,prices&client_id=${clientId}`;
   try {
     const response = await this.fetchFromEndpoint(endpoint);
     const value = response.refinements;
     const valueFacets = this.getRefinementValue(value);
     response?.hits?.map((items: any) => {
       product_arr.push({
-        product_id: items?.product_id,
-        sku_id: items?.product_id,
-        product_name: items?.product_name,
-        product_image: items?.image?.dis_base_link,
-        product_price: {
+        productId: items?.product_id,
+        skuId: items?.product_id,
+        productName: items?.product_name,
+        productImage: items?.image?.dis_base_link,
+        productPrice: {
           listPrice: items?.price,
           sellingPrice: ' ',
           discount: ' ',
@@ -197,18 +198,18 @@ async searchByFacets(
 async getSalesforceProductBysubCategory(subcategoryId: any): Promise<any> {
   try {
     const product_arr: any[] = [];
-    const endpoint = `/${shopName}/dw/shop/v23_2/product_search?refine=cgid=${subcategoryId}&expand=images,prices&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const endpoint = `/${shopName}/dw/shop/v23_2/product_search?refine=cgid=${subcategoryId}&expand=images,prices&client_id=${clientId}`;
     const response = await this.fetchFromEndpoint(endpoint);
     const value = response.refinements;
     const valueFacets = this.getRefinementValue(value);
     const data = response;
     response?.hits?.map((items: any) => {
       product_arr.push({
-        product_id: items?.product_id,
-        sku_id: items?.product_id,
-        product_name: items?.product_name,
-        product_image: items?.image.dis_base_link,
-        product_price: {
+        productId: items?.product_id,
+        skuId: items?.product_id,
+        productName: items?.product_name,
+        productImage: items?.image.dis_base_link,
+        productPrice: {
           listPrice: items?.price,
           sellingPrice: null,
           discount: null,
@@ -223,7 +224,7 @@ async getSalesforceProductBysubCategory(subcategoryId: any): Promise<any> {
 
 async getsalesForceProductById(pid: any): Promise<any> {
   try {
-    const endpoint = `/${shopName}/dw/shop/v23_2/products/${pid}?null=null&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b&expand=images%2Cprices%2Cavailability%2Cvariations%2Cpromotions%2Cset_products`;
+    const endpoint = `/${shopName}/dw/shop/v23_2/products/${pid}?null=null&client_id=${clientId}&expand=images%2Cprices%2Cavailability%2Cvariations%2Cpromotions%2Cset_products`;
     const response = await this.fetchFromEndpoint(endpoint);
     const data = response; // Parse JSON response
     const variantProductsData = await this.getVariationData(data?.variants);
@@ -244,14 +245,14 @@ private async getVariationData(response: any): Promise<any[]> {
 
   await Promise.all(
     response?.map(async (variantProducts: any) => {
-      const endpoint = `/${shopName}/dw/shop/v23_2/products/${variantProducts?.product_id}?null=null&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b&expand=images%2Cprices%2Cavailability%2Cvariations%2Cpromotions%2Cset_products`;
+      const endpoint = `/${shopName}/dw/shop/v23_2/products/${variantProducts?.product_id}?null=null&client_id=${clientId}&expand=images%2Cprices%2Cavailability%2Cvariations%2Cpromotions%2Cset_products`;
       const response = await this.fetchFromEndpoint(endpoint);
       skuData.push({
         sku: response?.id,
-        skuname: response?.name,
+        skuName: response?.name,
         specifications: response?.variation_values,
         available: response?.inventory?.orderable,
-        availablequantity: response?.inventory?.ats,
+        availableQuantity: response?.inventory?.ats,
         listPriceFormated: currencySymbol(response?.currency) + response?.price,
         listPrice: response?.price,
         bestPriceFormated:
@@ -267,7 +268,7 @@ private async getVariationData(response: any): Promise<any[]> {
 }
 
 async postsalesForceLogin(reqBody: any): Promise<any> {
-  const endpoint = `${shopName}/dw/shop/v23_2/customers/auth?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+  const endpoint = `${shopName}/dw/shop/v23_2/customers/auth?client_id=${clientId}`;
   var reqBody = reqBody;
   var basicAuth = btoa(`${reqBody.email}:${reqBody.password}`);
   console.log('reqBody', basicAuth);
@@ -295,7 +296,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
         "product_id":requestBody?.itemId,
         "quantity":requestBody?.quantity
       }
-      const endpoint = `https://zzkd-003.dx.commercecloud.salesforce.com/${shopName}/dw/shop/v23_2/baskets/${baskets_id}/items?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+      const endpoint = `https://zzkd-003.dx.commercecloud.salesforce.com/${shopName}/dw/shop/v23_2/baskets/${baskets_id}/items?client_id=${clientId}`;
 
       const response = await axios.post(endpoint,[body],{headers});
       const data = await response;
@@ -331,7 +332,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     }
 
     async getSalesforceProductItems(baskets_id:any,header:any): Promise<any>{
-      const endpoint = `${shopName}/dw/shop/v23_2/baskets/${baskets_id}?&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+      const endpoint = `${shopName}/dw/shop/v23_2/baskets/${baskets_id}?&client_id=${clientId}`;
       console.log(endpoint,"endpoitn");
       const response = await this.cartFetchFromEndpoint(endpoint,header);
       console.log("wdwadawdwad",response)
@@ -414,7 +415,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     } 
     async getSalesForceCategory(): Promise<any> {
       const product_arr: any[] = [];
-      const endpoint = `/${shopName}/dw/shop/v23_2/categories/root?levels=6&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+      const endpoint = `/${shopName}/dw/shop/v23_2/categories/root?levels=6&client_id=${clientId}`;
     
       try {
         const response = await this.fetchFromEndpoint(endpoint);
@@ -450,7 +451,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     }
 
     async removeItem(basket_Id:any,index_id:any,quantity:any, bearer:any):Promise<any>{
-      const endpoint = `/${shopName}/dw/shop/v23_2/baskets/${basket_Id}/items/${index_id}?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+      const endpoint = `/${shopName}/dw/shop/v23_2/baskets/${basket_Id}/items/${index_id}?client_id=${clientId}`;
       const header = {
         'Authorization':`Bearer ${bearer}`
       }
@@ -472,7 +473,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
 
   //Function to create cart:
   async createCart(bearer: any):Promise<any>{
-    const endpoint = `${shopName}/dw/shop/v23_2/baskets?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const endpoint = `${shopName}/dw/shop/v23_2/baskets?client_id=${clientId}`;
     const header = {
        'Content-Type': 'application/json',
         'Authorization':`Bearer ${bearer}`
@@ -480,7 +481,12 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     const response = this.createUserCart(endpoint,header);
     const data = await response
     console.log("thisis response",data);
-    return{"baskets":[{"basket_id":data.basket_id}]}
+    if (data.status==undefined) {
+      return{"baskets":[{"basket_id":data.basket_id}]}      
+    }
+    else{
+      return data
+    }
   }
   async createUserCart(endpoint:any,header:any){
     var body={}
@@ -503,7 +509,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
 
   //Function to get customer cart on behalf of customer id:
   async customerCart(customerId:any, bearer:any){
-    const endpoint = `${shopName}/dw/shop/v23_2/customers/${customerId}/baskets?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const endpoint = `${shopName}/dw/shop/v23_2/customers/${customerId}/baskets?client_id=${clientId}`;
     const header = {
       'Content-Type': 'application/json',
        'Authorization':`Bearer ${bearer}`
@@ -559,7 +565,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
   
   //Function crud customer address start
   async addCustomerAddress(bearer: any,customerId:any, requestBody: any): Promise<any> {
-    const endpoint = `${shopName}/dw/shop/v23_2/customers/${customerId}/addresses?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const endpoint = `${shopName}/dw/shop/v23_2/customers/${customerId}/addresses?client_id=${clientId}`;
     const header = {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${bearer}`,
@@ -590,7 +596,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
   }
 
   async removeCustomerAddress(bearer: any,customerId:any,address_name:any): Promise<any> {
-    const endpoint = `${shopName}/dw/shop/v23_2/customers/${customerId}/addresses/${address_name}?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const endpoint = `${shopName}/dw/shop/v23_2/customers/${customerId}/addresses/${address_name}?client_id=${clientId}`;
     const header = {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${bearer}`,
@@ -619,7 +625,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     }
   }
   async updateCustomerAddress(bearer: any,requestBody:any,customerId:any,address_name:any): Promise<any> {
-    const endpoint = `${shopName}/dw/shop/v23_2/customers/${customerId}/addresses/${address_name}?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const endpoint = `${shopName}/dw/shop/v23_2/customers/${customerId}/addresses/${address_name}?client_id=${clientId}`;
     const header = {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${bearer}`,
@@ -654,7 +660,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
 
   //Function to get payment details:
   async getSaleforcePaymentMethodDetails(baskets_id:any,header:any): Promise<any>{
-    const endpoint = `${shopName}/dw/shop/v23_2/baskets/${baskets_id}/payment_methods?&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const endpoint = `${shopName}/dw/shop/v23_2/baskets/${baskets_id}/payment_methods?&client_id=${clientId}`;
     const response = await this.cartFetchFromEndpoint(endpoint,header);
     const data = response;
     return data
@@ -755,7 +761,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     }
   }
   async updateSalesForceaddress(baskets_id:any,header:any):Promise<any>{
-    const endpoint = `${shopName}/dw/shop/v23_1/baskets/${baskets_id}/shipments/me/shipping_address?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const endpoint = `${shopName}/dw/shop/v23_1/baskets/${baskets_id}/shipments/me/shipping_address?client_id=${clientId}`;
     console.log(endpoint,"updateSalesforceProductItems");
     const response = await this.addressUpdateFromEndpoint(endpoint,header);
     const data = response;
@@ -796,7 +802,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     }
   }
   async newupdateSalesForceaddress(baskets_id:any,shipment_id:string,requestBody:any,header:any):Promise<any>{
-    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_1/baskets/${baskets_id}/shipments/${shipment_id}/shipping_address?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_1/baskets/${baskets_id}/shipments/${shipment_id}/shipping_address?client_id=${clientId}`;
     console.log(endpoint,"updateSalesforceProductItems");
     const response = await this.newaddressUpdateFromEndpoint(endpoint,requestBody,header);
     const data = response;
@@ -840,7 +846,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     }
   }
   async updateSalesForcebillingaddress(baskets_id:any,header:any):Promise<any>{
-    const endpoint = `${shopName}/dw/shop/v23_1/baskets/${baskets_id}/billing_address?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const endpoint = `${shopName}/dw/shop/v23_1/baskets/${baskets_id}/billing_address?client_id=${clientId}`;
     console.log(endpoint,"updateSalesforceProductItems");
     const response = await this.billingaddressUpdateFromEndpoint(endpoint,header);
     const data = response;
@@ -881,7 +887,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     }
   }
   async newupdateSalesForcebillingaddress(baskets_id:any,requestBody:any,header:any):Promise<any>{
-    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_1/baskets/${baskets_id}/billing_address?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const endpoint = `s/Ref-VinodCSQT/dw/shop/v23_1/baskets/${baskets_id}/billing_address?client_id=${clientId}`;
     console.log(endpoint,"updateSalesforceProductItems");
     const response = await this.newbillingaddressUpdateFromEndpoint(endpoint,requestBody,header);
     const data = response;
@@ -892,7 +898,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
 
 
   async confirmPayment(basketId: any,bearer: any,requestBody: any):Promise<any>{
-    const endpoint = `${shopName}/dw/shop/v23_2/baskets/${basketId}/payment_instruments?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const endpoint = `${shopName}/dw/shop/v23_2/baskets/${basketId}/payment_instruments?client_id=${clientId}`;
     const header = {
        'Content-Type': 'application/json',
         'Authorization':`Bearer ${bearer}`
@@ -963,7 +969,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     }
   }
   async placeOrder(bearer: any, requestBody: any): Promise<any> {
-    const endpoint = `${shopName}/dw/shop/v23_2/orders?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const endpoint = `${shopName}/dw/shop/v23_2/orders?client_id=${clientId}`;
     const header = {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${bearer}`,
@@ -978,7 +984,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
   }
 
   async getShiipingmethod(baskets_id:any,shipment_id:any,header:any):Promise<any>{
-    const endpoint = `${shopName}/dw/shop/v23_1/baskets/${baskets_id}/shipments/${shipment_id}/shipping_methods?client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const endpoint = `${shopName}/dw/shop/v23_1/baskets/${baskets_id}/shipments/${shipment_id}/shipping_methods?client_id=${clientId}`;
     try{
       const response = await axios.get(`${this.dataSource.settings.baseURL}/${endpoint}`,
       {
@@ -1005,18 +1011,18 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
   ): Promise<any> {
     console.log('SFCC service: searchByFacets');
     const product_arr: any[] = [];
-    const endpoint = `/${shopName}/dw/shop/v23_2/product_search?q=${query}&refine_1=c_refinementColor=${color == undefined ? '' : color}&refine_2=price=${minprice == undefined && maxprice == undefined ? '' : '(' + minprice + '..' + maxprice + ')'}&refine_3=c_size=${size == undefined ? '' : size}&sort=${sortbyname == undefined ? '' : sortbyname}&expand=images,prices&client_id=e0f74755-15bf-4575-8e0f-85d52b39a73b`;
+    const endpoint = `/${shopName}/dw/shop/v23_2/product_search?q=${query}&refine_1=c_refinementColor=${color == undefined ? '' : color}&refine_2=price=${minprice == undefined && maxprice == undefined ? '' : '(' + minprice + '..' + maxprice + ')'}&refine_3=c_size=${size == undefined ? '' : size}&sort=${sortbyname == undefined ? '' : sortbyname}&expand=images,prices&client_id=${clientId}`;
     try {
       const response = await this.fetchFromEndpoint(endpoint);
       const value = response.refinements;
       const valueFacets = this.getRefinementValue(value);
       response?.hits?.map((items: any) => {
         product_arr.push({
-          product_id: items?.product_id,
-          sku_id: items?.product_id,
-          product_name: items?.product_name,
-          product_image: items?.image?.dis_base_link,
-          product_price: {
+          productId: items?.product_id,
+          skuId: items?.product_id,
+          productName: items?.product_name,
+          productImage: items?.image?.dis_base_link,
+          productPrice: {
             listPrice: items?.price,
             sellingPrice: ' ',
             discount: ' ',
@@ -1028,4 +1034,24 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
       return this.handleErrorResponse(error);
     }
   }
+
+
+  async CheckoutDetails(requestBody:any,header:any): Promise<any>{
+    var baskets_id=requestBody.basketId
+    var shipment_id=requestBody.shipmentId
+    var customers_id=requestBody.customerId
+    const endpoint = `${shopName}/dw/shop/v23_2/baskets/${baskets_id}/payment_methods?&client_id=${clientId}`;
+    const paymentresponse = await this.cartFetchFromEndpoint(endpoint,header);
+    const shippmentendpoint = `${shopName}/dw/shop/v23_1/baskets/${baskets_id}/shipments/${shipment_id}/shipping_methods?client_id=${clientId}`;
+    const shippmentmethodresponse=await this.cartFetchFromEndpoint(shippmentendpoint,header)
+    const addressendpoint =`${shopName}/dw/shop/v23_2/customers/${customers_id}/addresses`
+    const addressresponse=await this.cartFetchFromEndpoint(addressendpoint,header)
+    const data = {
+      paymentData:paymentresponse.applicable_payment_methods,
+      shipmentData:shippmentmethodresponse.applicable_shipping_methods,
+      addressData:addressresponse
+    };
+    return data
+  }
+  
 }
