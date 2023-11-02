@@ -540,7 +540,7 @@ return emptyarray;
     my_new_data.map((items: any, index: any) => {
       available_facets.push({
         name: items.values[0].key,
-        value: items.values,
+        value: items.values[0].key === "price" ?items.values.map((valueitem:any)=>({value:valueitem.range})):items.values,
       });
     });
 
@@ -661,7 +661,7 @@ return emptyarray;
     my_new_data.map((items: any, index: any) => {
       available_facets.push({
         name: items.values[0].key,
-        value: items.values,
+        value: items.values[0].key === "price" ?items.values.map((valueitem:any)=>({value:valueitem.range})):items.values,
       });
     });
 
@@ -769,7 +769,7 @@ return emptyarray;
     my_new_data.map((items: any, index: any) => {
       available_facets.push({
         name: items.values[0].key,
-        value: items.values,
+        value: items.values[0].key === "price" ?items.values.map((valueitem:any)=>({value:valueitem.range})):items.values,
       });
     });
 
