@@ -924,7 +924,7 @@ return emptyarray;
         parent_Id: item.id,
         name: item.name,
         hasChildren: item.hasChildren,
-        url: item.url,
+        url: item.url.split('.br').pop(),
         children: this.CategroychildrenData(item.children),
       });
     });
@@ -937,7 +937,7 @@ return emptyarray;
         Id: childitem.id,
         name: childitem.name,
         hasChildren: childitem.hasChildren,
-        url: childitem.url,
+        url: childitem.url.split('.br').pop(),
         children: this.CategroychildrenData(childitem.children),
       });
     });
