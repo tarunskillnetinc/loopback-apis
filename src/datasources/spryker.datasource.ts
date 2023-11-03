@@ -4,7 +4,7 @@ import {juggler} from '@loopback/repository';
 const config = {
   name: 'spryker',
   connector: 'rest',
-  baseURL: 'http://localhost:9003',
+  baseURL: 'http://103.113.36.20:9003',
   crud: true
 };
 
