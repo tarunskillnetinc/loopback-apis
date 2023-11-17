@@ -142,7 +142,7 @@ private getRefinementValue(response: any): any {
   response?.map((item: any) => {
     value_arr.push({
       name: item.label,
-      value: item?.values?.map((valueObj: any) => ({"value":valueObj.label})),
+      value: item.label=="Price"?item?.values?.map((valueObj: any) => ({"value":({from:parseInt((valueObj.value).slice(1,-1).split('..')[0]),to:parseInt((valueObj.value).slice(1,-1).split('..')[1])})})):item?.values?.map((valueObj: any) => ({"value":valueObj.value}))
     });
   });
   return value_arr;
@@ -481,7 +481,12 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     const response = this.createUserCart(endpoint,header);
     const data = await response
     console.log("thisis response",data);
-    return{"baskets":[{"basket_id":data.basket_id}]}
+    if (data.status==undefined) {
+      return{"baskets":[{"basket_id":data.basket_id}]}      
+    }
+    else{
+      return data
+    }
   }
   async createUserCart(endpoint:any,header:any){
     var body={}

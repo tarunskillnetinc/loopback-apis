@@ -560,7 +560,7 @@ return emptyarray;
     my_new_data.map((items: any, index: any) => {
       available_facets.push({
         name: items.values[0].key,
-        value: items.values,
+        value: items.values[0].key === "price" ?items.values.map((valueitem:any)=>({value:valueitem.range})):items.values,
       });
     });
 
@@ -681,7 +681,7 @@ return emptyarray;
     my_new_data.map((items: any, index: any) => {
       available_facets.push({
         name: items.values[0].key,
-        value: items.values,
+        value: items.values[0].key === "price" ?items.values.map((valueitem:any)=>({value:valueitem.range})):items.values,
       });
     });
 
@@ -789,7 +789,7 @@ return emptyarray;
     my_new_data.map((items: any, index: any) => {
       available_facets.push({
         name: items.values[0].key,
-        value: items.values,
+        value: items.values[0].key === "price" ?items.values.map((valueitem:any)=>({value:valueitem.range})):items.values,
       });
     });
 
@@ -944,7 +944,7 @@ return emptyarray;
         parent_Id: item.id,
         name: item.name,
         hasChildren: item.hasChildren,
-        url: item.url,
+        url: item.url.split('.br').pop(),
         children: this.CategroychildrenData(item.children),
       });
     });
@@ -957,7 +957,7 @@ return emptyarray;
         Id: childitem.id,
         name: childitem.name,
         hasChildren: childitem.hasChildren,
-        url: childitem.url,
+        url: childitem.url.split('.br').pop(),
         children: this.CategroychildrenData(childitem.children),
       });
     });

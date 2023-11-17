@@ -15,6 +15,7 @@ export class SprykerService  {
   ) {}
   
   handleErrorResponse(error: any): any {
+    console.log("err1234",error.response)
     return {
       "status": error?.response.status,
       "statusText": error?.response?.statusText,
@@ -226,7 +227,8 @@ async getSprykerSellingProducts(): Promise<any> {
     const product_arr: any[] = [];
     const endpoint = `abstract-products/${abstractId}?include=abstract-product-image-sets%2Cabstract-product-prices%2Cconcrete-product-availabilities%2Cproduct-labels%2Cproduct-options%2Cproduct-reviews%2Cproduct-measurement-units%2Csales-units%2Cbundled-products%2Cproduct-offers`;
     const response = await this.fetchFromEndpoint(endpoint);
-    await Promise.all(
+    if (response.status==undefined) {
+      await Promise.all(
       response.data.attributes.attributeMap.product_concrete_ids?.map(
         async (item: any) => {
           var id = item;
@@ -246,6 +248,10 @@ async getSprykerSellingProducts(): Promise<any> {
     "description":response.data.attributes.description,
     "skus": transformedResponse
   };
+    }
+    else{
+      return response
+    }
     // return response;
   }
 
@@ -448,13 +454,20 @@ async getSprykerSellingProducts(): Promise<any> {
     const endpoint = `carts`;
     const response = this.cartFetchFromEndpoint(endpoint,authorizationHeader);
     const data = await response;
-    if(data.data.length == 1 ){
-      var basketId =  data.data[0].id;
-      return{"baskets":[{"basket_id":basketId}]}
+    console.log("data",data)
+    if (data.status==undefined) {
+      if(data.data.length == 1 ){
+        var basketId =  data.data[0].id;
+        return{"baskets":[{"basket_id":basketId}]}
+      }
+      else{
+      return{"baskets":[{"basket_id":""}]};
+      }  
     }
     else{
-    return{"baskets":[{"basket_id":""}]};
+      return data
     }
+
   }
 
   async cartFetchFromEndpoint(endpoint: string, authorization:string): Promise<any> {
@@ -514,7 +527,7 @@ async getSprykerSellingProducts(): Promise<any> {
       const data = response.data.included;
       await Promise.all(
         data.map(async (items:any)=>{
-          const endpoint_two = `http://103.113.36.20:9003/concrete-products/${items.id}?include=concrete-product-image-sets`;
+          const endpoint_two = `${this.dataSource.settings.baseURL}/concrete-products/${items.id}?include=concrete-product-image-sets`;
           const additional_data = await axios.get(endpoint_two);
           products.push(
             {
