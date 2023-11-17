@@ -47,6 +47,7 @@ export declare class VtexController {
     salesForceProduct(productId: string): Promise<any>;
     searchByFacets(category: string, color?: any, size?: any, minprice?: any, maxprice?: any, sortbyprice?: any, sortbyname?: any, count?: any, page?: any): Promise<any>;
     getUserProfileDetails(email: string): Promise<any>;
+    getOrderUserDetails(auth: string): Promise<any>;
     facetsResults(parentCategory: string, color?: any, size?: any, minprice?: any, maxprice?: any, sortbyprice?: any, sortbyname?: any, count?: any, page?: any): Promise<any>;
     placeOrder(basketId: string, requestBody: {
         body: any;

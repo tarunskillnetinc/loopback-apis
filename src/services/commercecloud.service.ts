@@ -642,17 +642,95 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
   ): Promise<any> {
     const endpoint = `${shopName}/dw/shop/v23_2/customers/${customers_id}/orders`;
     const response = await this.cartFetchFromEndpoint(endpoint, header);
-    const data = response?.data == undefined ? response : response.data;
-    const promises = data[0].product_items.map(async (items:any)=>{
-      const endpoint_two = `${shopName}/dw/shop/v23_2/products/${items.product_id}/images`;
-      const data = await this.cartFetchFromEndpoint(endpoint_two,header);
-      console.log("newdata",data.image_groups[0].images[0]);
-      items["imageUrl"] = data.image_groups[0].images[0].dis_base_link;
-    })
-    await Promise.all(promises);
-    return data;
-  }
+    console.log("responsessss",endpoint)
+    const data = response?.data == undefined ? response : response?.data;
+    console.log(data, "dataaaa")
 
+
+    const promises = data.map(async (order: any) => {
+      const orderItemsPromises = order.product_items.map(async (items: any) => {
+        const endpoint_two = `${shopName}/dw/shop/v23_2/products/${items.product_id}/images`;
+        const imageResponse = await this.cartFetchFromEndpoint(endpoint_two, header);
+        console.log("newdata", imageResponse.image_groups[0].images[0]);
+        items["imageUrl"] = imageResponse.image_groups[0].images[0].dis_base_link;
+      });
+  
+      await Promise.all(orderItemsPromises);
+
+    });
+  
+    await Promise.all(promises);
+
+    const transformedData = await Promise.all(data.map(async (order:any) => {
+      const items = await Promise.all(order.product_items.map(async (item:any) => ({
+        productId: item.product_id,
+        quantity: item.quantity,
+        priceTotal: item.price,
+        // Add other item fields as needed, like imageUrl
+        imageUrl: item.imageUrl
+      })));
+  
+      const payments = order.payment_instruments.map((payment:any) => ({
+        paymentAmount: payment.amount,
+        paymentMethod: payment.payment_card.card_type,
+        paymentId: payment.payment_instrument_id,
+        orderStatus: order.payment_status 
+      }));
+  
+      const shipments = order.shipments.map((shipment:any) => ({
+        shipmentMethodName: shipment.shipping_method.name,
+        netPrice: shipment.shipment_total,
+        shippingStatus: shipment.shipping_status 
+      }));
+  
+      return {
+        type: "orders",
+        id: `${order.order_no}`, 
+        attributes: {
+          createdAt: order.creation_date,
+          currencyIsoCode: order.currency,
+          totals: {
+            expenseTotal: order.product_total,
+            discountTotal:order.adjusted_tax,
+            taxTotal:order.tax_total,
+            subtotal:order.product_sub_total,
+            grandTotal:order.product_total,
+
+          }
+        },
+        billingAddress: {
+          firstName: order.billing_address.first_name,
+          lastName: order.billing_address.last_name,
+          address1: order.billing_address.address1,
+          address2: order.billing_address.address2,
+          city: order.billing_address.city,
+          zipCode: order.billing_address.postal_code,
+          country: order.country || "United States" // You might need to adjust this field accordingly
+        },
+        items,
+        payments,
+        shipments,
+      };
+    }));
+  
+    return transformedData;
+  }
+  //  await Promise.all(transformedData);
+  //   return transformedData;
+  // }
+    // return data;
+  // }
+
+  //   const promises = data[0].product_items.map(async (items:any)=>{
+  //     const endpoint_two = `${shopName}/dw/shop/v23_2/products/${items.product_id}/images`;
+  //     const data = await this.cartFetchFromEndpoint(endpoint_two,header);
+  //     console.log("newdata",data.image_groups[0].images[0]);
+  //     items["imageUrl"] = data.image_groups[0].images[0].dis_base_link;
+  //   })
+  //   await Promise.all(promises);
+  //   return data;
+  // }
+  
   //Function to get payment details:
   async getSaleforcePaymentMethodDetails(baskets_id:any,header:any): Promise<any>{
     const endpoint = `${shopName}/dw/shop/v23_2/baskets/${baskets_id}/payment_methods?&client_id=${clientId}`;

@@ -406,7 +406,7 @@ export class SprykerController {
      }
      @get('/spryker/usersDetail/customers/{customerId}/addresses')
      @response(200, {
-       description: 'Get VTEX user details from the external API',
+       description: 'Get spryker user details from the external API',
      })
      async getSprykerUsersData(
        @param.path.string('customerId') customerId: any,
@@ -421,6 +421,79 @@ export class SprykerController {
        }
      }
 
+     @post('/spryker/customers/{customerId}/addresses')
+     @response(200,{
+       description:'Post spryker address from external API',
+     })
+     async postSprykerAddress(
+      @param.path.string('customerId') customerId:any,
+      @param.header.string('bearer') bearer:string,
+      @requestBody() requestBody:{data:any},
+     ):Promise<any>{
+       try {
+           const header = this.request.headers.bearer;
+           const sprykerAddressDetail = await this.sprykerService.postSprykerAddress(customerId,header, requestBody)
+           return this.handlepostResponse(sprykerAddressDetail)
+       }catch(error){
+        throw error;
+       }
+     }
+
+     @patch('/spryker/customers/{customerId}/addresses/{addressId}')
+     @response(200,{
+       description:'Update spryker address from external API',
+     })
+     async updateSprykerAddress(
+      @param.path.string('customerId') customerId:any,
+      @param.path.string('addressId') addressId:any,
+      @param.header.string('bearer') bearer:string,
+      @requestBody() requestBody:{data:any},
+     ):Promise<any>{
+       try {
+           const header = this.request.headers.bearer;
+           const sprykerAddressDetail = await this.sprykerService.updateSprykerAddress(customerId,header, addressId,requestBody)
+           return this.handlepostResponse(sprykerAddressDetail)
+       }catch(error){
+        throw error;
+       }
+     }
+
+     @del('/spryker/customers/{customerId}/addresses/{addressId}')
+     @response(200,{
+       description:'Update spryker address from external API',
+     })
+     async removeSprykerAddress(
+      @param.path.string('customerId') customerId:any,
+      @param.path.string('addressId') addressId:any,
+      @param.header.string('bearer') bearer:string,
+     ):Promise<any>{
+       try {
+           const header = this.request.headers.bearer;
+           const sprykerAddressDetail = await this.sprykerService.removeSprykerAddress(customerId,header, addressId)
+           return this.handlepostResponse(sprykerAddressDetail)
+       }catch(error){
+        throw error;
+       }
+     }
+
+
+     @get('/spryker/customers/{customerId}/orders')
+     @response(200,{
+      description:'Get spryker order details from the external API'
+     })
+     async getSprykerOrdersData(
+      @param.path.string('customerId') customerId:any,
+      @param.header.string('bearer') bearer:string,
+     ): Promise<any> {
+      try{
+        const header = this.request.headers.bearer;
+        const sprykerOrderDetail = await this.sprykerService.getSprykerOrderData(customerId,header);
+        return this.handlegetResponse(sprykerOrderDetail)
+
+      }catch(error){
+        throw error;
+      }
+     }
 
      
 @post('/spryker/post-checkout-data')

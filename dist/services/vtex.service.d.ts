@@ -4,6 +4,7 @@ export declare class VtexService {
     protected dataSource: VtexDataSource;
     constructor(dataSource: VtexDataSource);
     fetchFromEndpoint(endpoint: string): Promise<any>;
+    fetchFromOrderEndpoint(endpoint: string, authToken: string): Promise<any>;
     handleErrorResponse(error: any): any;
     cartFetchFromEndpoint(endpoint: string): Promise<any>;
     fetchSfFromEndpoint(endpoint: string): Promise<any>;
@@ -64,6 +65,7 @@ export declare class VtexService {
     salesForceProduct(pid: any): Promise<any>;
     searchByFacets(category: string, color: any, size: any, minprice: any, maxprice: any, sortbyprice: any, sortbyname: any, count: Number, page: Number): Promise<any>;
     getUserProfileDetails(email: string): Promise<any>;
+    getOrderUserDetails(auth: any): Promise<any>;
     facetsResults(parentCategory: string, color: any, size: any, minprice: any, maxprice: any, sortbyprice: any, sortbyname: any, count: Number, page: Number): Promise<any>;
     placeOrder(basketId: string, requestBody: any): Promise<any>;
     placeOrderEndpoint(endpoint: any, requestBody: any): Promise<any>;

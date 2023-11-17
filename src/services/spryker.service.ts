@@ -644,6 +644,75 @@ async getSprykerSellingProducts(): Promise<any> {
 
   }
 
+  async postAddressFromEndpoint(
+    endpoint: string,
+    reqBody: any,
+    authorization:any,
+  ): Promise<any> {
+    try {
+      const response = await axios.post(
+        (`${this.dataSource.settings.baseURL}/${endpoint}`),
+        reqBody,
+        {
+          headers: {
+            Authorization: `Bearer ${authorization}`
+          },
+        },
+      );
+      return response.data;
+    } catch (error) {
+      return this.handleErrorResponse(error)
+      throw error;
+    }
+
+  }
+
+  
+  async patchAddressFromEndpoint(
+    endpoint: string,
+    reqBody:any,
+    authorization:any,
+  ): Promise<any> {
+    try {
+      const response = await axios.patch(
+        (`${this.dataSource.settings.baseURL}/${endpoint}`),
+        reqBody,
+        {
+          headers: {
+            Authorization: `Bearer ${authorization}`
+          },
+        },
+      );
+      return response.data;
+    } catch (error) {
+      return this.handleErrorResponse(error)
+      throw error;
+    }
+
+  }
+
+  
+  async deleteAddressFromEndpoint(
+    endpoint: string,
+    authorization:any,
+  ): Promise<any> {
+    try {
+      const response = await axios.delete(
+        (`${this.dataSource.settings.baseURL}/${endpoint}`),
+        {
+          headers: {
+            Authorization: `Bearer ${authorization}`
+          },
+        },
+      );
+      return response.data;
+    } catch (error) {
+      return this.handleErrorResponse(error)
+      throw error;
+    }
+
+  }
+
   async cartDeleteFetchFromEndpoint(
     endpoint: string,
     authorization: string,
@@ -708,6 +777,76 @@ async getSprykerSellingProducts(): Promise<any> {
 
 } 
 
+
+async getSprykerOrderData(customerId:any, authorization: any):Promise<any>{
+  const endpoint = `/customers/${customerId}/orders`;
+  console.log(endpoint,"getsprkerorderdata")
+  const response = await this.cartFetchFromEndpoint(endpoint,authorization);
+  console.log("resddd",response.data)
+
+  const promises = response.data.map(async (order: any)=>{
+    // const orderDetailsPromises = order.data.map(async (order:any)=> {
+  const endpoint_two = `/orders/${order.id}`;
+  console.log("endpoint_two",endpoint_two)
+  const imageResponse = await this.cartFetchFromEndpoint(endpoint_two, authorization);
+        
+        // console.log("oreer", imageResponse.attributes.items[0].metadata.image);
+        
+    if (!order.billingAddress) {
+      order.billingAddress = {};
+    }
+
+    // Add firstName and lastName to billingAddress
+    order.billingAddress["firstName"] = imageResponse.data.attributes.billingAddress.firstName;
+    order.billingAddress["lastName"] = imageResponse.data.attributes.billingAddress.lastName;
+    order.billingAddress["address1"] = imageResponse.data.attributes.billingAddress.address1;
+    order.billingAddress["address2"] = imageResponse.data.attributes.billingAddress.address2;
+    order.billingAddress["city"] = imageResponse.data.attributes.billingAddress.city;
+    order.billingAddress["zipCode"] = imageResponse.data.attributes.billingAddress.zipCode;
+    order.billingAddress["country"] = imageResponse.data.attributes.billingAddress.country;
+    order.billingAddress["phoneNo"] = imageResponse.data.attributes.billingAddress.phoneNo;
+    order.billingAddress["postalCode"] = imageResponse.data.attributes.billingAddress.postalCode;
+        
+    if(!order.items){
+      order.items = {}
+    }
+
+    order.items = imageResponse.data.attributes.items.map((item:any) => ({
+      productId: item.sku,
+      quantity: item.quantity,
+      priceTotal: item.sumPrice,
+      discount: item.sumDiscountAmountAggregation,
+      imageUrl: item.metadata.image,
+    }));
+    console.log("orderss",order.items)
+  
+    if(!order.payments){
+       order.payments = {}
+    }
+
+    order.payments = imageResponse.data.attributes.payments.map((item:any)=>({
+      paymentAmount: item.amount,
+      paymentMethod: item.paymentMethod,
+      paymentId: item.paymentProvider,
+      orderStatus: item.orderStatus || ""
+    }))
+    
+    if(!order.shipments){
+      order.shipments = {}
+    }
+     order.shipments = imageResponse.data.attributes.shipments.map((item:any)=>({
+      shipmentMethodName: item.shipmentMethodName,
+      netPrice: item.defaultNetPrice,
+      shippingStatus: item.shippingStatus || ""
+     }))
+
+  // })
+  // await Promise.all(orderDetailsPromises)
+})
+  await Promise.all(promises);
+  return response.data;
+}
+
 async getSprykerUsersData(customerId: any, authorization: any): Promise<any> {
   const endpoint = `/customers/${customerId}/addresses`;
   const response = this.cartFetchFromEndpoint(endpoint, authorization);
@@ -748,6 +887,33 @@ async getSprykerUsersData(customerId: any, authorization: any): Promise<any> {
   };
   return formattedData;
 }
+
+async postSprykerAddress(customerId:any, authorization: any, requestBody:any): Promise<any>{
+const endpoint = `/customers/${customerId}/addresses`
+const response = this.postAddressFromEndpoint(endpoint, requestBody,authorization);
+    const data = await response;
+    return data;
+}
+
+async updateSprykerAddress(customerId:any, authorization: any, addressId:any,requestBody:any): Promise<any>{
+  const endpoint = `/customers/${customerId}/addresses/${addressId}`
+  console.log("endpointt",endpoint)
+  const response = this.patchAddressFromEndpoint(endpoint, requestBody,authorization);
+      const data = await response;
+      console.log("object",data)
+      return data;
+  }
+
+  async removeSprykerAddress(customerId:any, authorization: any, addressId:any): Promise<any>{
+    const endpoint = `/customers/${customerId}/addresses/${addressId}`
+    console.log("endpointt",endpoint)
+    const response = this.deleteAddressFromEndpoint(endpoint,authorization);
+        const data = await response;
+        console.log("object",data)
+        return data;
+    }
+
+
 
 async postCheckoutData(reqBody: any, authorization: any): Promise<any> {
   const endpoint = `checkout-data?include=shipments%2Cshipment-methods%2Caddresses%2Cpayment-methods%2Citems`;

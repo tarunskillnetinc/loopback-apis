@@ -680,6 +680,22 @@ export class VtexController {
     }
   }
 
+  // Get the order-details or profile
+ 
+  @get('/order-details/{auth}')
+  @response(200, {
+    description: 'Get VTEX user details from the external API',
+  })
+  async getOrderUserDetails(@param.path.string('auth') auth: string): Promise<any> {
+    try {
+      const orderProfile = await this.vtexService.getOrderUserDetails(auth);
+      console.log(orderProfile,"orderProfile")
+      return orderProfile;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   //Search for product with filter for parent categories:
   @get('vtex-facets-results/{parentCategory}')
   @response(200, {

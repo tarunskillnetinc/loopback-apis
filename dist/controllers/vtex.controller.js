@@ -456,6 +456,17 @@ let VtexController = exports.VtexController = class VtexController {
             throw error;
         }
     }
+    // Get the order-details or profile
+    async getOrderUserDetails(auth) {
+        try {
+            const orderProfile = await this.vtexService.getOrderUserDetails(auth);
+            console.log(orderProfile, "orderProfile");
+            return orderProfile;
+        }
+        catch (error) {
+            throw error;
+        }
+    }
     //Search for product with filter for parent categories:
     async facetsResults(parentCategory, color, size, minprice, maxprice, sortbyprice, sortbyname, count, page) {
         try {
@@ -787,6 +798,16 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:paramtypes", [String]),
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getUserProfileDetails", null);
+tslib_1.__decorate([
+    (0, rest_1.get)('/order-details/{auth}'),
+    (0, rest_1.response)(200, {
+        description: 'Get VTEX user details from the external API',
+    }),
+    tslib_1.__param(0, rest_1.param.path.string('auth')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String]),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "getOrderUserDetails", null);
 tslib_1.__decorate([
     (0, rest_1.get)('vtex-facets-results/{parentCategory}'),
     (0, rest_1.response)(200, {

@@ -26,6 +26,26 @@ export class VtexService {
           },
         },
       );
+      console.log("aamirdata",response)
+      return response.data;
+    } catch (error) {
+        return this.handleErrorResponse(error);
+    }
+  }
+
+  async fetchFromOrderEndpoint(endpoint: string,authToken:string): Promise<any> {
+    try {
+      const response = await axios.get(
+        `${this.dataSource.settings.baseURL}/${endpoint}`,
+        {
+          headers: {
+            Accept: 'application/json',
+            'X-VTEX-API-AppToken':
+            vtexAppToken,
+            'X-VTEX-API-AppKey': vtexAppKey,
+          },
+        },
+      );
       return response.data;
     } catch (error) {
         return this.handleErrorResponse(error);
@@ -1367,6 +1387,7 @@ return emptyarray;
     const endpoint = `api/checkout/pub/profiles/?email=${email}`;
     const response = this.fetchFromEndpoint(endpoint);
     const data = await response;
+    console.log("dataaaa",data)
     const formattedData = {
       userProfile: {
         email: `${data.userProfile.email}`,
@@ -1384,6 +1405,18 @@ return emptyarray;
       }
     };
     return formattedData;
+  }
+
+
+  //Function for getting order Details Or order Items:
+  async getOrderUserDetails(auth:any): Promise<any>{
+    const endpoint = `api/oms/user/orders/?page=1&includeProfileLastPurchases=true`;
+    const authToken:string = "_vss=" + auth;
+    console.log("authToken", authToken);
+    const response = this.fetchFromOrderEndpoint(endpoint,authToken);
+    const data = await response;
+    console.log("datafff",data)
+    return data;
   }
 
   //Function for getting filter results for parent categories:
