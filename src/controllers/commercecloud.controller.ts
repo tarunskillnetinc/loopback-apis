@@ -535,18 +535,18 @@ export class CommercecloudController {
     }
   }
 
-  @del('/sfcc/removeCustomerAddress/{customerId}/address/{address_name}')
+  @del('/sfcc/removeCustomerAddress/{customerId}/address/{addressId}')
   @response(200,{
     message: "API for removeCustomerAddress"
   })
   async removeCustomerAddress(
     @param.path.string('customerId') customerId: any,
-    @param.path.string('address_name') address_name: any,
+    @param.path.string('addressId') addressId: any,
     @param.header.string('token') token: any,
   ): Promise<any>{
     try{
       const headers = this.request.headers.token;
-      const data = await this.sfccService.removeCustomerAddress(headers,customerId,address_name);
+      const data = await this.sfccService.removeCustomerAddress(headers,customerId,addressId);
       return this.handledeleteResponse(data)
     }
     catch(error){
@@ -554,20 +554,20 @@ export class CommercecloudController {
     }
   }
  
-  @patch('/sfcc/updateCustomerAddress/{customerId}/address/{address_name}')
+  @patch('/sfcc/updateCustomerAddress/{customerId}/address/{addressId}')
   @response(200,{
     message: "API for updateCustomerAddress"
   })
   async updateCustomerAddress(
     @param.path.string('customerId') customerId: any,
-    @param.path.string('address_name') address_name: any,
+    @param.path.string('addressId') addressId: any,
     @param.header.string('token') token: any,
     @requestBody() requestBody:any,
 
   ): Promise<any>{
     try{
       const headers = this.request.headers.token;
-      const data = await this.sfccService.updateCustomerAddress(headers,requestBody,customerId,address_name);
+      const data = await this.sfccService.updateCustomerAddress(headers,requestBody,customerId,addressId);
       return this.handlepatchResponse(data)
     }
     catch(error){
