@@ -26,7 +26,7 @@ export class SprykerService  {
   async fetchFromEndpoint(endpoint: string): Promise<any> {
     try {
       const response = await axios.get(`${this.dataSource.settings.baseURL}/${endpoint}`);
-      return response.data;
+      return response;
     } catch (error) {
 
       return this.handleErrorResponse(error)
@@ -672,7 +672,10 @@ async getSprykerSellingProducts(): Promise<any> {
           },
         },
       );
-      return response.data;
+
+      var addId = response.data.data.id;
+      return {addressId:addId };
+      // return response.data;
     } catch (error) {
       return this.handleErrorResponse(error)
       throw error;
@@ -696,7 +699,9 @@ async getSprykerSellingProducts(): Promise<any> {
           },
         },
       );
-      return response.data;
+      var addId = response.data.data.id;
+      return {addressId:addId };
+      // return response.data;
     } catch (error) {
       return this.handleErrorResponse(error)
       throw error;
@@ -903,15 +908,52 @@ async getSprykerUsersData(customerId: any, authorization: any): Promise<any> {
 
 async postSprykerAddress(customerId:any, authorization: any, requestBody:any): Promise<any>{
 const endpoint = `/customers/${customerId}/addresses`
-const response = this.postAddressFromEndpoint(endpoint, requestBody,authorization);
+var reqbody ={
+  "data": {
+      "type": "addresses",
+      "attributes": {
+          "salutation":requestBody.salutation, 
+          "firstName": requestBody.firstName,
+          "lastName": requestBody.lastName,
+          "address1": requestBody.address1,
+          "address2":requestBody.address2,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+          "zipCode": requestBody.zipCode,
+          "city":requestBody.city,
+          "iso2Code":requestBody.countryCode,
+          "phone":requestBody.phone,
+          "isDefaultShipping": true,
+          "isDefaultBilling": true
+      }
+  }
+}
+console.log("aaf",reqbody);
+const response = this.postAddressFromEndpoint(endpoint, reqbody,authorization);
     const data = await response;
     return data;
 }
 
 async updateSprykerAddress(customerId:any, authorization: any, addressId:any,requestBody:any): Promise<any>{
   const endpoint = `/customers/${customerId}/addresses/${addressId}`
+  var reqbody ={
+    "data": {
+        "type": "addresses",
+        "attributes": {
+            "salutation":requestBody.salutation, 
+            "firstName": requestBody.firstName,
+            "lastName": requestBody.lastName,
+            "address1": requestBody.address1,
+            "address2":requestBody.address2,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+            "zipCode": requestBody.zipCode,
+            "city":requestBody.city,
+            "iso2Code":requestBody.countryCode,
+            "phone":requestBody.phone,
+            "isDefaultShipping": true,
+            "isDefaultBilling": true
+        }
+    }
+  }
   console.log("endpointt",endpoint)
-  const response = this.patchAddressFromEndpoint(endpoint, requestBody,authorization);
+  const response = this.patchAddressFromEndpoint(endpoint, reqbody,authorization);
       const data = await response;
       console.log("object",data)
       return data;
@@ -970,6 +1012,86 @@ async postCheckoutorder(reqBody: any, authorization: any): Promise<any> {
   return data;
 }
 
+//facets
+async searchByFacets(category:any,color:any, minprice:any, maxprice:any, sort:any, count:any, page: any): Promise<any> {
+  const endpoint = `catalog-search?category=${category}&color=${color || ''}&price%5Bmin%5D=${minprice || ''}&price%5Bmax%5D=${maxprice || ''}&ipp=${count || ''}&page=${page || ''}&sort=${sort || ''}`;
+  const response = await this.fetchFromEndpoint(endpoint);
+  const data = response.data;
+  const paginations = data[0]?.attributes?.pagination
+  const pages ={
+      count: paginations.numFound,
+      totalPages: paginations.maxPage,
+      perPage: paginations.currentItemsPerPage,
+      next: paginations.nextPage
+    };
+  const valueFacets = data[0]?.attributes?.valueFacets?.map((facet: any) => {
+    return {
+      name: facet.name,
+      value: facet.values.map((value: any) => {
+        return {
+          id: value.value,
+          quantity: value.doc_count,
+          value: value.value,
+        };
+      }),
+    };
+  }) || [];
+  const productData = data[0]?.attributes?.abstractProducts?.map((item: any) => {
+    const listPrice = item?.prices[1]?.netAmount;
+    const discountPrice = item?.price;
+    const discountPercent = Math.round(
+      ((listPrice - discountPrice) / listPrice) * 100
+    );
+    return {
+      productId: item.abstractSku,
+      sku_id: item.abstractSku,
+      productName: item.abstractName,
+      productImage: item.images[0]?.externalUrlLarge || null,
+      productRating: "", // You can populate this if it's available in your data
+      productPrice: {
+        sellingPrice: discountPrice,
+        listPrice: listPrice || discountPrice,
+        discount: listPrice - discountPrice || 0,
+        discountPercentage: discountPercent || 0,
+      },
+    };
+  }) || [];
 
+  return { productData , valueFacets, pagination: pages};
 
+}
+
+async getSearchFacets(category:any): Promise<any> {
+  const endpoint = `catalog-search?category=${category}`;
+  const response = await this.fetchFromEndpoint(endpoint);
+    if(response.status==200){
+      const data = response.data.data;
+      const paginations = data[0]?.attributes?.pagination
+      const pages ={
+          count: paginations.numFound,
+          totalPages: paginations.maxPage,
+          perPage: paginations.currentItemsPerPage,
+          next: paginations.nextPage
+        };
+      console.log("khsn")
+  const valueFacets = data[0]?.attributes?.valueFacets?.map((facet: any) => {
+    return {
+      name: facet.name,
+      value: facet.values.map((value: any) => {
+        return {
+          id: value.value,
+          quantity: value.doc_count,
+          value: value.value,
+        };
+      }),
+    };
+  }) || [];
+  return {  valueFacets, pagination: pages};
+}
+else{
+  console.log("aaaff")
+ return response;
+}
+
+}
 }

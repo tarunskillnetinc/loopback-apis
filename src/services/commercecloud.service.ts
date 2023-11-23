@@ -564,16 +564,28 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
 
   
   //Function crud customer address start
-  async addCustomerAddress(bearer: any,customerId:any, requestBody: any): Promise<any> {
+  async addCustomerAddress(authorization: any,customerId:any, requestBody: any): Promise<any> {
     const endpoint = `${shopName}/dw/shop/v23_2/customers/${customerId}/addresses?client_id=${clientId}`;
     const header = {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${bearer}`,
+      'Authorization': `Bearer ${authorization}`,
     };
+    var body={
+      "salutation":requestBody.salutation,
+      "first_name": requestBody.firstName,
+      "last_name": requestBody.lastName,
+      "address1": requestBody.address1,
+      "address2":requestBody.address2,
+      "postal_code": requestBody.zipCode,
+      "city":requestBody.city,
+      "country_code":requestBody.countryCode,
+      "phone":requestBody.phone,
+      "address_id":requestBody.address_id=uuidv4()
+    }
+    requestBody.address_id=uuidv4()//
+    console.log("addressbody",body)
+    const response = await this.confirm(endpoint, header, body);
 
-    requestBody.address_id=uuidv4()
-    console.log("addressbody",requestBody)
-    const response = await this.confirm(endpoint, header, requestBody);
 
     if (response.error) {
       return response; // You can decide how to handle errors
@@ -595,11 +607,11 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
     }
   }
 
-  async removeCustomerAddress(bearer: any,customerId:any,address_name:any): Promise<any> {
+  async removeCustomerAddress(authorization: any,customerId:any,address_name:any): Promise<any> {
     const endpoint = `${shopName}/dw/shop/v23_2/customers/${customerId}/addresses/${address_name}?client_id=${clientId}`;
     const header = {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${bearer}`,
+      'Authorization': `Bearer ${authorization}`,
     };
     const response = await this.removeCustomerAddressEndpoint(endpoint, header);
 
@@ -613,22 +625,36 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
   async updateCustomerAddressEndpoint(endpoint:any,requestBody:any,header:any){
     try{
       console.log("headers",header);
+      var body={
+        "salutation":requestBody.salutation,
+        "first_name": requestBody.firstName,
+        "last_name": requestBody.lastName,
+        "address1": requestBody.address1,
+        "address2":requestBody.address2,
+        "postal_code": requestBody.zipCode,
+        "city":requestBody.city,
+        "country_code":requestBody.countryCode,
+        "phone":requestBody.phone,
+        "address_id":requestBody.address_id=uuidv4()
+      }
       const response = await axios.patch(`${this.dataSource.settings.baseURL}/${endpoint}`,
-      requestBody,
+      body,
       {
         headers: header
       });
-      return response.data;
+      var addId= response.data.address_id;
+      return { addressId:addId };
+      // return response.data;
     }
     catch(error){
       return this.handleErrorResponse(error)
     }
   }
-  async updateCustomerAddress(bearer: any,requestBody:any,customerId:any,address_name:any): Promise<any> {
+  async updateCustomerAddress(authorization: any,requestBody:any,customerId:any,address_name:any): Promise<any> {
     const endpoint = `${shopName}/dw/shop/v23_2/customers/${customerId}/addresses/${address_name}?client_id=${clientId}`;
     const header = {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${bearer}`,
+      'Authorization': `Bearer ${authorization}`,
     };
     const response = await this.updateCustomerAddressEndpoint(endpoint,requestBody,header);
 
@@ -981,6 +1007,7 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
        'Content-Type': 'application/json',
         'Authorization':`Bearer ${bearer}`
     }
+
     const response = await this.confirm(endpoint,header,requestBody);
     console.log("AAfreeeen",response)
     console.log("my response",response?.data)
@@ -1027,7 +1054,8 @@ async postsalesForceLogin(reqBody: any): Promise<any> {
           headers: header,
         }
       );
-      return response.data;
+       var addId= response.data.address_id;
+      return { addressId:addId };
     } catch (error) {
       if (error.response) {
         console.error("Error response data:", error.response.data);

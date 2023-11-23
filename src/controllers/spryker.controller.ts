@@ -427,12 +427,12 @@ export class SprykerController {
      })
      async postSprykerAddress(
       @param.path.string('customerId') customerId:any,
-      @param.header.string('bearer') bearer:string,
+      @param.header.string('token') token: any,
       @requestBody() requestBody:{data:any},
      ):Promise<any>{
        try {
-           const header = this.request.headers.bearer;
-           const sprykerAddressDetail = await this.sprykerService.postSprykerAddress(customerId,header, requestBody)
+           const headers = this.request.headers.token;
+           const sprykerAddressDetail = await this.sprykerService.postSprykerAddress(customerId,headers, requestBody)
            return this.handlepostResponse(sprykerAddressDetail)
        }catch(error){
         throw error;
@@ -446,12 +446,12 @@ export class SprykerController {
      async updateSprykerAddress(
       @param.path.string('customerId') customerId:any,
       @param.path.string('addressId') addressId:any,
-      @param.header.string('bearer') bearer:string,
+      @param.header.string('token') token: any,
       @requestBody() requestBody:{data:any},
      ):Promise<any>{
        try {
-           const header = this.request.headers.bearer;
-           const sprykerAddressDetail = await this.sprykerService.updateSprykerAddress(customerId,header, addressId,requestBody)
+        const headers = this.request.headers.token;
+           const sprykerAddressDetail = await this.sprykerService.updateSprykerAddress(customerId,headers, addressId,requestBody)
            return this.handlepostResponse(sprykerAddressDetail)
        }catch(error){
         throw error;
@@ -465,11 +465,11 @@ export class SprykerController {
      async removeSprykerAddress(
       @param.path.string('customerId') customerId:any,
       @param.path.string('addressId') addressId:any,
-      @param.header.string('bearer') bearer:string,
+      @param.header.string('token') token: any,
      ):Promise<any>{
        try {
-           const header = this.request.headers.bearer;
-           const sprykerAddressDetail = await this.sprykerService.removeSprykerAddress(customerId,header, addressId)
+        const headers = this.request.headers.token;
+           const sprykerAddressDetail = await this.sprykerService.removeSprykerAddress(customerId,headers, addressId)
            return this.handlepostResponse(sprykerAddressDetail)
        }catch(error){
         throw error;
@@ -536,5 +536,44 @@ async postCheckoutOrder(
     return error.response.data
     throw error;
   }
-}   
+}  
+
+
+@get('/spryker/searchbyFacets')
+@response(200,{
+  description: 'Get Spryker Product List by search query',
+})
+async searchbyFacets(
+  @param.query.string('category') category?: any,
+  @param.query.string('color') color?: any,
+  @param.query.string('minprice') minprice?: any,
+  @param.query.string('maxprice') maxprice?: any,
+  @param.query.string('sort') sort?: any,
+  @param.query.string('page') page?: any,
+  @param.query.string('productsPerPage') count?: any,
+): Promise<any>{
+  try{
+    const getSprkerProducts = await this.sprykerService.searchByFacets(category,color,minprice,maxprice,sort,count,page);
+    return this.handlegetResponse(getSprkerProducts)
+  }
+  catch(error){
+    throw error;
+  }
+}
+
+@get('/spryker/getSearchFacets/{categoryId}')
+@response(200,{
+  description: 'Get Spryker Product List by search query',
+})
+async getSearchFacets(
+  @param.path.string('categoryId') categoryId?: any,
+): Promise<any>{
+  try{
+    const getSprkerProducts = await this.sprykerService.getSearchFacets(categoryId);
+    return this.handlegetResponse(getSprkerProducts)
+  }
+  catch(error){
+    throw error;
+  }
+}
 }
