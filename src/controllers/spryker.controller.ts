@@ -460,7 +460,7 @@ export class SprykerController {
 
      @del('/spryker/customers/{customerId}/addresses/{addressId}')
      @response(200,{
-       description:'Update spryker address from external API',
+       description:'Delete spryker address from external API',
      })
      async removeSprykerAddress(
       @param.path.string('customerId') customerId:any,
