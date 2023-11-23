@@ -456,10 +456,54 @@ let VtexController = exports.VtexController = class VtexController {
             throw error;
         }
     }
-    // Get the order-details or profile
-    async getOrderUserDetails(auth) {
+    // Get the user-details or profile
+    async getUserDetails() {
         try {
-            const orderProfile = await this.vtexService.getOrderUserDetails(auth);
+            const userAddress = await this.vtexService.getUserDetails();
+            console.log(userAddress, "userAddress");
+            return this.handlegetResponse(userAddress);
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    // post the user-details or profile
+    async postUserProfileDetails(customerId, requestBody) {
+        try {
+            const postUserProfile = await this.vtexService.postUserProfileDetails(requestBody, customerId);
+            console.log(postUserProfile, "postUserProfile");
+            return this.handlepostResponse(postUserProfile);
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    // patch the user-details or profile
+    async updateUserProfileDetails(documentId, requestBody) {
+        try {
+            const postUserProfile = await this.vtexService.updateUserProfileDetails(requestBody, documentId);
+            console.log(postUserProfile, "postUserProfile");
+            return this.handlepatchResponse(postUserProfile);
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    // delete the user-details or profile
+    async delUserProfileDetails(addressId) {
+        try {
+            const userProfile = await this.vtexService.delUserProfileDetails(addressId);
+            console.log(userProfile, "userProfile");
+            return this.handlegetResponse(userProfile);
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    // Get the order-details or profile
+    async getOrderUserDetails(cookie) {
+        try {
+            const orderProfile = await this.vtexService.getOrderUserDetails(cookie);
             console.log(orderProfile, "orderProfile");
             return orderProfile;
         }
@@ -799,11 +843,52 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], VtexController.prototype, "getUserProfileDetails", null);
 tslib_1.__decorate([
-    (0, rest_1.get)('/order-details/{auth}'),
+    (0, rest_1.get)('vtex/user-Address/search'),
     (0, rest_1.response)(200, {
         description: 'Get VTEX user details from the external API',
     }),
-    tslib_1.__param(0, rest_1.param.path.string('auth')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", []),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "getUserDetails", null);
+tslib_1.__decorate([
+    (0, rest_1.post)('vtex/user-Address/search'),
+    (0, rest_1.response)(200, {
+        description: 'Post VTEX user details from the external API',
+    }),
+    tslib_1.__param(0, rest_1.param.query.string('customerId')),
+    tslib_1.__param(1, (0, rest_1.requestBody)()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String, Object]),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "postUserProfileDetails", null);
+tslib_1.__decorate([
+    (0, rest_1.patch)('vtex/user-Address/search/{documentId}'),
+    (0, rest_1.response)(200, {
+        description: 'Update VTEX user details from the external API',
+    }),
+    tslib_1.__param(0, rest_1.param.path.string('documentId')),
+    tslib_1.__param(1, (0, rest_1.requestBody)()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String, Object]),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "updateUserProfileDetails", null);
+tslib_1.__decorate([
+    (0, rest_1.del)('vtex/user-details/{addressId}'),
+    (0, rest_1.response)(200, {
+        description: 'Get VTEX user details from the external API',
+    }),
+    tslib_1.__param(0, rest_1.param.path.string('addressId')),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String]),
+    tslib_1.__metadata("design:returntype", Promise)
+], VtexController.prototype, "delUserProfileDetails", null);
+tslib_1.__decorate([
+    (0, rest_1.get)('vtex/order-details/{cookie}'),
+    (0, rest_1.response)(200, {
+        description: 'Get VTEX user details from the external API',
+    }),
+    tslib_1.__param(0, rest_1.param.path.string('cookie')),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [String]),
     tslib_1.__metadata("design:returntype", Promise)

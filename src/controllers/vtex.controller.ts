@@ -680,15 +680,81 @@ export class VtexController {
     }
   }
 
-  // Get the order-details or profile
- 
-  @get('/order-details/{auth}')
+    // Get the user-details or profile
+    @get('vtex/user-Address/search')
+    @response(200, {
+      description: 'Get VTEX user details from the external API',
+    })
+    async getUserDetails(): Promise < any > {
+      try {
+        const userAddress = await this.vtexService.getUserDetails();
+        console.log(userAddress, "userAddress")
+        return this.handlegetResponse(userAddress)
+      } catch (error) {
+          throw error;
+      }
+    }
+
+     // post the user-details or profile
+  @post('vtex/user-Address/search')
+  @response(200, {
+    description: 'Post VTEX user details from the external API',
+  })
+  async postUserProfileDetails(
+    @param.query.string('customerId') customerId: string,
+    @requestBody() requestBody:{data:any}): Promise < any > {
+    try {
+      const postUserProfile = await this.vtexService.postUserProfileDetails(requestBody,customerId);
+      console.log(postUserProfile, "postUserProfile")
+      return this.handlepostResponse(postUserProfile)
+    } catch (error) {
+        throw error;
+    }
+  }
+
+       // patch the user-details or profile
+       @patch('vtex/user-Address/search/{documentId}')
+       @response(200, {
+         description: 'Update VTEX user details from the external API',
+       })
+       async updateUserProfileDetails(
+        @param.path.string('documentId') documentId: string,
+        @requestBody() requestBody:{data:any}
+        ): Promise < any > {
+         try {
+           const postUserProfile = await this.vtexService.updateUserProfileDetails(requestBody,documentId);
+           console.log(postUserProfile, "postUserProfile")
+           return this.handlepatchResponse(postUserProfile)
+         } catch (error) {
+             throw error;
+         }
+       }
+
+
+    // delete the user-details or profile
+  @del('vtex/user-details/{addressId}')
   @response(200, {
     description: 'Get VTEX user details from the external API',
   })
-  async getOrderUserDetails(@param.path.string('auth') auth: string): Promise<any> {
+  async delUserProfileDetails(@param.path.string('addressId') addressId: string): Promise < any > {
     try {
-      const orderProfile = await this.vtexService.getOrderUserDetails(auth);
+      const userProfile = await this.vtexService.delUserProfileDetails(addressId);
+      console.log(userProfile, "userProfile")
+      return this.handlegetResponse(userProfile)
+    } catch (error) {
+        throw error;
+    }
+  }
+
+  // Get the order-details or profile
+ 
+  @get('vtex/order-details/{cookie}')
+  @response(200, {
+    description: 'Get VTEX user details from the external API',
+  })
+  async getOrderUserDetails(@param.path.string('cookie') cookie: string): Promise<any> {
+    try {
+      const orderProfile = await this.vtexService.getOrderUserDetails(cookie);
       console.log(orderProfile,"orderProfile")
       return orderProfile;
     } catch (error) {

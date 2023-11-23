@@ -2,7 +2,7 @@ import {injectable, inject} from '@loopback/core';
 import axios, { AxiosResponse } from 'axios';
 import {VtexDataSource} from '../datasources';
 import FormData = require('form-data');
-import {response} from '@loopback/rest';
+import {requestBody, response} from '@loopback/rest';
 import { CountSchema } from '@loopback/repository';
 require('dotenv').config();
 const vtexAppToken=process.env.VTEX_APP_TOKEN
@@ -33,9 +33,30 @@ export class VtexService {
     }
   }
 
-  async fetchFromOrderEndpoint(endpoint: string,authToken:string): Promise<any> {
+  async addressFetchFromEndpoint(endpoint: string): Promise<any> {
     try {
       const response = await axios.get(
+        `${this.dataSource.settings.baseURL}/${endpoint}`,
+        {
+          headers: {
+            Accept: 'application/json',
+            'X-VTEX-API-AppToken':
+            vtexAppToken,
+            'X-VTEX-API-AppKey': vtexAppKey,
+            'REST-Range':'resources=0-100',
+          },
+        },
+      );
+      console.log("aamirdata",response)
+      return response.data;
+    } catch (error) {
+        return this.handleErrorResponse(error);
+    }
+  }
+
+  async delfetchFromEndpoint(endpoint: string): Promise<any> {
+    try {
+      const response = await axios.delete(
         `${this.dataSource.settings.baseURL}/${endpoint}`,
         {
           headers: {
@@ -46,11 +67,48 @@ export class VtexService {
           },
         },
       );
+      console.log("aamirdata",response)
       return response.data;
     } catch (error) {
         return this.handleErrorResponse(error);
     }
   }
+
+  async fetchFromOrderEndpoint(endpoint: string,cookie:string): Promise<any> {
+    try {
+      const response = await axios.get(
+        `${this.dataSource.settings.baseURL}/${endpoint}`,
+        {
+          headers: {
+             cookie: `${cookie}`,
+          },
+        },
+      );
+      return response.data;
+    } catch (error) {
+        return this.handleErrorResponse(error);
+    }
+  }
+
+  
+  // async fetchFromOrderEndpoint(response: any,cookie:any) {
+  //   try{
+  //     const sessionresponse: AxiosResponse<any> = await axios.get(
+  //       "https://skillnet.myvtex.com/api/sessions",
+  //       {
+  //         headers: {
+  //           cookie: `${(response.accountAuthCookie.Name =
+  //             response.accountAuthCookie.Value)}+";"+${(response.authCookie.Name =
+  //             response.accountAuthCookie.Value)}`,
+  //         },
+  //       }
+  //     );
+  //     return sessionresponse;
+  //   }
+  //   catch(error){
+  //     return this.handleErrorResponse(error);
+  //   }
+  // }
 
   //For handling Errors:
   handleErrorResponse(error: any): any {
@@ -1408,12 +1466,127 @@ return emptyarray;
   }
 
 
+  async getUserDetails():Promise<any>{
+    const endpoint = `api/dataentities/Address/search?_fields=_all`;
+    const response = this.addressFetchFromEndpoint(endpoint);
+    const data = await response;
+    // console.log("show",data[0])
+    const promise = data.map((item:any)=>{
+      
+    const formattedData = {
+        id:item.id,
+        salutation: item.salutation,
+        firstName: item?.receiverName?.split(" ")[0],
+        lastName: item?.receiverName?.split(" ")[1] || "",
+        address1: item.street,
+        address2: item.complement || "",
+        zipCode: item.postalCode,
+        city: item.city,
+        countryCode: item.country,
+        phone: item.phone,
+        isDefaultShipping: item.isDefaultShipping,
+        isDefaultBilling: item.isDefaultBilling
+    };
+
+    return formattedData;
+    })
+    return promise;
+  }
+
+  
+  async postUserProfileDetails(requestBody:any,_customerId:any): Promise<any> {
+
+    const modifiedBody = {
+          salutation: requestBody.salutation,
+          firstName: requestBody.firstName,
+          lastName: requestBody.lastName,
+          address1: requestBody.address1, // Map relevant fields from your original requestBody
+          address2: requestBody.address2, // Adjust fields as necessary
+          zipCode: requestBody.zipCode,
+          city: requestBody.city,
+          iso2Code: requestBody.countryCode,
+          phone:requestBody.phone,
+          isDefaultShipping: true,
+          isDefaultBilling: true,
+    };
+    
+    const endpoint = `api/dataentities/Address/documents`;
+    try{
+      const response : AxiosResponse<any> = await axios.post(`${this.dataSource.settings.baseURL}/${endpoint}`,
+      modifiedBody,
+      {
+        headers: {
+          Accept: 'application/json',
+          'X-VTEX-API-AppToken':
+          vtexAppToken,
+          'X-VTEX-API-AppKey': vtexAppKey,
+        }
+      }
+      );
+      
+      // return response.data;
+      const formattedData = {
+        addressId:response.data.DocumentId
+      };
+      return formattedData;
+    }
+    catch(error){
+      return this.handleErrorResponse(error);
+    }
+  }
+
+      // Function for updating items in cart
+    async updateUserProfileDetails(requestBody:any,documentId:any):Promise<any>{
+      const modifiedBody = {
+        salutation: requestBody.salutation,
+        firstName: requestBody.firstName,
+        lastName: requestBody.lastName,
+        address1: requestBody.address1, // Map relevant fields from your original requestBody
+        address2: requestBody.address2, // Adjust fields as necessary
+        zipCode: requestBody.zipCode,
+        city: requestBody.city,
+        iso2Code: requestBody.countryCode,
+        phone:requestBody.phone,
+        isDefaultShipping: true,
+        isDefaultBilling: true,
+      };
+
+      const endpoint = `api/dataentities/Address/documents/${documentId}`;
+      try{
+        const url = `${this.dataSource.settings.baseURL}/${endpoint}`;
+        const response : AxiosResponse<any> = await axios.patch(`${this.dataSource.settings.baseURL}/${endpoint}`,
+        modifiedBody,
+          {
+            headers: {
+              Accept: 'application/json',
+              'X-VTEX-API-AppToken':
+            vtexAppToken,
+            'X-VTEX-API-AppKey': vtexAppKey,
+            }
+          }
+        );
+        return response.data;
+      }
+      catch(error){
+        return this.handleErrorResponse(error);
+      }
+    }
+
+
+
+  async delUserProfileDetails(addressId:any):Promise<any>{
+    const endpoint = `api/dataentities/Address/documents/${addressId}`;
+    const response = this.delfetchFromEndpoint(endpoint);
+    const data = await response;
+    console.log("daaa",data)
+    return data;
+  }
+
+
   //Function for getting order Details Or order Items:
-  async getOrderUserDetails(auth:any): Promise<any>{
-    const endpoint = `api/oms/user/orders/?page=1&includeProfileLastPurchases=true`;
-    const authToken:string = "_vss=" + auth;
-    console.log("authToken", authToken);
-    const response = this.fetchFromOrderEndpoint(endpoint,authToken);
+  async getOrderUserDetails(cookie:any): Promise<any>{
+    const endpoint = `api/oms/user/orders/?page=1&includeProfileLastPurchases=true&items=[]`;
+    const response = this.fetchFromOrderEndpoint(endpoint,cookie);
     const data = await response;
     console.log("datafff",data)
     return data;
